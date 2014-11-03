@@ -1,9 +1,11 @@
 #!/usr/bin/python
+impo#!/usr/bin/python
 import argparse, re
 
 def take_arguments():
 	parser = argparse.ArgumentParser(description=
 		"<insert it later>")
+	conflicting_group = parser.add_mutually_exclusive_group()
 
 	parser.add_argument('--ruby','-r',
 		help='Generate a ruby script for given HTTP request',
@@ -32,12 +34,12 @@ def take_arguments():
 		help='Generates command/script with relevant,\
 		specified proxy')
 
-	parser.add_argument('--string-search',
+	conflicting_group.add_argument('--string-search',
 		help='Sends the request and searches for the\
 		required string in the response(i.e literal match)',
 		action='store_true')
 
-	parser.add_argument('--regex-search',
+	conflicting_group.add_argument('--regex-search',
 		help='Sends the request and searches for the\
 		required regex in the response(i.e regex match)',
 		action='store_true')
@@ -53,6 +55,7 @@ def take_arguments():
 
 	process_arguments(parser.parse_args())
 	return parser.parse_args()
+
 
 
 def process_arguments(args):
