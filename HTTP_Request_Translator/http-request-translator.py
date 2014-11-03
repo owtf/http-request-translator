@@ -1,5 +1,4 @@
 #!/usr/bin/python
-impo#!/usr/bin/python
 import argparse, re
 
 def take_arguments():
