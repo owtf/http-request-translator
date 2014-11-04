@@ -1,5 +1,7 @@
 #!/usr/bin/python
-import argparse, re
+import argparse, re, sys
+from tornado.httputil import HTTPHeaders
+
 
 def take_arguments():
 	parser = argparse.ArgumentParser(description=
@@ -29,7 +31,6 @@ def take_arguments():
 	parser.add_argument('--proxy',
 		nargs='?',
 		const='127.0.0.1:8009',
-		default='127.0.0.1:8009',
 		help='Generates command/script with relevant,\
 		specified proxy')
 
@@ -48,7 +49,7 @@ def take_arguments():
 	 	hit enter when ready.Type exit to exit the interactive mode.',
 		action='store_true')
 
-	parser.add_argument('HTTP Request',
+	parser.add_argument('HTTPRequest',
 		help='Input the HTTP request')
 
 
@@ -56,99 +57,79 @@ def take_arguments():
 	return parser.parse_args()
 
 
-
 def process_arguments(args):
+	default = True
+	script_list = []
+	argdict = vars(args)
+	for i in argdict :
+		if argdict[i] == True:
+			script_list.append(i)
 
-	proxy = None
-	if args.proxy:
-		proxy=args.proxy
+	if 'interactive' in script_list :
+		script_list.remove('interactive')
+		interactive_mode(script_list)
 
-	if args.interactive :
-		interactive_mode(args, proxy)
-	
-	elif args.regex-search or args.string-search :
+	else:
+		if 'string-search' in script_list :
+			script_list.remove('string-search')
+			pass
+
+		elif 'regex-search' in script_list :
+			script_list.remove('regex-search')			
+			pass
+
+		else:
+			parsed_dict = parse_raw_request(args.HTTPRequest)
+			generate_scripts(script_list, parsed_dict)
+
+	return argdict
+
+
+def generate_scripts(script_list, parsed_dictionary):
+
+	default = True
+	if 'python' in script_list:
+		default = False
 		pass
 
-	else :
-		if args.python :
-			pass
+	if 'ruby' in script_list :
+		default = False
+		pass
 
-		elif args.ruby :
-			pass
+	if 'php' in script_list :
+		default = False
+		pass
 
-		elif args.php :
-			pass
+	if 'bash' in script_list :
+		default = False
+		pass
 
-		elif args.bash :
-			pass
-
-		else :
-			pass
+	if default :
+		#generates the default Curl command
+		pass
 
 
-def interactive_mode(args, proxy):
+def interactive_mode(script_list):
 
 	while (True):
 		http_request = input("Enter the HTTP Request")
 		if http_request == "exit":
-			break
+			sys.exit(0)
 		else:
 			parsed_dictionary = parse_raw_request(http_request)
-			if parsed_dictionary['request_type'] or parsed_dictionary['host'] is None:
+			if parsed_dictionary['request_type'] or parsed_dictionary['Host'] is None:
 				print "Invalid HTTP Request"
-				break
+				sys.exit(0)
 			else:
-				if args.python :
-					pass
-
-				elif args.ruby :
-					pass
-
-				elif args.php :
-					pass
-
-				elif args.bash :
-					pass
-
-				else :
-					pass
-					#The functionality will be added after adding the required methods in default.py
-					pass
+				generate_scripts(script_list, parsed_dictionary)
+				
 
 
 def parse_raw_request(request):
 
-	request_type = "GET"
-	type_match = re.search(r'^POST', request)
-	if type_match:
-		request_type = "POST"
-	type_match = re.search(r'^PUT', request)
-	if type_match:
-		request_type = "PUT"
-	type_match = re.search(r'^HEAD', request)
-	if type_match:
-		request_type = "HEAD"
-	type_match = re.search(r'^DELETE', request)
-	if type_match:
-		request_type = 'Delete'
-
-	host_match = re.search(r'Host: [\w \d .-]+', request)
-	if host_match:
-		host = host_match.group().split(':', 1)[1]
-
-	user_agent_match = re.search(r'User-Agent: [\w \d .-/();]+', request)
-	if user_agent_match:
-		user_agent = user_agent_match.group().split(':', 1)[1]
-
-	content_length_match = re.search(r'Content-Length: [\d]+ ', request)
-	if content_length_match:
-		content_length = content_length_match.group().split(':', 1)[1]
-
-	return {'request_type': request_type, 
-			'host': host,
-			'user_agent': user_agent,
-			'content_length': content_length}
-
+	new_request = request.encode('string-escape').split(r'\n', 1)[1]
+	h = HTTPHeaders.parse(str(new_request))
+	return dict(h)
 
 def main():
 	args = take_arguments()
