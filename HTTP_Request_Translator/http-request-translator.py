@@ -70,6 +70,11 @@ def process_arguments(args):
 		interactive_mode(script_list)
 
 	else:
+		if args.HTTPRequest == False :
+			print "Input a raw HTTP Request and try again\
+			" +"\n"+"Else try using the interactive option"
+			sys.exit(0)
+
 		if 'string-search' in script_list :
 			script_list.remove('string-search')
 			pass
@@ -111,18 +116,26 @@ def generate_scripts(script_list, parsed_dictionary):
 
 def interactive_mode(script_list):
 
-	while (True):
-		http_request = input("Enter the HTTP Request")
-		if http_request == "exit":
-			sys.exit(0)
-		else:
-			parsed_dictionary = parse_raw_request(http_request)
-			if parsed_dictionary['request_type'] or parsed_dictionary['Host'] is None:
-				print "Invalid HTTP Request"
-				sys.exit(0)
-			else:
-				generate_scripts(script_list, parsed_dictionary)
-				
+	buf = []
+	print "Enter the HTTP request. Once entered,\
+	Press enter again! And type ':q!' to exit "
+
+	while True:
+	    http_request = raw_input(">>" + '\n')
+	    if not http_request:
+	        take_interactive_params("".join(buf), script_list)
+	        buf = []
+	    buf.append(http_request + "\n")
+
+
+def take_interactive_params(chunk, script_list):
+    if chunk.strip() == "exit":
+        sys.exit(0)
+    else:
+        parsed_dictionary = parse_raw_request(chunk)
+        generate_scripts(script_list, parsed_dictionary)
+
+					
 
 
 def parse_raw_request(request):
