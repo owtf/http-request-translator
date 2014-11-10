@@ -49,8 +49,9 @@ def take_arguments():
 	 	hit enter when ready.Type exit to exit the interactive mode.',
 		action='store_true')
 
-	parser.add_argument('HTTPRequest',
-		help='Input the HTTP request')
+	parser.add_argument('--Request',
+		help='Input the HTTP request',
+		)
 
 
 	process_arguments(parser.parse_args())
@@ -65,12 +66,12 @@ def process_arguments(args):
 		if argdict[i] == True:
 			script_list.append(i)
 
-	if 'interactive' in script_list :
+	if args.interactive :
 		script_list.remove('interactive')
 		interactive_mode(script_list)
 
 	else:
-		if args.HTTPRequest == False :
+		if not args.Request:
 			print "Input a raw HTTP Request and try again\
 			" +"\n"+"Else try using the interactive option"
 			sys.exit(0)
@@ -84,7 +85,7 @@ def process_arguments(args):
 			pass
 
 		else:
-			parsed_dict = parse_raw_request(args.HTTPRequest)
+			parsed_dict = parse_raw_request(args.Request)
 			generate_scripts(script_list, parsed_dict)
 
 	return argdict
@@ -95,23 +96,28 @@ def generate_scripts(script_list, parsed_dictionary):
 	default = True
 	if 'python' in script_list:
 		default = False
-		pass
+		import pythonScripts
+		pythonScripts.skeleton(parsed_dictionary)
 
 	if 'ruby' in script_list :
 		default = False
-		pass
+		import rubyScripts
+		rubyScripts.skeleton(parsed_dictionary)
 
 	if 'php' in script_list :
 		default = False
-		pass
+		import phpScripts
+		phpScripts.skeleton(parsed_dictionary)
 
 	if 'bash' in script_list :
 		default = False
-		pass
+		import bashScripts
+		bashScripts.skeleton(parsed_dictionary)
 
 	if default :
 		#generates the default Curl command
-		pass
+		import default
+		default.skeleton(parsed_dictionary)
 
 
 def interactive_mode(script_list):
@@ -129,20 +135,21 @@ def interactive_mode(script_list):
 
 
 def take_interactive_params(chunk, script_list):
-    if chunk.strip() == "exit":
+    if chunk.strip() == ":q!":
         sys.exit(0)
     else:
         parsed_dictionary = parse_raw_request(chunk)
         generate_scripts(script_list, parsed_dictionary)
 
-					
-
-
 def parse_raw_request(request):
 
-	new_request = request.encode('string-escape').split(r'\n', 1)[1]
-	h = HTTPHeaders.parse(str(new_request))
-	return dict(h)
+	new_request_method, new_request = request.split('\n', 1)[0], request.split('\n', 1)[1]
+	parsed_dict = dict(HTTPHeaders.parse(new_request))
+	parsed_dict['method'] = new_request_method.split('/', 2)[0]
+	parsed_dict['protocol'] = new_request_method.split('/', 2)[1]
+	parsed_dict['version'] = new_request_method.split('/', 2)[2]
+	return parsed_dict
+
 
 def main():
 	args = take_arguments()
