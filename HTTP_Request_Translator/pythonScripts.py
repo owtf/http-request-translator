@@ -1,8 +1,19 @@
-#!/bin/user/python
+#!/usr/bin/python
+from tornado.httpclient import HTTPRequest, HTTPClient
+import pprint
+def generate_skeleton(header_dict, details_dict):
 
-def skeleton(parsed_dictionary):
-	''' This method contains the skeleton code of Python script to send requests '''
-	skeleton_code = "<Insert the skeleton_code here>"
-	''' Take in the values from the parsed_dictionary and then add the parsed values to this to make a basic script
+	skeleton_code = '''
+	#!/usr/bin/python
+	from tornado.httpclient import HTTPRequest, HTTPClient
+
+	def main():
+		request_object = HTTPRequest(''' +details_dict['Host']+ \
+			''', method=''' +details_dict['method'].strip()+\
+			''', headers=''' +str(header_dict)+ ''')
+		return HTTPClient().fetch(request_object).headers
+
+	if __name__ == '__main__':
+	main()
 	'''
-	return skeleton_code
+	print(skeleton_code)

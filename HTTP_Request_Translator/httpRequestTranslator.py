@@ -91,13 +91,26 @@ def process_arguments(args):
 	return argdict
 
 
-def generate_scripts(script_list, parsed_dictionary):
+def generate_scripts(script_list, parsed_tuple):
 
 	default = True
 	if 'python' in script_list:
 		default = False
 		import pythonScripts
-		pythonScripts.skeleton(parsed_dictionary)
+		port_protocol = {'https' : 443, 'ssh' : 22, 'ftp' : 21,'ftp' : 20, 'irc' : 113}
+		url = str(parsed_tuple[0]['Host'])
+		try :
+			protocol = url.split(':', 2)[2]
+			if protocol in port_protocol.keys():
+				prefix = str(port_protocol[key]) + "://"
+			else :
+				prefix = "http://"
+				
+		except IndexError:
+			prefix = "http://"
+		url = prefix + str(parsed_tuple[0]['Host'])
+		parsed_tuple[1]['Host'] = url
+		pythonScripts.generate_skeleton(parsed_tuple[0], parsed_tuple[1])
 
 	if 'ruby' in script_list :
 		default = False
@@ -143,12 +156,14 @@ def take_interactive_params(chunk, script_list):
 
 def parse_raw_request(request):
 
-	new_request_method, new_request = request.split('\n', 1)[0], request.split('\n', 1)[1]
-	parsed_dict = dict(HTTPHeaders.parse(new_request))
-	parsed_dict['method'] = new_request_method.split('/', 2)[0]
-	parsed_dict['protocol'] = new_request_method.split('/', 2)[1]
-	parsed_dict['version'] = new_request_method.split('/', 2)[2]
-	return parsed_dict
+	new_request_method, new_request = \
+	request.split('\n', 1)[0], request.split('\n', 1)[1]
+	header_dict = dict(HTTPHeaders.parse(new_request))
+	details_dict = {}
+	details_dict['method'], details_dict['protocol'], details_dict['version'],\
+	details_dict['Host'] = new_request_method.split('/', 2)[0],new_request_method.split('/', 2)[1],\
+	new_request_method.split('/', 2)[2], header_dict['Host']
+	return header_dict, details_dict
 
 
 def main():
