@@ -1,6 +1,6 @@
 #!/bin/user/python
 
-def skeleton(parsed_dictionary):
+def generate_script(header_dict, details_dict):
 
 	''' This method contains the skeleton code of Ruby script to send requests'''
 	skeleton_code = "<Insert the skeleton_code here>"
