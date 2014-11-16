@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import pprint
 
-def generate_skeleton(header_dict, details_dict):
+def generate_script(header_dict, details_dict):
 	
 	method = details_dict['method'].strip()
 	host = details_dict['Host']
