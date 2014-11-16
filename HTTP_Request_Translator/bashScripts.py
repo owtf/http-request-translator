@@ -1,9 +1,35 @@
-#!/bin/user/python
+#!/usr/bin/python
+import pprint
 
-def skeleton(parsed_dictionary):
+def generate_skeleton(header_dict, details_dict):
+	
+	method = details_dict['method'].strip()
+	host = details_dict['Host']
+	headers = str(header_dict)
 
-	''' This method contains the skeleton code of Bash script to send requests'''
-	skeleton_code = "<Insert the skeleton_code here>"
-	''' Take in the values from the parsed_dictionary and then add the parsed values to this to make a basic script
-	'''
-	return skeleton_code
+        if method == 'POST'{
+		skeleton_code = '''
+		#!/usr/bin/env bash
+		curl --request POST '''host''' --header '''headers''' --include
+                '''
+        }
+        elif method == 'GET'{
+		skeleton_code = '''
+		#!/usr/bin/env bash
+		curl --request GET '''host''' --header '''headers''' --include
+		'''
+        }
+        elif method == 'PUT'{
+		skeleton_code = '''
+		#!/usr/bin/env bash
+		curl --request PUT '''host''' --header '''headers''' --include
+                '''
+        }
+        elif method == 'DELETE'{
+		skeleton_code = '''
+		#!/usr/bin/env bash
+		curl --request DELETE '''host''' --header '''headers''' --include
+                '''
+        }
+
+	print (skeleton_code)
