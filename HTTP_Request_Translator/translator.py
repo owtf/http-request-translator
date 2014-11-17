@@ -54,6 +54,7 @@ def process_arguments(args):
 
 	try :
 		script_list = argdict['output'][0].split(',')
+
 	except TypeError:
 		#If --output option is not used
 		script_list = []
@@ -75,6 +76,8 @@ def process_arguments(args):
 
 		else:
 			parsed_tuple = parse_raw_request(args.Request)
+			if args.proxy :
+				parsed_tuple[1]['proxy'] = args.proxy
 			pluginManager(script_list, parsed_tuple)
 
 	return argdict

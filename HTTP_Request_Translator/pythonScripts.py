@@ -17,17 +17,42 @@ def generate_script(header_dict, details_dict):
 	url = prefix + str(header_dict['Host'])
 	details_dict['Host'] = url
 
-	skeleton_code = '''
-	#!/usr/bin/python
-	from tornado.httpclient import HTTPRequest, HTTPClient
+	try :
+		if not 'proxy' in details_dict :
+			skeleton_code = '''
+			#!/usr/bin/python
+			from tornado.httpclient import HTTPRequest, HTTPClient
 
-	def main():
-		request_object = HTTPRequest(''' +details_dict['Host']+ \
-			''', method=''' +details_dict['method'].strip()+\
-			''', headers=''' +str(header_dict)+ ''')
-		return HTTPClient().fetch(request_object).headers
+			def main():
+				request_object = HTTPRequest(''' +details_dict['Host']+ \
+					''', method=''' +details_dict['method'].strip()+\
+					''', headers=''' +str(header_dict)+ ''')
+				return HTTPClient().fetch(request_object).headers
 
-	if __name__ == '__main__':
-	main()
-	'''
-	print(skeleton_code)
+			if __name__ == '__main__':
+			main()
+			'''
+		
+		else :
+			skeleton_code = '''
+			#!/usr/bin/python
+			from tornado.httpclient import HTTPRequest, HTTPClient
+
+			def main():
+				request_object = HTTPRequest(''' +details_dict['Host']+ \
+					''', method=''' +details_dict['method'].strip()+\
+					''', headers=''' +str(header_dict)+ ''', proxy_host='''\
+					+details_dict['proxy'].split(':')[0].strip()+ \
+					''', proxy_port=''' +details_dict['proxy'].split(':')[1].strip()+ \
+					''')			
+				return HTTPClient().fetch(request_object).headers
+
+			if __name__ == '__main__':
+			main()
+			'''
+	
+	except IndexError as i :
+		print "You haven't given the port Number" 
+		
+	else :
+		print(skeleton_code)
