@@ -1,7 +1,10 @@
 #!/usr/bin/python
-import pprint
+from tornado.httpclient import HTTPRequest, HTTPClient
+from termcolor import colored
 
-def generate_script(header_dict, details_dict):
+import pprint, re
+
+def generate_script(header_dict, details_dict, searchString=None):
 
 	port_protocol = {'https' : 443, 'ssh' : 22, 'ftp' : 21,'ftp' : 20, 'irc' : 113}
 	url = str(header_dict['Host'])
@@ -17,42 +20,94 @@ def generate_script(header_dict, details_dict):
 	url = prefix + str(header_dict['Host'])
 	details_dict['Host'] = url
 
-	try :
-		if not 'proxy' in details_dict :
-			skeleton_code = '''
-			#!/usr/bin/python
-			from tornado.httpclient import HTTPRequest, HTTPClient
+	if searchString :
+		try :
+			if not 'proxy' in details_dict :
+				skeleton_code = '''\
+#!/usr/bin/python
+from tornado.httpclient import HTTPRequest, HTTPClient
+from termcolor import colored
+import re
 
-			def main():
-				request_object = HTTPRequest(''' +details_dict['Host']+ \
-					''', method=''' +details_dict['method'].strip()+\
-					''', headers=''' +str(header_dict)+ ''')
-				return HTTPClient().fetch(request_object).headers
+def main():
+	headers, url, method = ''' +str(header_dict)+ ''', "''' +url+ '''" , "''' +details_dict['method'].strip()+ '''"
+	request_object = HTTPRequest(url, method=method,headers=headers)		
+	response_header = HTTPClient().fetch(request_object).headers
+	response_header = re.sub("''' +str(searchString)+ '''", str(colored("''' +str(searchString)+ '''", 'green')), str(response_header))
+	print response_header
+			
+if __name__ == '__main__':
+	main()
 
-			if __name__ == '__main__':
-			main()
-			'''
-		
+				'''
+			else :
+				skeleton_code = '''\
+#!/usr/bin/python
+from tornado.httpclient import HTTPRequest, HTTPClient
+from termcolor import colored
+import re
+
+
+def main():
+
+	headers, url, method = ''' +str(header_dict)+ ''', "''' +url+\
+	'''" , "''' +details_dict['method'].strip()+ '''"
+	proxy_host, proxy_port = "''' +details_dict['proxy'].split(':')[0].strip()+\
+	'''", "''' +details_dict['proxy'].split(':')[1].strip()+ '''"
+	request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host, proxy_port=proxy_port)
+	response_header = HTTPClient().fetch(request_object).headers
+	response_header = re.sub("''' +str(searchString)+ '''", str(colored("''' +str(searchString)+ '''", 'green')), str(response_header))
+	return request_object
+
+
+if __name__ == '__main__':
+	main()
+				'''
+
+		except IndexError as i :
+			print "You haven't given the port Number" 
 		else :
-			skeleton_code = '''
-			#!/usr/bin/python
-			from tornado.httpclient import HTTPRequest, HTTPClient
+			print skeleton_code
 
-			def main():
-				request_object = HTTPRequest(''' +details_dict['Host']+ \
-					''', method=''' +details_dict['method'].strip()+\
-					''', headers=''' +str(header_dict)+ ''', proxy_host='''\
-					+details_dict['proxy'].split(':')[0].strip()+ \
-					''', proxy_port=''' +details_dict['proxy'].split(':')[1].strip()+ \
-					''')			
-				return HTTPClient().fetch(request_object).headers
-
-			if __name__ == '__main__':
-			main()
-			'''
-	
-	except IndexError as i :
-		print "You haven't given the port Number" 
-		
 	else :
-		print(skeleton_code)
+		try :
+			if not 'proxy' in details_dict :
+				skeleton_code = '''\
+#!/usr/bin/python
+from tornado.httpclient import HTTPRequest, HTTPClient
+
+def main():
+	headers, url, method = ''' +str(header_dict)+ ''', "''' +url+ '''" , "''' +details_dict['method'].strip()+ '''"
+	request_object = HTTPRequest(url, method=method,headers=headers)		
+	response_header = HTTPClient().fetch(request_object).headers
+	print response_header
+			
+if __name__ == '__main__':
+	main()
+				'''
+			
+			else :
+				skeleton_code = '''\
+#!/usr/bin/python
+from tornado.httpclient import HTTPRequest, HTTPClient
+
+
+def main():
+
+	headers, url, method = ''' +str(header_dict)+ ''', "''' +url+\
+	'''" , "''' +details_dict['method'].strip()+ '''"
+	proxy_host, proxy_port = "''' +details_dict['proxy'].split(':')[0].strip()+\
+	'''", "''' +details_dict['proxy'].split(':')[1].strip()+ '''"
+	request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host, proxy_port=proxy_port")			
+	return HTTPClient().fetch(request_object).headers
+
+
+if __name__ == '__main__':
+	main()
+				'''
+		
+		except IndexError as i :
+			print "You haven't given the port Number" 
+			
+		else :
+			print(skeleton_code)

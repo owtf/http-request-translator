@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-def pluginManager(script_list, parsed_tuple):
+def pluginManager(script_list, parsed_tuple, searchString=None):
 
 	default = True
 	if not len(script_list) == 0 :
@@ -10,14 +10,16 @@ def pluginManager(script_list, parsed_tuple):
 		string = script_list[x].lower() + "Scripts"
 
 		try :
-			__import__(string).generate_script(parsed_tuple[0], parsed_tuple[1])
+			__import__(string).generate_script(parsed_tuple[0],\
+			parsed_tuple[1], searchString)
 
 		except ImportError :
-			print("The support for generating the"+ 
-			"required Script is not available at the now,"+
-			"might be added in the future :) ")
+			print("The support for generating the\
+			required Script is not available at the now,\
+			 might be added in the future :) ")
 
 	if default :
 		#generates the default Curl command
 		import default
 		pass
+
