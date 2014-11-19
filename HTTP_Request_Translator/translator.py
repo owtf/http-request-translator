@@ -27,12 +27,12 @@ def take_arguments():
 	conflicting_group.add_argument('--stringSearch',
 		help='Sends the request and searches for the\
 		required string in the response(i.e literal match)',
-		action='store_true')
+		)
 
 	conflicting_group.add_argument('--regexSearch',
 		help='Sends the request and searches for the\
 		required regex in the response(i.e regex match)',
-		action='store_true')
+		)
 
 	parser.add_argument('--interactive', '-i',
 		help='Interactive mode: read raw HTTP request from keyboard,\
@@ -69,7 +69,10 @@ def process_arguments(args):
 			sys.exit(0)
 
 		if args.stringSearch :
-			pass
+			parsed_tuple = parse_raw_request(args.Request)
+			if args.proxy :
+				parsed_tuple[1]['proxy'] = args.proxy
+			pluginManager(script_list, parsed_tuple, args.stringSearch)
 
 		elif args.regexSearch :
 			pass
