@@ -1,6 +1,4 @@
 #!/usr/bin/python
-from tornado.httpclient import HTTPRequest, HTTPClient
-from termcolor import colored
 
 import pprint, re
 
@@ -33,7 +31,10 @@ def main():
 	headers, url, method = ''' +str(header_dict)+ ''', "''' +url+ '''" , "''' +details_dict['method'].strip()+ '''"
 	request_object = HTTPRequest(url, method=method,headers=headers)		
 	response_header = HTTPClient().fetch(request_object).headers
-	response_header = re.sub("''' +str(searchString)+ '''", str(colored("''' +str(searchString)+ '''", 'green')), str(response_header))
+	match = re.findall(r"''' +searchString+ '''", str(response_header))
+	for x in range(0, len(match)) :
+		replace_string = colored(match[x], 'green')
+		response_header = re.sub(match[x], replace_string, str(response_header))
 	print response_header
 			
 if __name__ == '__main__':
@@ -56,9 +57,10 @@ def main():
 	'''", "''' +details_dict['proxy'].split(':')[1].strip()+ '''"
 	request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host, proxy_port=proxy_port)
 	response_header = HTTPClient().fetch(request_object).headers
-	response_header = re.sub("''' +str(searchString)+ '''", str(colored("''' +str(searchString)+ '''", 'green')), str(response_header))
-	return request_object
-
+	for x in range(0, len(match)) :
+		replace_string = colored(match[x], 'green')
+		response_header = re.sub(match[x], replace_string, str(response_header))
+	print response_header
 
 if __name__ == '__main__':
 	main()

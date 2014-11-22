@@ -1,4 +1,4 @@
-#!/bin/user/python
+#!/usr/bin/python
 
 def generate_script(header_dict, details_dict):
 

@@ -75,7 +75,10 @@ def process_arguments(args):
 			pluginManager(script_list, parsed_tuple, args.stringSearch)
 
 		elif args.regexSearch :
-			pass
+			parsed_tuple = parse_raw_request(args.Request)
+			if args.proxy :
+				parsed_tuple[1]['proxy'] = args.proxy
+			pluginManager(script_list, parsed_tuple, args.regexSearch)
 
 		else:
 			parsed_tuple = parse_raw_request(args.Request)

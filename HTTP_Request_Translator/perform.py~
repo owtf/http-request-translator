@@ -1,0 +1,19 @@
+#!/usr/bin/python
+from tornado.httpclient import HTTPRequest, HTTPClient
+from termcolor import colored
+import re
+
+def main():
+	headers, url, method = {'Accept-Language': 'de,en;q=0.7,en-us;q=0.3', 'Accept-Encoding': 'gzip', 'Host': 'www.espncricinfo.com', 'User-Agent': 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; de-de) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16', 'Accept-Charset': 'ISO-8859-1,UTF-8;q=0.7,*;q=0.7', 'Connection': 'close', 'Referer': 'http://web-sniffer.net/', 'Cache-Control': 'no-cache'}, "http://www.espncricinfo.com" , "GET"
+	request_object = HTTPRequest(url, method=method,headers=headers)		
+	response_header = HTTPClient().fetch(request_object).headers
+	match = re.findall(r"HIT", str(response_header))
+	for x in range(0, len(match)) :
+		replace_string = colored(match[x], 'green')
+		response_header = re.sub(match[x], replace_string, str(response_header))
+	print response_header
+			
+if __name__ == '__main__':
+	main()
+
+				
