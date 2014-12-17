@@ -1,6 +1,14 @@
 #!/usr/bin/python
 
-import pprint, re
+from tornado.httpclient import HTTPRequest, HTTPClient
+import pprint, re, sys
+
+try :
+	from termcolor import colored
+except ImportError :
+	print "Dependency of the library 'termcolor' not satisfied. \
+	Do $pip install termcolor to install the library :-) "
+	sys.exit(0)
 
 def generate_script(header_dict, details_dict, searchString=None):
 
