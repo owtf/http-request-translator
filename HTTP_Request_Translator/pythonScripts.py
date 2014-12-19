@@ -37,7 +37,7 @@ import re
 
 def main():
 	headers, url, method = ''' +str(header_dict)+ ''', "''' +url+ '''" , "''' +details_dict['method'].strip()+ '''"
-	request_object = HTTPRequest(url, method=method,headers=headers)		
+	request_object = HTTPRequest(url, method=method,headers=headers, body=details_dict['data'])		
 	response_header = HTTPClient().fetch(request_object).headers
 	match = re.findall(r"''' +searchString+ '''", str(response_header))
 	for x in range(0, len(match)) :
@@ -63,7 +63,7 @@ def main():
 	'''" , "''' +details_dict['method'].strip()+ '''"
 	proxy_host, proxy_port = "''' +details_dict['proxy'].split(':')[0].strip()+\
 	'''", "''' +details_dict['proxy'].split(':')[1].strip()+ '''"
-	request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host, proxy_port=proxy_port)
+	request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host, proxy_port=proxy_port, body=details_dict['data'])
 	response_header = HTTPClient().fetch(request_object).headers
 	for x in range(0, len(match)) :
 		replace_string = colored(match[x], 'green')
@@ -88,7 +88,7 @@ from tornado.httpclient import HTTPRequest, HTTPClient
 
 def main():
 	headers, url, method = ''' +str(header_dict)+ ''', "''' +url+ '''" , "''' +details_dict['method'].strip()+ '''"
-	request_object = HTTPRequest(url, method=method,headers=headers)		
+	request_object = HTTPRequest(url, method=method,headers=headers, body=details_dict['data'])		
 	response_header = HTTPClient().fetch(request_object).headers
 	print response_header
 			
@@ -108,7 +108,7 @@ def main():
 	'''" , "''' +details_dict['method'].strip()+ '''"
 	proxy_host, proxy_port = "''' +details_dict['proxy'].split(':')[0].strip()+\
 	'''", "''' +details_dict['proxy'].split(':')[1].strip()+ '''"
-	request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host, proxy_port=proxy_port")			
+	request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host, proxy_port=proxy_port, body=details_dict['data'])			
 	return HTTPClient().fetch(request_object).headers
 
 
