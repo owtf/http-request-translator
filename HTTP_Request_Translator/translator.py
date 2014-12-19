@@ -39,9 +39,13 @@ def take_arguments():
 	 	hit enter when ready.Type exit to exit the interactive mode.',
 		action='store_true')
 
+	parser.add_argument('--data', '-d',
+	help='Add the data that you want to send along with the header'
+	)
+
 	parser.add_argument('--Request',
 		help='Input the HTTP request',
-		)
+	)
 
 
 	process_arguments(parser.parse_args())
@@ -68,26 +72,30 @@ def process_arguments(args):
 			" +"\n"+"Else try using the interactive option"
 			sys.exit(0)
 
+		parsed_tuple = parse_raw_request(args.Request)
+
+		if args.data :
+			parsed_tuple[1]['data'] = args.data
+
+		else :
+			parsed_tuple[1]['proxy'] = None
+
+		if args.proxy :
+			parsed_tuple[1]['proxy'] = args.proxy
+
+		else :
+			parsed_tuple[1]['proxy'] = None
+			
 		if args.stringSearch :
-			parsed_tuple = parse_raw_request(args.Request)
-			if args.proxy :
-				parsed_tuple[1]['proxy'] = args.proxy
 			pluginManager(script_list, parsed_tuple, args.stringSearch)
 
 		elif args.regexSearch :
-			parsed_tuple = parse_raw_request(args.Request)
-			if args.proxy :
-				parsed_tuple[1]['proxy'] = args.proxy
 			pluginManager(script_list, parsed_tuple, args.regexSearch)
 
 		else:
-			parsed_tuple = parse_raw_request(args.Request)
-			if args.proxy :
-				parsed_tuple[1]['proxy'] = args.proxy
 			pluginManager(script_list, parsed_tuple)
 
 	return argdict
-
 
 def interactive_mode(script_list):
 
