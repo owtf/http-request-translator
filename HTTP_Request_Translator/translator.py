@@ -78,14 +78,15 @@ def process_arguments(args):
 			parsed_tuple[1]['data'] = args.data
 
 		else :
-			parsed_tuple[1]['proxy'] = None
+			parsed_tuple[1]['data'] = None
 
 		if args.proxy :
 			parsed_tuple[1]['proxy'] = args.proxy
 
-		else :
-			parsed_tuple[1]['proxy'] = None
-			
+		if not parsed_tuple[1]['data'] and parsed_tuple[1]['method'].strip().upper() == "POST":
+			print "Hi there. Send some data to POST, use --data for sending data."
+			sys.exit(0)
+
 		if args.stringSearch :
 			pluginManager(script_list, parsed_tuple, args.stringSearch)
 
@@ -96,6 +97,7 @@ def process_arguments(args):
 			pluginManager(script_list, parsed_tuple)
 
 	return argdict
+
 
 def interactive_mode(script_list):
 
