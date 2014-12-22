@@ -1,14 +1,16 @@
 #!/usr/bin/python
 
 from tornado.httpclient import HTTPRequest, HTTPClient
-import pprint, re, sys
-
+from urllib import quote
 try :
 	from termcolor import colored
 except ImportError :
 	print "Dependency of the library 'termcolor' not satisfied. \
 	Do $pip install termcolor to install the library :-) "
 	sys.exit(0)
+
+import re, sys
+
 
 def generate_script(header_dict, details_dict, searchString=None):
 
@@ -20,14 +22,23 @@ def generate_script(header_dict, details_dict, searchString=None):
 			prefix = str(port_protocol[key]) + "://"
 		else :
 			prefix = "http://"
-			
+
 	except IndexError:
 		prefix = "http://"
 	url = prefix + str(header_dict['Host'])
-	details_dict['Host'] = url
 
 	if details_dict['data'] :
 		details_dict['data'] = '"' +str(details_dict['data'])+ '"'
+
+	encoding_list = ['HEAD', 'OPTIONS', 'GET']
+
+	if details_dict['data'] and (details_dict['method'].strip() in encoding_list) :
+		print "Encoding URL"
+		encoded_data = quote(details_dict['data'], '')
+		url = url+encoded_data
+		header_dict['Host'] = url
+		details_dict['data'] = None
+
 	if searchString :
 		try :
 			if not 'proxy' in details_dict :
