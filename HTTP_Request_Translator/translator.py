@@ -64,7 +64,7 @@ def process_arguments(args):
 		script_list = []
 
 	if args.interactive :
-		interactive_mode(script_list)
+		take_headers(script_list)
 
 	else:
 		if not args.Request:
@@ -99,28 +99,43 @@ def process_arguments(args):
 	return argdict
 
 
-def interactive_mode(script_list):
+def take_headers(script_list) :
 
-	buf = []
-	print "Enter the HTTP request. Once entered,\
-	Press enter again! And type ':q!' to exit "
+	headers = [] 
+	while (True) :
+		uentered = raw_input(">> ")
 
+		if not uentered :
+			print "Enter the Body/Parameter "
+			take_body(headers, script_list)
+
+		if uentered == "q!": 
+			print "Thanks for using the interactive mode!"
+			sys.exit(0)
+
+		headers.append(uentered + "\n")
+	return headers
+
+def take_body(headers, script_list):
+
+	body = []
 	while True:
-	    http_request = raw_input(">>")
-	    if not http_request:
-	        take_interactive_params("".join(buf), script_list)
-	        buf = []
-	    buf.append(http_request + "\n")
+		uentered = raw_input(">> ")
 
-def take_interactive_params(chunk, script_list):
+		if not uentered:
+			print "Thank you !"
+			parsed_tuple = parse_raw_request("".join(headers))
+			parsed_tuple[1]['data'] = "".join(body)
+			pluginManager(script_list, parsed_tuple)
+			take_headers(script_list)
 
-	if chunk.strip() == ":q!":
-		sys.exit(0)
-	elif chunk == "\n" :
-		sys.exit(0)
-	else:
-		parsed_tuple = parse_raw_request(chunk)
-		pluginManager(script_list, parsed_tuple)
+		if uentered == "q!": 
+			print "Thanks for using the interactive mode!"
+			sys.exit(0)
+
+		body.append(uentered+ "\n")
+
+	return body
 
 def parse_raw_request(request):
 
