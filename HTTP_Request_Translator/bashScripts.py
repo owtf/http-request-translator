@@ -18,51 +18,17 @@ def generate_script(header_dict, details_dict, searchString=None):
 		try:
 			if not 'proxy' in details_dict:
  
-			        if method == 'POST':
-					skeleton_code = '''\
+			        skeleton_code = '''\
 #!/usr/bin/env bash
-curl -v --request POST'''+formattedHeaders+''' --include
-					'''
-			        elif method == 'GET':
-					skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request GET'''+formattedHeaders+''' --include > request
-replacement = $(tput setaf 1; echo "'''+searchString+'''")
-echo ${request//'''+searchString+'''/$replacement}
-					'''
-			        elif method == 'PUT':
-					skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request PUT'''+formattedHeaders+''' --include
-					'''
-			        elif method == 'DELETE':
-					skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request DELETE'''+formattedHeaders+''' --include
-					'''
+curl -s --request '''+method+formattedHeaders+''' --include | egrep --color '''+"'"+searchString+'''|$'
+				'''
 			
 			else:
 
-				if method == 'POST':
-                                        skeleton_code = '''\
+				skeleton_code = '''\
 #!/usr/bin/env bash
-curl -v --request POST'''+formattedHeaders+''' --include
-					'''
-                                elif method == 'GET':
-                                        skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request GET'''+formattedHeaders+''' --include
-					'''
-                                elif method == 'PUT':
-                                        skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request PUT'''+formattedHeaders+''' --include
-					'''
-                                elif method == 'DELETE':
-                                        skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request DELETE'''+formattedHeaders+''' --include
-					'''
+curl -x '''+details_dict['proxy']+''' -s --request '''+method+formattedHeaders+''' --include | egrep --color '''+"'"+searchString+'''|$'
+				'''
 		except IndexError as i :
 			print "You haven't given the port Number"
 		else :
@@ -71,48 +37,15 @@ curl -v --request DELETE'''+formattedHeaders+''' --include
 		try :
                         if not 'proxy' in details_dict :
 
-                                if method == 'POST':
-                                       	skeleton_code = '''\
+				skeleton_code = '''\
 #!/usr/bin/env bash
-curl -v --request POST'''+formattedHeaders+''' --include
-					'''
-                                elif method == 'GET':
-                                        skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request GET'''+formattedHeaders+''' --include
-					'''
-                                elif method == 'PUT':
-                                        skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request PUT'''+formattedHeaders+''' --include
-					'''
-                                elif method == 'DELETE':
-                                        skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request DELETE'''+formattedHeaders+''' --include
-					'''
-
+curl -s --request '''+method+formattedHeaders+''' --include
+				'''
 			else:
-				if method == 'POST':
-                                        skeleton_code = '''\
+				skeleton_code = '''\
 #!/usr/bin/env bash
-curl -v --request POST'''+formattedHeaders+''' --include
-					'''
-                                elif method == 'GET':
-                                        skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request GET'''+formattedHeaders+''' --include
-					'''
-                                elif method == 'PUT':
-                                        skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request PUT'''+formattedHeaders+''' --include
-					'''
-                                elif method == 'DELETE':
-                                        skeleton_code = '''\
-#!/usr/bin/env bash
-curl -v --request DELETE'''+formattedHeaders+''' --include
-					'''
+curl -x '''+details_dict['proxy']+''' -s --request '''+method+formattedHeaders+''' --include
+				'''
 		except IndexError as i :
 			print "You haven't given the port Number"
 
