@@ -9,13 +9,15 @@ import argparse, re, sys
 def take_arguments():
 
 	parser = argparse.ArgumentParser(description=
-		"<To be inserted later>")
+		'Request Translator is a standalone tool that can translate \
+		 raw HTTP requests into curl commands or \
+		 bash/python/php/ruby/PowerShell scripts')
+
 	conflicting_group = parser.add_mutually_exclusive_group()
 
 	parser.add_argument('--output','-o',
-		help='Generate a script for given HTTP request. \
-		Add the script that you want to generate. \
-		If you want to generate multiple scripts, separate with a <,> ',
+		help='Generates a script for given HTTP request. \
+		If you want to generate multiple scripts, separate the script\'s name with a <,> ',
 		action='append')
 
 	parser.add_argument('--proxy',
@@ -36,7 +38,7 @@ def take_arguments():
 
 	parser.add_argument('--interactive', '-i',
 		help='Interactive mode: read raw HTTP request from keyboard,\
-	 	hit enter when ready.Type exit to exit the interactive mode.',
+	 	hit enter when ready.Type ":q!" to exit from the interactive mode.',
 		action='store_true')
 
 	parser.add_argument('--data', '-d',
@@ -102,8 +104,9 @@ def process_arguments(args):
 def take_headers(script_list) :
 
 	headers = [] 
+	print(r">>>"),
 	while (True) :
-		uentered = raw_input(">> ")
+		uentered = raw_input("")
 
 		if not uentered :
 			print "Enter the Body/Parameter "
@@ -119,8 +122,9 @@ def take_headers(script_list) :
 def take_body(headers, script_list):
 
 	body = []
+	print(">>>"),
 	while True:
-		uentered = raw_input(">> ")
+		uentered = raw_input("")
 
 		if not uentered:
 			print "Thank you !"
