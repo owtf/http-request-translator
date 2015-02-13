@@ -1,5 +1,0 @@
-GET / HTTP/1.1
-Host: www.espncricinfo.com
-Accept: */*
-Content-Type: text/html
-Content-Length: 0
