@@ -2,6 +2,7 @@
 
 from tornado.httpclient import HTTPRequest, HTTPClient
 from urllib import quote
+from urlparse import urlparse
 try :
 	from termcolor import colored
 except ImportError :
@@ -11,6 +12,24 @@ except ImportError :
 
 import re, sys
 
+def check_valid_url(test_url):
+
+	parsed_url = urlparse(test_url)
+	host_address = ''
+	if ":" in parsed_url[1] :
+		host_address = parsed_url[1].split(':', 1)[0]
+	else :
+		host_address = parsed_url[1]
+	domain_regex = re.compile(
+	r'(?:(?:[A-Z](?:[A-Z-]{0,61}[A-Z])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|)'
+	,re.IGNORECASE) 
+	domain_match = domain_regex.match(host_address)
+	if domain_match:
+		if not domain_match.group():
+			return False
+		else :
+			return True
+	return False
 
 def generate_script(header_dict, details_dict, searchString=None):
 
@@ -26,6 +45,10 @@ def generate_script(header_dict, details_dict, searchString=None):
 	except IndexError:
 		prefix = "http://"
 	url = prefix + str(header_dict['Host'])
+
+	if not check_valid_url(url) :
+		print("Please enter a valid URL with correct domain name and try again ")
+		sys.exit(0)
 
 	if details_dict['data'] :
 		details_dict['data'] = '"' +str(details_dict['data'])+ '"'

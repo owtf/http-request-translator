@@ -3,7 +3,7 @@
 from tornado.httputil import HTTPHeaders
 from tornado.httpclient import HTTPRequest
 from translatorPlugin import pluginManager
-
+from urlparse import urlparse
 import argparse, re, sys
 
 def take_arguments():
@@ -148,7 +148,8 @@ def parse_raw_request(request):
 	header_dict = dict(HTTPHeaders.parse(new_request))
 	details_dict = {}
 	details_dict['method'], details_dict['protocol'], details_dict['version'],\
-	details_dict['Host'] = new_request_method.split('/', 2)[0],new_request_method.split('/', 2)[1],\
+	details_dict['Host'] = new_request_method.split('/', 2)[0],\
+	new_request_method.split('/', 2)[1],\
 	new_request_method.split('/', 2)[2], header_dict['Host']
 	return header_dict, details_dict
 
