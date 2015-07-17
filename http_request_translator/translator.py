@@ -1,10 +1,8 @@
 #!/usr/bin/python
 
 from tornado.httputil import HTTPHeaders
-
 from translatorPlugin import pluginManager
 import argparse
-import re
 import sys
 
 
@@ -75,7 +73,6 @@ def process_arguments(args):
             sys.exit(0)
 
         parsed_tuple = parse_raw_request(args.Request)
-
         if args.data:
             parsed_tuple[1]['data'] = args.data
 
@@ -149,10 +146,16 @@ def parse_raw_request(request):
         request.split('\n', 1)[0], request.split('\n', 1)[1]
     header_dict = dict(HTTPHeaders.parse(new_request))
     details_dict = {}
-    details_dict['method'], details_dict['protocol'], details_dict['version'],\
-        details_dict['Host'] = new_request_method.split('/', 2)[0],\
-        new_request_method.split('/', 2)[1],\
-        new_request_method.split('/', 2)[2], header_dict['Host']
+    details_dict['method'] = new_request_method.split(' ', 2)[0]
+    try:
+        details_dict['protocol'], details_dict['version'] = new_request_method.split(
+            ' ', 2)[2].split('/', 1)[0], new_request_method.split(' ', 2)[2].split('/', 1)[1]
+        details_dict['path'] = new_request_method.split(' ', 2)[1]
+    except IndexError:
+        details_dict['path'] = ""
+        details_dict['protocol'], details_dict['version'] = new_request_method.split(
+            ' ', 2)[1].split('/', 1)[0], new_request_method.split(' ', 2)[1].split('/', 1)[1]
+    details_dict['Host'] = header_dict['Host']
     return header_dict, details_dict
 
 
