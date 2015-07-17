@@ -1,8 +1,10 @@
-#!/usr/bin/python
+from __future__ import print_function
+
 import re
 
 
 def generate_script(header_dict, details_dict, searchString=None):
+    # TODO: Docstring and comments.
     method = details_dict['method'].strip()
     headers = str(header_dict)
     a = re.sub(r"{|}", "", headers)
@@ -11,7 +13,6 @@ def generate_script(header_dict, details_dict, searchString=None):
     d = re.sub(r"\'", "\"", c)
     e = re.sub(r"\"Host :", "", d)
     formattedHeaders = re.sub(r"\"", "", e, 1)
-
     if searchString:
         try:
             if 'proxy' not in details_dict:
@@ -20,13 +21,12 @@ def generate_script(header_dict, details_dict, searchString=None):
 curl -s --request ''' + method + formattedHeaders + ''' --include | egrep --color ''' + "'" + searchString + '''|$'
                 '''
             else:
-
                 skeleton_code = '''\
 #!/usr/bin/env bash
 curl -x ''' + details_dict['proxy'] + ''' -s --request ''' + method + formattedHeaders + ''' --include | egrep --color ''' + "'" + searchString + '''|$'
                 '''
         except IndexError:
-            print "You haven't given the port Number"
+            print("You haven't given the port Number")
         else:
             print(skeleton_code)
     else:
@@ -42,7 +42,6 @@ curl -s --request '''+method+formattedHeaders+''' --include
 curl -x '''+details_dict['proxy']+''' -s --request '''+method+formattedHeaders+''' --include
                 '''
         except IndexError:
-            print "You haven't given the port Number"
-
+            print("You haven't given the port Number")
         else:
-            print (skeleton_code)
+            print(skeleton_code)
