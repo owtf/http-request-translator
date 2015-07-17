@@ -1,53 +1,48 @@
 #!/usr/bin/python
-import pprint
 import re
 
+
 def generate_script(header_dict, details_dict, searchString=None):
-	
-	method = details_dict['method'].strip()
-        host = details_dict['Host']
-        headers = str(header_dict)
-        a = re.sub(r"{|}","",headers)
-        b = re.sub(r"': '"," : ",a)
-        c = re.sub(r"', '","\" --header \"",b)
-        d = re.sub(r"\'","\"",c)
-        e = re.sub(r"\"Host :","",d)
-        formattedHeaders = re.sub(r"\"","",e,1)
+    method = details_dict['method'].strip()
+    headers = str(header_dict)
+    a = re.sub(r"{|}", "", headers)
+    b = re.sub(r"': '", " : ", a)
+    c = re.sub(r"', '", "\" --header \"", b)
+    d = re.sub(r"\'", "\"", c)
+    e = re.sub(r"\"Host :", "", d)
+    formattedHeaders = re.sub(r"\"", "", e, 1)
 
-	if searchString:
-		try:
-			if not 'proxy' in details_dict:
- 
-			        skeleton_code = '''\
+    if searchString:
+        try:
+            if 'proxy' not in details_dict:
+                    skeleton_code = '''\
 #!/usr/bin/env bash
-curl -s --request '''+method+formattedHeaders+''' --include | egrep --color '''+"'"+searchString+'''|$'
-				'''
-			
-			else:
+curl -s --request ''' + method + formattedHeaders + ''' --include | egrep --color ''' + "'" + searchString + '''|$'
+                '''
+            else:
 
-				skeleton_code = '''\
+                skeleton_code = '''\
 #!/usr/bin/env bash
-curl -x '''+details_dict['proxy']+''' -s --request '''+method+formattedHeaders+''' --include | egrep --color '''+"'"+searchString+'''|$'
-				'''
-		except IndexError as i :
-			print "You haven't given the port Number"
-		else :
-                       	print (skeleton_code)
-	else :
-		try :
-                        if not 'proxy' in details_dict :
-
-				skeleton_code = '''\
+curl -x ''' + details_dict['proxy'] + ''' -s --request ''' + method + formattedHeaders + ''' --include | egrep --color ''' + "'" + searchString + '''|$'
+                '''
+        except IndexError:
+            print "You haven't given the port Number"
+        else:
+            print(skeleton_code)
+    else:
+        try:
+            if 'proxy' not in details_dict:
+                skeleton_code = '''\
 #!/usr/bin/env bash
 curl -s --request '''+method+formattedHeaders+''' --include
-				'''
-			else:
-				skeleton_code = '''\
+                '''
+            else:
+                skeleton_code = '''\
 #!/usr/bin/env bash
 curl -x '''+details_dict['proxy']+''' -s --request '''+method+formattedHeaders+''' --include
-				'''
-		except IndexError as i :
-			print "You haven't given the port Number"
+                '''
+        except IndexError:
+            print "You haven't given the port Number"
 
-                else :
-			print (skeleton_code)
+        else:
+            print (skeleton_code)

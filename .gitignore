@@ -1,0 +1,4 @@
+# Compiled source and other garbage #
+#####################################
+*.pyc
+*.swp
