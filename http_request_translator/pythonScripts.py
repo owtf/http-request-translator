@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from urllib import quote
-from urlparse import urlparse
 import sys
 
 try:
@@ -11,43 +10,11 @@ except ImportError:
     Do $pip install termcolor to install the library :-) "
     sys.exit(0)
 
-import re
-
-
-def check_valid_url(test_url):
-
-    parsed_url = urlparse(test_url)
-    host_address = ''
-    if ":" in parsed_url[1]:
-        host_address = parsed_url[1].split(':', 1)[0]
-    else:
-        host_address = parsed_url[1]
-    domain_regex = re.compile(
-        r'(?:(?:[A-Z](?:[A-Z-]{0,61}[A-Z])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|)', re.IGNORECASE)
-    domain_match = domain_regex.match(host_address)
-    if domain_match:
-        if not domain_match.group():
-            return False
-        else:
-            return True
-    return False
+from util import get_url, check_valid_url
 
 
 def generate_script(header_dict, details_dict, searchString=None):
-
-    port_protocol = {'https': 443, 'ssh': 22, 'ftp': 21, 'ftp': 20, 'irc': 113}
-    url = str(header_dict['Host'])
-    try:
-        protocol = url.split(':', 2)[2]
-        if protocol in port_protocol.keys():
-            prefix = str(port_protocol[protocol]) + "://"
-        else:
-            prefix = "http://"
-
-    except IndexError:
-        prefix = "http://"
-    url = prefix + str(header_dict['Host'])
-
+    url = get_url(header_dict['Host'])
     if not check_valid_url(url):
         print(
             "Please enter a valid URL with correct domain name and try again ")
@@ -105,8 +72,10 @@ def main():
     proxy_host, proxy_port = "''' + details_dict['proxy'].split(':')[0].strip() + \
                     '''", "''' + details_dict['proxy'].split(':')[1].strip() + '''"
     body = ''' + str(details_dict['data']) + '''
-    request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host, proxy_port=proxy_port,\
-        body=body, allow_nonstandard_methods=True)
+
+    request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host,\
+        proxy_port=proxy_port, body=body, allow_nonstandard_methods=True)
+
     response_header = HTTPClient().fetch(request_object).headers
     for x in range(0, len(match)) :
         replace_string = colored(match[x], 'green')
@@ -153,8 +122,10 @@ def main():
     proxy_host, proxy_port = "''' + details_dict['proxy'].split(':')[0].strip() +\
                     '''", "''' + details_dict['proxy'].split(':')[1].strip() + '''"
     body = ''' + str(details_dict['data']) + '''
-    request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host, \
-        proxy_port=proxy_port, body=body, allow_nonstandard_methods=True)
+
+    request_object = HTTPRequest(url, method=method, headers=headers,\
+        proxy_host=proxy_host, proxy_port=proxy_port, body=body, allow_nonstandard_methods=True)
+
     return HTTPClient().fetch(request_object).headers
 
 
