@@ -52,7 +52,7 @@ response = http.request(req)""" % (generate_request_headers(header_dict),
         skeleton_code += """
 req = Net::HTTP::Post.new(uri.request_uri)
 %s
-req.body = %s\n %s %s
+req.body = '%s'\n %s %s
 response = http.request(req)
 """ % (generate_request_headers(header_dict), str(body), generate_proxy_code(details_dict), generate_https_code(url))
 
