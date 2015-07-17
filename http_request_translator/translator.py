@@ -5,7 +5,7 @@ import sys
 import argparse
 
 from tornado.httputil import HTTPHeaders
-from translatorPlugin import pluginManager
+from plugin_manager import plugin_manager
 
 
 def take_arguments():
@@ -69,11 +69,11 @@ def process_arguments(args):
             print("Hi there. Send some data to POST, use --data for sending data.")
             sys.exit(-1)
         if args.stringSearch:
-            pluginManager(script_list, parsed_tuple, args.stringSearch)
+            plugin_manager(script_list, parsed_tuple, args.stringSearch)
         elif args.regexSearch:
-            pluginManager(script_list, parsed_tuple, args.regexSearch)
+            plugin_manager(script_list, parsed_tuple, args.regexSearch)
         else:
-            pluginManager(script_list, parsed_tuple)
+            plugin_manager(script_list, parsed_tuple)
     return argdict
 
 
@@ -103,7 +103,7 @@ def take_body(headers, script_list):
             print("Thank you !")
             parsed_tuple = parse_raw_request("".join(headers))
             parsed_tuple[1]['data'] = "".join(body)
-            pluginManager(script_list, parsed_tuple)
+            plugin_manager(script_list, parsed_tuple)
             take_headers(script_list)
         if uentered == "q!":
             print("Thanks for using the interactive mode!")
