@@ -1,23 +1,19 @@
-#!/usr/bin/python
+from __future__ import print_function
 
 
 def pluginManager(script_list, parsed_tuple, searchString=None):
-    default = True
-    if not len(script_list) == 0:
-        default = False
-
-    for x in range(0, len(script_list)):
-        string = script_list[x].lower() + "Scripts"
-
+    # TODO: Docstring and comments.
+    default = len(script_list) or False
+    for script in script_list:
+        string = script.lower() + "Scripts"
+        header_dict, details_dict = parsed_tuple
         try:
-            __import__(string, globals={"__name__": __name__}).generate_script(parsed_tuple[0],
-                                                                               parsed_tuple[1], searchString)
-
+            __import__(string, globals={"__name__": __name__}).generate_script(
+                header_dict,
+                details_dict,
+                searchString)
         except ImportError:
-            print("The support for generating the\
-            required Script is not available at the now,\
-             might be added in the future :) ")
-
+            print("The support for generating the required Script is not available at the now.")
     if default:
         # generates the default Curl command
         import default
