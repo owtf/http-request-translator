@@ -6,7 +6,7 @@ try:
 except ImportError:
     from urllib.parse import quote
 
-from util import check_valid_url, get_url
+from url import check_valid_url, get_url
 
 
 def generate_script(header_dict, details_dict, searchString=None):

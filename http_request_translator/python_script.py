@@ -12,7 +12,7 @@ except ImportError:
     print("Dependency of the library 'termcolor' not satisfied. Do $pip install termcolor to install the library :-)")
     sys.exit(-1)
 
-from util import get_url, check_valid_url
+from url import get_url, check_valid_url
 
 
 def generate_script(header_dict, details_dict, searchString=None):
