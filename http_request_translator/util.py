@@ -27,17 +27,19 @@ def check_valid_url(test_url):
 
 
 def get_url(host):
-    # TODO: Docstring and comments.
-    port_protocol = {443: 'https', 22: 'ssh', 21: 'ftp', 20: 'ftp', 113: 'irc', 80: 'http'}
-    url = str(host)
-    try:
-        port = url.split(':', 2)[1]
-        url = url.split(':', 2)[0]
-        if int(port.strip()) in port_protocol.keys():
-            prefix = str(port_protocol[int(port.strip())]) + "://"
-        else:
-            prefix = "http://"
-    except IndexError:
-        prefix = "http://"
-    url = prefix + url
-    return url
+    """Generate URL based on the host.
+
+    :param str host: Host from which to generate the URL (e.g. google.com:443).
+
+    :return: URL with domain and protocol (e.g. https://google.com).
+    :rtype: str
+    """
+    port_protocol = {'443': 'https', '22': 'ssh', '21': 'ftp', '20': 'ftp', '113': 'irc', '80': 'http'}
+    protocol = ''
+    url = host.strip()
+    if ':' in url:  # A port is specified in the domain.
+        url, port = url.rsplit(':', 1)
+        if port in port_protocol:  # Do we know the protocol?
+            protocol = port_protocol[port] + '://'
+    protocol = protocol or 'http://'  # Default protocol set to http
+    return protocol + url
