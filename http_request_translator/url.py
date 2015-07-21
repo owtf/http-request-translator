@@ -13,25 +13,48 @@ def check_valid_url(url):
 
     :param str url: URL containing the protocol to validate.
 
+    :raise: ValueError when port is specified but invalid.
+
     :return: ``True`` if `url` is valid, ``False`` otherwise.
     :rtype: bool
     """
     _, netloc, _, _, _, _ = urlparse(url)
     if not netloc:  # No protocol specified and urlparse assumed it was a relative path.
         return False
-    if re_ipv4_address.match(netloc):
-        return True
-    elif netloc.startswith('['):  # URL with IPv6 e.g. [::1]
-        if not netloc.endswith(']'):  # Is there a port specified? e.g. [::1]:443
-            netloc, _ = netloc.rsplit(':', 1)
-        if re_ipv6_address.match(netloc[1:-1]):
+    if not netloc.startswith('['):  # URL without IPv6 e.g. [::1]
+        if ':' in netloc:
+            netloc, port = netloc.rsplit(':', 1)
+            if port and not check_valid_port(port):
+                raise ValueError("Invalid port value '%s'." % port)
+        if re_ipv4_address.match(netloc):
             return True
-    else:
-        if ':' in netloc:  # If domain contains port like google.com:443
-            netloc, _ = netloc.rsplit(':', 1)
         if re_domain.match(netloc):
             return True
+    else:
+        if not netloc.endswith(']'):  # Is there a port specified? e.g. [::1]:443
+            netloc, port = netloc.rsplit(':', 1)
+            if port and not check_valid_port(port):
+                raise ValueError("Invalid port value '%s'." % port)
+        if re_ipv6_address.match(netloc[1:-1]):
+            return True
     return False
+
+
+def check_valid_port(port):
+    """Verify that a port is valid.
+
+    :param str port: port to validate.
+
+    :return: ``True`` if `port` is valid, ``False`` otherwise.
+    :rtype: bool
+    """
+    try:
+        port = int(port)
+    except ValueError:
+        return False
+    if port < 0 or port > 65535:
+        return False
+    return True
 
 
 def get_url(host):
