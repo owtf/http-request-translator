@@ -13,8 +13,6 @@ def check_valid_url(url):
 
     :param str url: URL containing the protocol to validate.
 
-    :raise: ValueError when port is specified but invalid.
-
     :return: ``True`` if `url` is valid, ``False`` otherwise.
     :rtype: bool
     """
@@ -25,7 +23,7 @@ def check_valid_url(url):
         if ':' in netloc:
             netloc, port = netloc.rsplit(':', 1)
             if port and not check_valid_port(port):
-                raise ValueError("Invalid port value '%s'." % port)
+                return False
         if re_ipv4_address.match(netloc):
             return True
         if re_domain.match(netloc):
@@ -34,7 +32,7 @@ def check_valid_url(url):
         if not netloc.endswith(']'):  # Is there a port specified? e.g. [::1]:443
             netloc, port = netloc.rsplit(':', 1)
             if port and not check_valid_port(port):
-                raise ValueError("Invalid port value '%s'." % port)
+                return False
         if re_ipv6_address.match(netloc[1:-1]):
             return True
     return False
