@@ -38,7 +38,7 @@ def get_url(host):
     protocol = ''
     url = host.strip()
     if ':' in url:  # A port is specified in the domain.
-        url, port = url.rsplit(':', 1)
+        _, port = url.rsplit(':', 1)
         if port in port_protocol:  # Do we know the protocol?
             protocol = port_protocol[port] + '://'
     protocol = protocol or 'http://'  # Default protocol set to http
