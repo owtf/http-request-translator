@@ -29,7 +29,7 @@ curl -x ''' + details_dict['proxy'] + ''' -s --request ''' + method + ''' ''' + 
         except IndexError:
             print("You haven't given the port Number")
         else:
-            print(skeleton_code)
+            return skeleton_code
     else:
         try:
             if 'proxy' not in details_dict:
@@ -45,4 +45,4 @@ curl -x '''+details_dict['proxy']+''' -s --request ''' + method + ''' ''' + host
         except IndexError:
             print("You haven't given the port Number")
         else:
-            print(skeleton_code)
+            return skeleton_code

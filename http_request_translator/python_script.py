@@ -19,8 +19,7 @@ def generate_script(header_dict, details_dict, searchString=None):
     # TODO: Docstring and comments.
     url = get_url(header_dict['Host'])
     if not check_valid_url(url):
-        print("Please enter a valid URL with correct domain name and try again ")
-        sys.exit(-1)
+        raise ValueError("Invalid URL")
     if details_dict['data']:
         details_dict['data'] = '"' + str(details_dict['data']) + '"'
     encoding_list = ['HEAD', 'OPTIONS', 'GET']
@@ -85,7 +84,7 @@ if __name__ == '__main__':
         except IndexError:
             print("You haven't given the port Number")
         else:
-            print(skeleton_code)
+            return skeleton_code
     else:
         try:
             if 'proxy' not in details_dict:
@@ -130,4 +129,4 @@ if __name__ == '__main__':
             print("You haven't given the port Number")
 
         else:
-            print(skeleton_code)
+            return skeleton_code

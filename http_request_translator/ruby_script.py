@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import sys
+import re
 try:
     from urllib import quote
 except ImportError:
@@ -16,7 +16,8 @@ def generate_script(header_dict, details_dict, searchString=None):
     :param dict details_dict: Request specific details like body and method for the request.
     :param str searchString: String to search for in the response to the request. By default remains None.
 
-    :return: None
+    :return: A combined string of generated code
+    :rtype:`str`
     """
     method = details_dict['method'].strip()
     url = get_url(header_dict['Host'])
@@ -32,8 +33,7 @@ def generate_script(header_dict, details_dict, searchString=None):
         url = url + encoded_data
 
     if not check_valid_url(url):
-        print("Please enter a valid URL with correct domain name and try again ")
-        sys.exit(-1)
+        raise ValueError("Invalid URL")
 
     skeleton_code = """
 require 'net/http'
@@ -54,7 +54,8 @@ req = Net::HTTP::Post.new(uri.request_uri)
 %s
 req.body = '%s'\n %s %s
 response = http.request(req)
-""" % (generate_request_headers(header_dict), str(body), generate_proxy_code(details_dict), generate_https_code(url))
+""" % (generate_request_headers(header_dict), generate_body_code(body),
+            generate_proxy_code(details_dict), generate_https_code(url))
 
     if searchString:
         skeleton_code += """
@@ -82,7 +83,8 @@ puts original
 puts "Response #{response.code} #{response.message}:
           #{response.body}"
 """
-    print(skeleton_code)
+
+    return skeleton_code
 
 
 def generate_request_headers(header_dict):
@@ -132,3 +134,17 @@ http = Net::HTTP.new(uri.hostname, nil, proxy_host, proxy_port)
         return """
 http = Net::HTTP.new(uri.hostname, uri.port)
 """
+
+
+def generate_body_code(body):
+    """Generate string for body part of the request.
+
+    :param str body:Passed body of the request
+
+    :return: A formatted string of body code
+    :rtype:`str`
+
+    """
+    # Escape single quotes , double quotes are good here
+    body = re.sub(r"'", "\\'", body)
+    return str(body)
