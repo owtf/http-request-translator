@@ -158,15 +158,9 @@ def parse_raw_request(request):
     details_dict['path'] = path
     # If scheme is specified in GET Path and Header 'Host' Field doesn't already starts with it
     if scheme and not header_dict['Host'].startswith(scheme):
-        # Check if Host Field already has port specified
-        if ":" not in header_dict['Host'] and not netloc.startswith('['):
-            if scheme == "https":
-                header_dict['Host'] += ":443"
-        else:
-            #  If no port is specified for address like [::1]
-            if header_dict['Host'].endswith(']'):
-                if scheme == "https":
-                    header_dict['Host'] += ":443"
+        details_dict['pre_scheme'] = scheme + "://"  # Store the scheme defined in GET path for later checks
+    else:
+        details_dict['pre_scheme'] = ''
     details_dict['Host'] = header_dict['Host']
     return header_dict, details_dict
 

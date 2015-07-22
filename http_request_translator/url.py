@@ -1,4 +1,3 @@
-import re
 
 try:
     from urlparse import urlparse
@@ -55,10 +54,15 @@ def check_valid_port(port):
     return True
 
 
-def get_url(host):
+def get_url(host, pre_protocol=None):
     """Generate URL based on the host.
 
     :param str host: Host from which to generate the URL (e.g. google.com:443).
+    :param str pre_protocol: Protocol passed in the GET Path. Example request:
+        GET https://127.0.0.1/robots.txt HTTP/1.1
+        Host: 127.0.0.1:323
+        Then, pre_protocol will be `https`.
+        Defaults to `None`.
 
     :return: URL with domain and protocol (e.g. https://google.com).
     :rtype: str
@@ -66,9 +70,16 @@ def get_url(host):
     port_protocol = {'443': 'https', '22': 'ssh', '21': 'ftp', '20': 'ftp', '113': 'irc', '80': 'http'}
     protocol = ''
     url = host.strip()
-    if ':' in url:  # A port is specified in the domain.
-        _, port = url.rsplit(':', 1)
-        if port in port_protocol:  # Do we know the protocol?
-            protocol = port_protocol[port] + '://'
-    protocol = protocol or 'http://'  # Default protocol set to http
+    if not url.startswith('['):  # A port is specified in the domain and without IPV6
+        if ':' in url:
+            _, port = url.rsplit(':', 1)
+            if port in port_protocol:  # Do we know the protocol?
+                protocol = port_protocol[port] + '://'
+    else:
+        if not url.endswith(']'):   # IPV6 url with Port, [::1]:443
+            _, port = url.rsplit(':', 1)
+            if port in port_protocol:  # Do we know the protocol?
+                protocol = port_protocol[port] + '://'
+    # If GET path already specifies a protocol, give preference to that
+    protocol = pre_protocol or protocol or 'http://'  # Default protocol set to http
     return protocol + url

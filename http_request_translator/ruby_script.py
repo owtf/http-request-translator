@@ -20,7 +20,7 @@ def generate_script(header_dict, details_dict, searchString=None):
     :rtype:`str`
     """
     method = details_dict['method'].strip()
-    url = get_url(header_dict['Host'])
+    url = get_url(header_dict['Host'], details_dict['pre_scheme'])
     path = details_dict['path']
 
     if path != "":
