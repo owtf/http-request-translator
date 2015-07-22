@@ -18,6 +18,8 @@ from url import get_url, check_valid_url
 def generate_script(header_dict, details_dict, searchString=None):
     # TODO: Docstring and comments.
     url = get_url(header_dict['Host'], details_dict['pre_scheme'])
+    if details_dict['path'] != "":
+        url += details_dict['path']
     if not check_valid_url(url):
         raise ValueError("Invalid URL")
     if details_dict['data']:
