@@ -3,9 +3,13 @@ from __future__ import print_function
 
 import sys
 import argparse
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
 
 from tornado.httputil import HTTPHeaders
-from plugin_manager import plugin_manager
+from plugin_manager import generate_script
 
 
 def take_arguments():
@@ -68,12 +72,20 @@ def process_arguments(args):
         if not parsed_tuple[1]['data'] and parsed_tuple[1]['method'].strip().upper() == "POST":
             print("Hi there. Send some data to POST, use --data for sending data.")
             sys.exit(-1)
+        arg_option = None
         if args.stringSearch:
-            plugin_manager(script_list, parsed_tuple, args.stringSearch)
+            arg_option = args.stringSearch
         elif args.regexSearch:
-            plugin_manager(script_list, parsed_tuple, args.regexSearch)
+            arg_option = args.regexSearch
+        if len(script_list) == 0:
+            # Default curl commands if --output option is not passed
+            # Not implemented yet
+            pass
         else:
-            plugin_manager(script_list, parsed_tuple)
+            for script in script_list:
+                generated_code = generate_script(script, parsed_tuple, arg_option)
+                print(generated_code)
+
     return argdict
 
 
@@ -103,7 +115,14 @@ def take_body(headers, script_list):
             print("Thank you !")
             parsed_tuple = parse_raw_request("".join(headers))
             parsed_tuple[1]['data'] = "".join(body)
-            plugin_manager(script_list, parsed_tuple)
+            if len(script_list) == 0:
+                # Default curl commands if --output option is not passed
+                # Not implemented yet
+                pass
+            else:
+                for script in script_list:
+                    generated_code = generate_script(script, parsed_tuple)
+                    print(generated_code)
             take_headers(script_list)
         if uentered == "q!":
             print("Thanks for using the interactive mode!")
@@ -126,6 +145,28 @@ def parse_raw_request(request):
         details_dict['path'] = ""
         details_dict['protocol'], details_dict['version'] = new_request_method.split(
             ' ', 2)[1].split('/', 1)[0], new_request_method.split(' ', 2)[1].split('/', 1)[1]
+    # Parse the GET Path to update it to only contain the relative path and not whole url
+    # scheme://netloc/path;parameters?query#fragment
+    # Eg: Path=https://google.com/robots.txt to /robots.txt
+    scheme, netloc, path, params, query, frag = urlparse(details_dict['path'])
+    if params:
+        path = path+";"+params
+    if query:
+        path = path+"?"+query
+    if frag:
+        path = path+"#"+frag
+    details_dict['path'] = path
+    # If scheme is specified in GET Path and Header 'Host' Field doesn't already starts with it
+    if scheme and not header_dict['Host'].startswith(scheme):
+        # Check if Host Field already has port specified
+        if ":" not in header_dict['Host'] and not netloc.startswith('['):
+            if scheme == "https":
+                header_dict['Host'] += ":443"
+        else:
+            #  If no port is specified for address like [::1]
+            if header_dict['Host'].endswith(']'):
+                if scheme == "https":
+                    header_dict['Host'] += ":443"
     details_dict['Host'] = header_dict['Host']
     return header_dict, details_dict
 
