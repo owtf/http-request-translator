@@ -16,6 +16,8 @@ def generate_script(header_dict, details_dict, searchString=None):
     :param dict details_dict: Request specific details like body and method for the request.
     :param str searchString: String to search for in the response to the request. By default remains None.
 
+    :raises ValueError: When Url is Invalid
+
     :return: A combined string of generated code
     :rtype:`str`
     """
@@ -121,15 +123,20 @@ def generate_proxy_code(details_dict):
 
     :param dict details_dict: Dictionary of request details containing proxy specific information.
 
+    :raises IndexError: When proxy provided is invalid
+
     :return: A string of ruby code
     :rtype:`str`
     """
     if 'proxy' in details_dict:
-        proxy_host, proxy_port = details_dict['proxy'].split(':')
-        return """
+        try:
+            proxy_host, proxy_port = details_dict['proxy'].split(':')
+            return """
 proxy_host, proxy_port = '%s', '%s'
 http = Net::HTTP.new(uri.hostname, nil, proxy_host, proxy_port)
 """ % (proxy_host.strip(), proxy_port.strip())
+        except IndexError:
+            raise IndexError("Proxy provided is invalid.")
     else:
         return """
 http = Net::HTTP.new(uri.hostname, uri.port)

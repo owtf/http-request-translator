@@ -16,7 +16,7 @@ def generate_script(header_dict, details_dict, searchString=None):
     :param dict details_dict: Request specific details like body and method for the request.
     :param str searchString: String to search for in the response to the request. By default remains None.
 
-    :raises:class:`ValueError`: When url is Invalid
+    :raises ValueError: When url is Invalid
 
     :return: A combined string of generated code
     :rtype:`str`
@@ -101,9 +101,9 @@ def generate_proxy_code(details_dict):
 def generate_body_code(body):
     """Generate bash code for the body of the request if one is passed.
 
-    :param dict details_dict: Dictionary of request details containing proxy specific information.
+    :param dict details_dict: Dictionary of request details containing data to be sent.
 
-    :return: A string of combined bash code for specific proxy
+    :return: A string of combined bash code for the body of the request.
     :rtype: `str`
     """
     # Escape single quotes , double quotes are good here
