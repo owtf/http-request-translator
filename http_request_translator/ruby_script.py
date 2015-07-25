@@ -65,17 +65,23 @@ puts 'Response #{response.code} #{response.message}:'
 
 begin
     require 'colorize'
+    lib_available = true
 rescue LoadError
-    puts "search option will need colorize to work properly"
-    puts "You can install it by gem install colorize"
+    lib_available = false
 end
 
 matched = response.body.match /%s/
 
 original = response.body
 if matched then
-    for i in 0..matched.length
-        original.gsub! /#{matched[i]}/, "#{matched[i]}".green
+    if lib_available then
+        for i in 0..matched.length
+            original.gsub! /#{matched[i]}/, "#{matched[i]}".green
+        end
+    else
+        for i in 0..matched.length
+            puts 'Matched item: #{matched[i]}'
+        end
     end
 end
 puts original

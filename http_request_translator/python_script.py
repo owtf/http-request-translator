@@ -1,17 +1,10 @@
 from __future__ import print_function
 
-import sys
 import re
 try:
     from urllib import quote
 except ImportError:
     from urllib.parse import quote
-
-try:
-    from termcolor import colored
-except ImportError:
-    print("Dependency of the library 'termcolor' not satisfied. Do $pip install termcolor to install the library :-)")
-    sys.exit(-1)
 
 from url import get_url, check_valid_url
 
@@ -110,9 +103,19 @@ def generate_search_code(searchString):
         searchString = re.sub("'", "\\'", searchString)
         return """
     match = re.findall(r'%s', str(response_header))
-    for x in range(0, len(match)) :
-        replace_string = colored(match[x], 'green')
-        response_header = re.sub(match[x], replace_string, str(response_header))
+    try:
+        from termcolor import colored
+        lib_available = True
+    except ImportError:
+        lib_available = False
+    if match:
+        for item in match:
+            if lib_available:
+                replace_string = colored(match[x], 'green')
+                response_header = re.sub(match[x], replace_string, str(response_header))
+            else:
+                print("Matched item: ",item)
+
     print response_header
 
 
