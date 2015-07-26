@@ -7,6 +7,7 @@ except ImportError:
     from urllib.parse import quote
 
 from url import check_valid_url, get_url
+from templates import ruby_template
 
 
 def generate_script(header_dict, details_dict, searchString=None):
@@ -37,61 +38,25 @@ def generate_script(header_dict, details_dict, searchString=None):
     if not check_valid_url(url):
         raise ValueError("Invalid URL")
 
-    skeleton_code = """
-require 'net/http'
-require 'uri'
-
-uri = URI('%s')""" % (url)
+    skeleton_code = ruby_template.begin_code.replace('@HOST@', url)
 
     if method == "GET":
-        skeleton_code += """
-req = Net::HTTP::Get.new(uri.request_uri)
-%s %s %s
-response = http.request(req)""" % (generate_request_headers(header_dict),
-                                   generate_proxy_code(details_dict), generate_https_code(url))
+        skeleton_code += ruby_template.get_request
+        skeleton_code += generate_request_headers(header_dict)
+        skeleton_code += generate_proxy_code(details_dict)
+        skeleton_code += generate_https_code(url)
+
     elif method == "POST":
         body = details_dict['data']
-        skeleton_code += """
-req = Net::HTTP::Post.new(uri.request_uri)
-%s
-req.body = '%s'\n %s %s
-response = http.request(req)
-""" % (generate_request_headers(header_dict), generate_body_code(body),
-            generate_proxy_code(details_dict), generate_https_code(url))
+        skeleton_code += ruby_template.post_request.replace('@BODY@', generate_body_code(body))
+        skeleton_code += generate_request_headers(header_dict)
+        skeleton_code += generate_proxy_code(details_dict)
+        skeleton_code += generate_https_code(url)
 
     if searchString:
-        skeleton_code += """
-puts 'Response #{response.code} #{response.message}:'
-
-begin
-    require 'colorize'
-    lib_available = true
-rescue LoadError
-    lib_available = false
-end
-
-matched = response.body.match /%s/
-
-original = response.body
-if matched then
-    if lib_available then
-        for i in 0..matched.length
-            original.gsub! /#{matched[i]}/, "#{matched[i]}".green
-        end
-    else
-        for i in 0..matched.length
-            puts 'Matched item: #{matched[i]}'
-        end
-    end
-end
-puts original
-""" % (searchString)
+        skeleton_code += ruby_template.body_code_search.replace('@SEARCH_STRING@', searchString)
     else:
-        skeleton_code += """
-puts "Response #{response.code} #{response.message}:
-          #{response.body}"
-"""
-
+        skeleton_code += ruby_template.body_code_simple
     return skeleton_code
 
 
@@ -105,8 +70,9 @@ def generate_request_headers(header_dict):
     """
     skeleton = ""
     for key, value in header_dict.items():
-        skeleton += """req['%s'] = '%s' \n""" % (str(key), str(value))
-
+        skeleton_ = ruby_template.request_header.replace('@HEADER@', str(key))
+        skeleton_ = skeleton_.replace('@HEADER_VALUE@', str(value))
+        skeleton += skeleton_
     return skeleton
 
 
@@ -119,7 +85,7 @@ def generate_https_code(url):
     :rtype:`str`
     """
     if url.startswith('https'):
-        return "\nhttp.use_ssl=true"
+        return ruby_template.https_code
     else:
         return ""
 
@@ -137,16 +103,13 @@ def generate_proxy_code(details_dict):
     if 'proxy' in details_dict:
         try:
             proxy_host, proxy_port = details_dict['proxy'].split(':')
-            return """
-proxy_host, proxy_port = '%s', '%s'
-http = Net::HTTP.new(uri.hostname, nil, proxy_host, proxy_port)
-""" % (proxy_host.strip(), proxy_port.strip())
+            skeleton = ruby_template.proxy_code.replace('@PROXY_PORT@', proxy_host.strip())
+            skeleton = skeleton.replace('@PROXY_HOST@', proxy_port.strip())
+            return skeleton
         except IndexError:
             raise IndexError("Proxy provided is invalid.")
     else:
-        return """
-http = Net::HTTP.new(uri.hostname, uri.port)
-"""
+        return ruby_template.non_proxy_code
 
 
 def generate_body_code(body):
