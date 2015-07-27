@@ -2,7 +2,7 @@ begin_code = """
 require 'net/http'
 require 'uri'
 
-uri = URI('@HOST@')"""
+uri = URI('{host}')"""
 
 get_request = """
 req = Net::HTTP::Get.new(uri.request_uri)
@@ -10,14 +10,14 @@ req = Net::HTTP::Get.new(uri.request_uri)
 
 post_request = """
 req = Net::HTTP::Post.new(uri.request_uri)
-req.body = '@BODY@'
+req.body = '{body}'
 """
 
 request_header = """
-req['@HEADER@'] = '@HEADER_VALUE@'"""
+req['{header}'] = '{header_value}'"""
 
 proxy_code = """
-proxy_host, proxy_port = '@PROXY_PORT@', '@PROXY_HOST@'
+proxy_host, proxy_port = '{proxy_host}', '{proxy_port}'
 http = Net::HTTP.new(uri.hostname, nil, proxy_host, proxy_port)
 """
 
@@ -30,7 +30,7 @@ https_code = """
 http.use_ssl=true
 """
 
-body_code_search = """
+body_code_search_1 = """
 response = http.request(req)
 puts 'Response #{response.code} #{response.message}:'
 
@@ -40,9 +40,11 @@ begin
 rescue LoadError
     lib_available = false
 end
-
-matched = response.body.match /@SEARCH_STRING@/
-
+"""
+body_code_search_2 = """
+matched = response.body.match /{search_string}/
+"""
+body_code_search_3 = """
 original = response.body
 if matched then
     if lib_available then

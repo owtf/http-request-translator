@@ -38,7 +38,7 @@ def generate_script(header_dict, details_dict, searchString=None):
     if not check_valid_url(url):
         raise ValueError("Invalid URL")
 
-    skeleton_code = ruby_template.begin_code.replace('@HOST@', url)
+    skeleton_code = ruby_template.begin_code.format(host=url)
 
     if method == "GET":
         skeleton_code += ruby_template.get_request
@@ -48,13 +48,14 @@ def generate_script(header_dict, details_dict, searchString=None):
 
     elif method == "POST":
         body = details_dict['data']
-        skeleton_code += ruby_template.post_request.replace('@BODY@', generate_body_code(body))
+        skeleton_code += ruby_template.post_request.format(body=generate_body_code(body))
         skeleton_code += generate_request_headers(header_dict)
         skeleton_code += generate_proxy_code(details_dict)
         skeleton_code += generate_https_code(url)
 
     if searchString:
-        skeleton_code += ruby_template.body_code_search.replace('@SEARCH_STRING@', searchString)
+        skeleton_code += ruby_template.body_code_search_1 + \
+            ruby_template.body_code_search_2.format(search_string=searchString) + ruby_template.body_code_search_3
     else:
         skeleton_code += ruby_template.body_code_simple
     return skeleton_code
@@ -70,8 +71,7 @@ def generate_request_headers(header_dict):
     """
     skeleton = ""
     for key, value in header_dict.items():
-        skeleton_ = ruby_template.request_header.replace('@HEADER@', str(key))
-        skeleton_ = skeleton_.replace('@HEADER_VALUE@', str(value))
+        skeleton_ = ruby_template.request_header.format(header=str(key), header_value=str(value))
         skeleton += skeleton_
     return skeleton
 
@@ -103,8 +103,7 @@ def generate_proxy_code(details_dict):
     if 'proxy' in details_dict:
         try:
             proxy_host, proxy_port = details_dict['proxy'].split(':')
-            skeleton = ruby_template.proxy_code.replace('@PROXY_PORT@', proxy_host.strip())
-            skeleton = skeleton.replace('@PROXY_HOST@', proxy_port.strip())
+            skeleton = ruby_template.proxy_code.format(proxy_host=proxy_host.strip(), proxy_port=proxy_port.strip())
             return skeleton
         except IndexError:
             raise IndexError("Proxy provided is invalid.")
