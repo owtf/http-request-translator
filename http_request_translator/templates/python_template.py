@@ -1,5 +1,6 @@
 begin_code = """
 #!/usr/bin/python
+from __future__ import print_function
 import re
 from tornado.httpclient import HTTPRequest, HTTPClient
 from termcolor import colored
@@ -39,7 +40,7 @@ body_code_search = """
             else:
                 print("Matched item: ",item)
 
-    print response_header
+    print(response_header)
 
 
 if __name__ == '__main__':
@@ -47,7 +48,7 @@ if __name__ == '__main__':
 """
 
 body_code_simple = """
-    print response_header
+    print(response_header)
 
 
 if __name__ == '__main__':
