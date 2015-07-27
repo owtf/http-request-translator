@@ -54,8 +54,7 @@ def generate_script(header_dict, details_dict, searchString=None):
         skeleton_code += generate_https_code(url)
 
     if searchString:
-        skeleton_code += ruby_template.body_code_search_1 + \
-            ruby_template.body_code_search_2.format(search_string=searchString) + ruby_template.body_code_search_3
+        skeleton_code += ruby_template.body_code_search.format(search_string=searchString)
     else:
         skeleton_code += ruby_template.body_code_simple
     return skeleton_code

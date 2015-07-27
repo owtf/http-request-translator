@@ -30,9 +30,9 @@ https_code = """
 http.use_ssl=true
 """
 
-body_code_search_1 = """
+body_code_search = """
 response = http.request(req)
-puts 'Response #{response.code} #{response.message}:'
+puts 'Response #{{response.code}} #{{response.message}}:'
 
 begin
     require 'colorize'
@@ -40,20 +40,18 @@ begin
 rescue LoadError
     lib_available = false
 end
-"""
-body_code_search_2 = """
+
 matched = response.body.match /{search_string}/
-"""
-body_code_search_3 = """
+
 original = response.body
 if matched then
     if lib_available then
         for i in 0..matched.length
-            original.gsub! /#{matched[i]}/, "#{matched[i]}".green
+            original.gsub! /#{{matched[i]}}/, "#{{matched[i]}}".green
         end
     else
         for i in 0..matched.length
-            puts 'Matched item: #{matched[i]}'
+            puts 'Matched item: #{{matched[i]}}'
         end
     end
 end
