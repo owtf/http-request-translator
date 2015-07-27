@@ -7,6 +7,7 @@ except ImportError:
     from urllib.parse import quote
 
 from url import get_url, check_valid_url
+from templates import python_template
 
 
 def generate_script(header_dict, details_dict, searchString=None):
@@ -31,21 +32,11 @@ def generate_script(header_dict, details_dict, searchString=None):
     if details_dict['data'] and (details_dict['method'].strip() in encoding_list):
         encoded_data = quote(details_dict['data'], '')
         url = url + encoded_data
-    skeleton_code = """
-#!/usr/bin/python
-import re
-from tornado.httpclient import HTTPRequest, HTTPClient
-from termcolor import colored
-
-
-def main():
-"""
+    skeleton_code = python_template.begin_code
     if method == "GET":
         skeleton_code += generate_req_code(header_dict, details_dict, url) + generate_search_code(searchString)
-        pass
     elif method == "POST":
         skeleton_code += generate_req_code(header_dict, details_dict, url) + generate_search_code(searchString)
-
     return skeleton_code
 
 
@@ -72,23 +63,17 @@ def generate_req_code(header_dict, details_dict, url):
             proxy_host, proxy_port = details_dict['proxy'].split(':')
         except IndexError:
             raise IndexError("Proxy provided is invalid.")
-        return """
-    headers, url, method = %s, '%s', '%s'
-    body = '%s'
-    proxy_host = '%s'
-    proxy_port = '%s'
-    request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host,\
-        proxy_port=proxy_port, body=body, allow_nonstandard_methods=True)
-    response_header = HTTPClient().fetch(request_object).headers
-""" % (str(header_dict), url, details_dict['method'].strip(), str(body),
-            proxy_host.strip(), proxy_port.strip())
+        return python_template.proxy_code.format(headers=str(header_dict),
+                                                 host=url,
+                                                 method=details_dict['method'].strip(),
+                                                 proxy_host=proxy_host,
+                                                 proxy_port=proxy_port,
+                                                 body=str(body))
     else:
-        return"""
-    headers, url, method = %s, '%s', '%s'
-    body = '%s'
-    request_object = HTTPRequest(url, method=method,headers=headers, body=body, allow_nonstandard_methods=True)
-    response_header = HTTPClient().fetch(request_object).headers
-""" % (str(header_dict), url, details_dict['method'].strip(), str(body))
+        return python_template.non_proxy_code.format(headers=str(header_dict),
+                                                     host=url,
+                                                     method=details_dict['method'].strip(),
+                                                     body=str(body))
 
 
 def generate_search_code(searchString):
@@ -101,32 +86,6 @@ def generate_search_code(searchString):
     """
     if searchString:
         searchString = re.sub("'", "\\'", searchString)
-        return """
-    match = re.findall(r'%s', str(response_header))
-    try:
-        from termcolor import colored
-        lib_available = True
-    except ImportError:
-        lib_available = False
-    if match:
-        for item in match:
-            if lib_available:
-                replace_string = colored(match[x], 'green')
-                response_header = re.sub(match[x], replace_string, str(response_header))
-            else:
-                print("Matched item: ",item)
-
-    print response_header
-
-
-if __name__ == '__main__':
-    main()
-""" % (searchString)
+        return python_template.body_code_search.format(search_string=searchString)
     else:
-        return """
-    print response_header
-
-
-if __name__ == '__main__':
-    main()
-"""
+        return python_template.body_code_simple
