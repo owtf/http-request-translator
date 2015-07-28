@@ -7,6 +7,7 @@ except ImportError:
     from urllib.parse import quote
 
 from url import get_url, check_valid_url
+from templates import bash_template
 
 
 def generate_script(header_dict, details_dict, searchString=None):
@@ -37,16 +38,19 @@ def generate_script(header_dict, details_dict, searchString=None):
     if not check_valid_url(url):
         raise ValueError("Invalid URL")
 
-    skeleton_code = """
-#!/usr/bin/env bash
-curl -s --request """
+    skeleton_code = bash_template.begin_code
     headers = generate_request_headers(header_dict)
     if method == "GET":
-        skeleton_code += generate_proxy_code(details_dict) + generate_request_code(method, url, headers, searchString)
+        skeleton_code += generate_proxy_code(details_dict)
+        skeleton_code += bash_template.code_simple.format(method=method, url=url, headers=headers)
 
     elif method == "POST":
-        skeleton_code += generate_proxy_code(details_dict) + generate_request_code(method, url, headers, searchString)\
-                                                           + generate_body_code(details_dict['data'])
+        skeleton_code += generate_proxy_code(details_dict)
+        skeleton_code += bash_template.code_simple.format(method=method, url=url, headers=headers)
+        skeleton_code += generate_body_code(details_dict['data'])
+
+    if searchString:
+        skeleton_code += generate_search_code(searchString)
     return skeleton_code
 
 
@@ -60,28 +64,23 @@ def generate_request_headers(header_dict):
     """
     skeleton = ""
     for key, value in header_dict.items():
-        skeleton += """ --header "%s : %s" """ % (str(key), str(value))
+        skeleton += bash_template.request_header.format(header=str(key), header_value=str(value))
 
     return skeleton
 
 
-def generate_request_code(method, url, headers, searchString):
-    """Generate bash code for specific `method`, `url`, `headers` and `searchString` if one is passed.
+def generate_search_code(searchString):
+    """Generate bash code for `searchString` if one is passed.
 
-    :param str method: Method of request
-    :param str url: Url for request
-    :param str headers: Bash specific headers string
     :param str searchString: String to be searched for in response to request
 
-    :return: A string of combined bash code for making request through curl
+    :return: A string of combined bash code for searching given string in response
     :rtype: `str`
     """
     if searchString:
         # Quote single quotes in substring, double quotes are good here
         searchString = re.sub("'", "\\'", searchString)
-        return "%s %s %s --include | egrep --color ' %s |$' " % (method, url, headers, searchString)
-    else:
-        return "%s %s %s --include " % (method, url, headers)
+        return bash_template.code_search.format(search_string=searchString)
 
 
 def generate_proxy_code(details_dict):
@@ -93,7 +92,7 @@ def generate_proxy_code(details_dict):
     :rtype: `str`
     """
     if 'proxy' in details_dict:
-        return "-x %s" % (details_dict['proxy'])
+        return bash_template.proxy_code.format(proxy=details_dict['proxy'])
     else:
         return ""
 
@@ -108,4 +107,4 @@ def generate_body_code(body):
     """
     # Escape single quotes , double quotes are good here
     body = re.sub(r"'", "\\'", body)
-    return " --data '%s' " % (str(body))
+    return bash_template.body_code.format(body=str(body))
