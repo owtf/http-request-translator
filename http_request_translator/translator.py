@@ -90,61 +90,98 @@ def process_arguments(args):
 
 
 def take_headers(script_list):
-    # TODO: Docstring and comments.
+    """Takes Request headers while interactive mode is active
+
+    :param list script_list: List of names of the languages for which script is to be generated.
+
+    :return: Raw Request Headers passed in the interactive session.
+    :rtype: `str`
+    """
     headers = []
-    print(r">>>"),
-    while True:
-        uentered = raw_input("")
-        if not uentered:
-            print("Enter the Body/Parameter ")
-            take_body(headers, script_list)
-        if uentered == "q!":
-            print("Thanks for using the interactive mode!")
-            sys.exit(0)
-        headers.append(uentered + "\n")
+    print("Enter Ctrl+C to quit. Press Ctrl+D when finished entering.")
+    try:
+        print(r">>>"),
+        while True:
+            try:
+                uentered = raw_input("")
+                headers.append(uentered + "\n")
+            except EOFError:
+                print("Enter the Body/Parameter(If Any)")
+                take_body(headers, script_list)
+    except KeyboardInterrupt:
+        print("\nThanks for using the interactive mode! Exiting!")
+        sys.exit(0)
     return headers
 
 
 def take_body(headers, script_list):
-    # TODO: Docstring and comments.
+    """Takes Request body while interactive mode is active.
+    Also prints the generated code for languages passed in `script_list` on console.
+
+    :param str headers: Raw request headers feeded in the interactive session.
+    :param list script_list: List of names of the languages for which script is to be generated.
+
+    :return: Body for the request passed in interactive session.
+    :rtype: `str`
+    """
     body = []
-    print(">>>"),
-    while True:
-        uentered = raw_input("")
-        if not uentered:
-            print("Thank you !")
-            parsed_tuple = parse_raw_request("".join(headers))
-            parsed_tuple[1]['data'] = "".join(body)
-            if len(script_list) == 0:
-                # Default curl commands if --output option is not passed
-                # Not implemented yet
-                pass
-            else:
-                for script in script_list:
-                    generated_code = generate_script(script, parsed_tuple)
-                    print(generated_code)
-            take_headers(script_list)
-        if uentered == "q!":
-            print("Thanks for using the interactive mode!")
-            sys.exit(0)
-        body.append(uentered + "\n")
+    try:
+        print(">>>"),
+        while True:
+            try:
+                uentered = raw_input("")
+                body.append(uentered + "\n")
+            except EOFError:
+                try:
+                    parsed_tuple = parse_raw_request("".join(headers))
+                    parsed_tuple[1]['data'] = "".join(body).strip()
+                    if len(script_list) == 0:
+                        # Default curl commands if --output option is not passed
+                        # Not implemented yet
+                        pass
+                    else:
+                        for script in script_list:
+                            generated_code = generate_script(script, parsed_tuple)
+                            print(generated_code)
+                except ValueError:
+                    print("Please Enter a Vaild Request!")
+                take_headers(script_list)
+    except KeyboardInterrupt:
+        print("\nThanks for using the interactive mode! Exiting!")
+        sys.exit(0)
     return body
 
 
 def parse_raw_request(request):
-    # TODO: Docstring and comments.
-    new_request_method, new_request = request.split('\n', 1)[0], request.split('\n', 1)[1]
+    """Parses Raw HTTP request into separate dictionaries for headers and body and other parameters.
+
+    :param str request: Raw HTTP request.
+
+    :raises ValueError: When request passed in malformed.
+
+    :return: Separate dictionaries for headers and body and other parameters.
+    :rtype: dict,dict
+    """
+    try:
+        new_request_method, new_request = request.split('\n', 1)[0], request.split('\n', 1)[1]
+    except IndexError:
+        raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
     header_dict = dict(HTTPHeaders.parse(new_request))
     details_dict = {}
     details_dict['method'] = new_request_method.split(' ', 2)[0]
-    try:
-        details_dict['protocol'], details_dict['version'] = new_request_method.split(
-            ' ', 2)[2].split('/', 1)[0], new_request_method.split(' ', 2)[2].split('/', 1)[1]
+    try:  # try to split the path from request if one is passed.
+        proto_ver = new_request_method.split(' ', 2)[2].split('/', 1)
+        details_dict['protocol'] = proto_ver[0]
+        details_dict['version'] = proto_ver[1]
         details_dict['path'] = new_request_method.split(' ', 2)[1]
     except IndexError:
         details_dict['path'] = ""
-        details_dict['protocol'], details_dict['version'] = new_request_method.split(
-            ' ', 2)[1].split('/', 1)[0], new_request_method.split(' ', 2)[1].split('/', 1)[1]
+        try:
+            proto_ver = new_request_method.split(' ', 2)[1].split('/', 1)
+        except IndexError:  # Failed to get protocol and version.
+            raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
+        details_dict['protocol'],  = proto_ver[0]
+        details_dict['version'] = proto_ver[1]
     # Parse the GET Path to update it to only contain the relative path and not whole url
     # scheme://netloc/path;parameters?query#fragment
     # Eg: Path=https://google.com/robots.txt to /robots.txt
