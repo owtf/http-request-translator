@@ -4,6 +4,10 @@ from __future__ import print_function
 import sys
 import argparse
 try:
+    input = raw_input  # Python 2.x
+except NameError:
+    pass  # Python 3.x
+try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import urlparse
@@ -57,7 +61,11 @@ def process_arguments(args):
     except TypeError:
         script_list = []  # If --output option is not used.
     if args.interactive:
-        take_headers(script_list)
+        try:
+            take_headers(script_list)
+        except KeyboardInterrupt:
+            print("\nThanks for using the interactive mode! Exiting!")
+            sys.exit(0)
     else:
         if not args.Request:
             print("Input a raw HTTP Request and try again.\nElse try using the interactive option")
@@ -98,19 +106,13 @@ def take_headers(script_list):
     :rtype: `str`
     """
     headers = []
-    print("Enter Ctrl+C to quit. Press Ctrl+D when finished entering.")
-    try:
-        print(r">>>"),
-        while True:
-            try:
-                uentered = raw_input("")
-                headers.append(uentered + "\n")
-            except EOFError:
-                print("Enter the Body/Parameter(If Any)")
-                take_body(headers, script_list)
-    except KeyboardInterrupt:
-        print("\nThanks for using the interactive mode! Exiting!")
-        sys.exit(0)
+    print("Enter request headers (Ctrl+D to finish/Ctrl+C to quit).")
+    while True:
+        try:
+            uentered = input(">>> ")
+            headers.append(uentered + "\n")
+        except EOFError:
+            take_body(headers, script_list)
     return headers
 
 
@@ -125,30 +127,25 @@ def take_body(headers, script_list):
     :rtype: `str`
     """
     body = []
-    try:
-        print(">>>"),
-        while True:
+    print("\nEnter request body/parameters (Ctrl+D to finish/Ctrl+C to quit).")
+    while True:
+        try:
+            uentered = input(">>> ")
+            body.append(uentered + "\n")
+        except EOFError:
             try:
-                uentered = raw_input("")
-                body.append(uentered + "\n")
-            except EOFError:
-                try:
-                    parsed_tuple = parse_raw_request("".join(headers))
-                    parsed_tuple[1]['data'] = "".join(body).strip()
-                    if len(script_list) == 0:
-                        # Default curl commands if --output option is not passed
-                        # Not implemented yet
-                        pass
-                    else:
-                        for script in script_list:
-                            generated_code = generate_script(script, parsed_tuple)
-                            print(generated_code)
-                except ValueError:
-                    print("Please Enter a Vaild Request!")
-                take_headers(script_list)
-    except KeyboardInterrupt:
-        print("\nThanks for using the interactive mode! Exiting!")
-        sys.exit(0)
+                headers, details = parse_raw_request("".join(headers))
+                details['data'] = "".join(body).strip()
+                if not script_list:
+                    # TODO: Default curl commands if --output option is not passed
+                    # Not implemented yet
+                    pass
+                else:
+                    for script in script_list:
+                        print(generate_script(script, headers, details))
+            except ValueError:
+                print("Please Enter a Vaild Request!")
+            take_headers(script_list)
     return body
 
 
