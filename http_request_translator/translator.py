@@ -62,14 +62,14 @@ def process_arguments(args):
         if not args.Request:
             print("Input a raw HTTP Request and try again.\nElse try using the interactive option")
             sys.exit(-1)
-        parsed_tuple = parse_raw_request(args.Request)
+        headers, details = parse_raw_request(args.Request)
         if args.data:
-            parsed_tuple[1]['data'] = args.data
+            details['data'] = args.data
         else:
-            parsed_tuple[1]['data'] = None
+            details['data'] = None
         if args.proxy:
-            parsed_tuple[1]['proxy'] = args.proxy
-        if not parsed_tuple[1]['data'] and parsed_tuple[1]['method'].strip().upper() == "POST":
+            details['proxy'] = args.proxy
+        if not details['data'] and details['method'].strip().upper() == "POST":
             print("Hi there. Send some data to POST, use --data for sending data.")
             sys.exit(-1)
         arg_option = None
@@ -83,7 +83,7 @@ def process_arguments(args):
             pass
         else:
             for script in script_list:
-                generated_code = generate_script(script, parsed_tuple, arg_option)
+                generated_code = generate_script(script, headers, details, arg_option)
                 print(generated_code)
 
     return argdict

@@ -20,11 +20,12 @@ def plugin_manager(script_list, parsed_tuple, searchString=None):
         pass
 
 
-def generate_script(script_type, parsed_tuple, searchString=None):
+def generate_script(script_type, headers, details, searchString=None):
     """Returns the script code for the HTTP request passed in `script_type` language
 
     :param str script_type: Name of the language for which script is to be generated
-    :param list parsed_tuple: Tuple containing Header Information and Request Information
+    :param dict headers: Headers information
+    :param dict details: Details information
     :param str searchString: string to be searched for in the response for given request
 
     :return: A combined string of generated code
@@ -36,11 +37,10 @@ def generate_script(script_type, parsed_tuple, searchString=None):
 
     """
     script_name = script_type.lower() + "_script"
-    header_dict, details_dict = parsed_tuple
     try:
         return __import__(script_name, globals={"__name__": __name__}).generate_script(
-                header_dict,
-                details_dict,
+                headers,
+                details,
                 searchString)
     except ImportError:
         raise ImportError("The support for generating the required Script is not available at the time now.")
