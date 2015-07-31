@@ -15,13 +15,13 @@ from plugin_manager import generate_script
 def take_arguments():
     # TODO: Docstring and comments.
     parser = argparse.ArgumentParser(
-        description="Request Translator is a standalone tool that can translate "\
+        description="Request Translator is a standalone tool that can translate "
                     "raw HTTP requests into curl commands or bash/python/php/ruby/PowerShell scripts")
     conflicting_group = parser.add_mutually_exclusive_group()
     parser.add_argument(
         '--output', '-o',
         action='append',
-        help="Generates a script for given HTTP request. "\
+        help="Generates a script for given HTTP request. "
              "If you want to generate multiple scripts, separate the script's name with a <,>")
     parser.add_argument(
         '--proxy',
@@ -37,7 +37,7 @@ def take_arguments():
     parser.add_argument(
         '--interactive', '-i',
         action='store_true',
-        help="Interactive mode: read raw HTTP request from keyboard, hit enter when ready."\
+        help="Interactive mode: read raw HTTP request from keyboard, hit enter when ready."
              "Type ':q!' to exit from the interactive mode.")
     parser.add_argument(
         '--data', '-d',
