@@ -1,5 +1,8 @@
 begin_code = """
-<?php
+if (!extension_loaded('curl')) {{
+    print 'Curl Extension not found. Exiting';
+    exit;
+}}
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, '{url}');
 // Set so curl_exec returns the result instead of outputting it.
@@ -47,11 +50,8 @@ else {{
         print 'Found a match!';
     }}
 }}
-
-?>
 """
 
 non_search_code = """
 print $response;
-?>
 """

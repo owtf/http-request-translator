@@ -22,8 +22,8 @@ def generate_script(header_dict, details_dict, searchString=None):
     :return: A combined string of generated code
     :rtype:`str`
     """
-    method = details_dict['method'].strip()
-    url = get_url(header_dict['Host'].strip(), details_dict['pre_scheme'])
+    method = details_dict['method']
+    url = get_url(header_dict['Host'], details_dict['pre_scheme'])
     path = details_dict['path']
 
     if path != "":
@@ -31,7 +31,7 @@ def generate_script(header_dict, details_dict, searchString=None):
 
     encoding_list = ['HEAD', 'OPTIONS', 'GET']
 
-    if details_dict['data'] and (details_dict['method'].strip() in encoding_list):
+    if details_dict['data'] and (details_dict['method'] in encoding_list):
         encoded_data = quote(details_dict['data'], '')
         url = url + encoded_data
 

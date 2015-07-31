@@ -23,13 +23,13 @@ def generate_script(header_dict, details_dict, searchString=None):
     :rtype:`str`
     """
     url = get_url(header_dict['Host'], details_dict['pre_scheme'])
-    method = details_dict['method'].strip()
+    method = details_dict['method']
     if details_dict['path'] != "":
         url += details_dict['path']
     if not check_valid_url(url):
         raise ValueError("Invalid URL")
     encoding_list = ['HEAD', 'OPTIONS', 'GET']
-    if details_dict['data'] and (details_dict['method'].strip() in encoding_list):
+    if details_dict['data'] and (details_dict['method'] in encoding_list):
         encoded_data = quote(details_dict['data'], '')
         url = url + encoded_data
     skeleton_code = python_template.begin_code
@@ -65,14 +65,14 @@ def generate_req_code(header_dict, details_dict, url):
             raise IndexError("Proxy provided is invalid.")
         return python_template.proxy_code.format(headers=str(header_dict),
                                                  host=url,
-                                                 method=details_dict['method'].strip(),
+                                                 method=details_dict['method'],
                                                  proxy_host=proxy_host,
                                                  proxy_port=proxy_port,
                                                  body=str(body))
     else:
         return python_template.non_proxy_code.format(headers=str(header_dict),
                                                      host=url,
-                                                     method=details_dict['method'].strip(),
+                                                     method=details_dict['method'],
                                                      body=str(body))
 
 

@@ -165,20 +165,20 @@ def parse_raw_request(request):
         raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
     header_dict = dict(HTTPHeaders.parse(new_request))
     details_dict = {}
-    details_dict['method'] = new_request_method.split(' ', 2)[0]
+    details_dict['method'] = new_request_method.split(' ', 2)[0].strip()
     try:  # try to split the path from request if one is passed.
         proto_ver = new_request_method.split(' ', 2)[2].split('/', 1)
-        details_dict['protocol'] = proto_ver[0]
-        details_dict['version'] = proto_ver[1]
-        details_dict['path'] = new_request_method.split(' ', 2)[1]
+        details_dict['protocol'] = proto_ver[0].strip()
+        details_dict['version'] = proto_ver[1].strip()
+        details_dict['path'] = new_request_method.split(' ', 2)[1].strip()
     except IndexError:
         details_dict['path'] = ""
         try:
             proto_ver = new_request_method.split(' ', 2)[1].split('/', 1)
         except IndexError:  # Failed to get protocol and version.
             raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
-        details_dict['protocol'] = proto_ver[0]
-        details_dict['version'] = proto_ver[1]
+        details_dict['protocol'] = proto_ver[0].strip()
+        details_dict['version'] = proto_ver[1].strip()
     # Parse the GET Path to update it to only contain the relative path and not whole url
     # scheme://netloc/path;parameters?query#fragment
     # Eg: Path=https://google.com/robots.txt to /robots.txt

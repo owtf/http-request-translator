@@ -3,7 +3,6 @@ begin_code = """
 from __future__ import print_function
 import re
 from tornado.httpclient import HTTPRequest, HTTPClient
-from termcolor import colored
 
 
 def main():
