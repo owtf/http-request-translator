@@ -180,18 +180,18 @@ def parse_raw_request(request):
             proto_ver = new_request_method.split(' ', 2)[1].split('/', 1)
         except IndexError:  # Failed to get protocol and version.
             raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
-        details_dict['protocol'],  = proto_ver[0]
+        details_dict['protocol'] = proto_ver[0]
         details_dict['version'] = proto_ver[1]
     # Parse the GET Path to update it to only contain the relative path and not whole url
     # scheme://netloc/path;parameters?query#fragment
     # Eg: Path=https://google.com/robots.txt to /robots.txt
     scheme, netloc, path, params, query, frag = urlparse(details_dict['path'])
     if params:
-        path = path+";"+params
+        path = path + ";" + params
     if query:
-        path = path+"?"+query
+        path = path + "?" + query
     if frag:
-        path = path+"#"+frag
+        path = path + "#" + frag
     details_dict['path'] = path
     # If scheme is specified in GET Path and Header 'Host' Field doesn't already starts with it
     if scheme and not header_dict['Host'].startswith(scheme):
@@ -204,7 +204,7 @@ def parse_raw_request(request):
 
 def main():
     # TODO: Docstring and comments.
-    args = take_arguments()
+    take_arguments()
 
 if __name__ == '__main__':
     main()
