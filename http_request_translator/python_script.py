@@ -24,8 +24,7 @@ def generate_script(header_dict, details_dict, searchString=None):
     """
     url = get_url(header_dict['Host'], details_dict['pre_scheme'])
     method = details_dict['method']
-    if details_dict['path'] != "":
-        url += details_dict['path']
+    url += details_dict['path']
     if not check_valid_url(url):
         raise ValueError("Invalid URL")
     encoding_list = ['HEAD', 'OPTIONS', 'GET']

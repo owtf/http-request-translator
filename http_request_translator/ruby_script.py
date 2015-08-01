@@ -24,10 +24,7 @@ def generate_script(header_dict, details_dict, searchString=None):
     """
     method = details_dict['method']
     url = get_url(header_dict['Host'], details_dict['pre_scheme'])
-    path = details_dict['path']
-
-    if path != "":
-        url += path
+    url += details_dict['path']
 
     encoding_list = ['HEAD', 'OPTIONS', 'GET']
 
