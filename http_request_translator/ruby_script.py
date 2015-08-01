@@ -91,18 +91,13 @@ def generate_proxy_code(details_dict):
 
     :param dict details_dict: Dictionary of request details containing proxy specific information.
 
-    :raises IndexError: When proxy provided is invalid
-
     :return: A string of ruby code
     :rtype:`str`
     """
-    if 'proxy' in details_dict:
-        try:
-            proxy_host, proxy_port = details_dict['proxy'].split(':')
-            skeleton = ruby_template.proxy_code.format(proxy_host=proxy_host.strip(), proxy_port=proxy_port.strip())
-            return skeleton
-        except IndexError:
-            raise IndexError("Proxy provided is invalid.")
+    if 'proxy_host' and 'proxy_port' in details_dict:
+        skeleton = ruby_template.proxy_code.format(
+            proxy_host=details_dict['proxy_host'], proxy_port=details_dict['proxy_port'])
+        return skeleton
     else:
         return ruby_template.non_proxy_code
 

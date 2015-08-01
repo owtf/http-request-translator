@@ -46,8 +46,6 @@ def generate_req_code(header_dict, details_dict, url):
     :param dict details_dict: Dictionary of request details like proxy,data etc.
     :param str url: URL for the request.
 
-    :raises IndexError: If proxy provided is invalid
-
     :return: A string of combined python code for specific proxy if one passed
     :rtype: `str`
     """
@@ -57,22 +55,13 @@ def generate_req_code(header_dict, details_dict, url):
     else:
         body = ""
 
-    if 'proxy' in details_dict:
-        try:
-            proxy_host, proxy_port = details_dict['proxy'].split(':')
-        except IndexError:
-            raise IndexError("Proxy provided is invalid.")
-        return python_template.proxy_code.format(headers=str(header_dict),
-                                                 host=url,
-                                                 method=details_dict['method'],
-                                                 proxy_host=proxy_host,
-                                                 proxy_port=proxy_port,
-                                                 body=str(body))
+    if 'proxy_host' and 'proxy_port' in details_dict:
+        return python_template.proxy_code.format(
+            headers=str(header_dict), host=url, method=details_dict['method'], proxy_host=details_dict['proxy_host'],
+            proxy_port=details_dict['proxy_port'], body=str(body))
     else:
-        return python_template.non_proxy_code.format(headers=str(header_dict),
-                                                     host=url,
-                                                     method=details_dict['method'],
-                                                     body=str(body))
+        return python_template.non_proxy_code.format(
+            headers=str(header_dict), host=url, method=details_dict['method'], body=str(body))
 
 
 def generate_search_code(searchString):

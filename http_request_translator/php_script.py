@@ -63,18 +63,13 @@ def generate_req_code(details_dict, searchString):
     :param dict details_dict: Dictionary of request details like proxy,data etc.
     :param str searchString: String to search for in response of the request
 
-    :raises IndexError: If proxy provided is invalid
-
     :return: A string of combined php code for specific proxy and searchString if one passed
     :rtype: `str`
     """
     skeleton = ""
-    if 'proxy' in details_dict:
-        try:
-            proxy_host, proxy_port = details_dict['proxy'].split(':')
-        except IndexError:
-            raise IndexError("Proxy provided is invalid.")
-        skeleton += php_template.proxy_code.format(proxy_host=proxy_host, proxy_port=proxy_port)
+    if 'proxy_host' and 'proxy_port' in details_dict:
+        skeleton += php_template.proxy_code.format(
+            proxy_host=details_dict['proxy_host'], proxy_port=details_dict['proxy_port'])
     skeleton += php_template.req_code
     if searchString:
         searchString = re.sub("'", "\\'", searchString)

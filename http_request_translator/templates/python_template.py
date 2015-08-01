@@ -12,8 +12,9 @@ proxy_code = """
     body = '{body}'
     proxy_host = '{proxy_host}'
     proxy_port = '{proxy_port}'
-    request_object = HTTPRequest(url, method=method, headers=headers, proxy_host=proxy_host,\
-        proxy_port=proxy_port, body=body, allow_nonstandard_methods=True)
+    request_object = HTTPRequest(
+        url, method=method, headers=headers, proxy_host=proxy_host, proxy_port=proxy_port,
+        body=body, allow_nonstandard_methods=True)
     response_header = HTTPClient().fetch(request_object).headers
 """
 

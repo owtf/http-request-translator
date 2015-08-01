@@ -88,8 +88,9 @@ def generate_proxy_code(details_dict):
     :return: A string of combined bash code for specific proxy
     :rtype: `str`
     """
-    if 'proxy' in details_dict:
-        return bash_template.proxy_code.format(proxy=details_dict['proxy'])
+    if 'proxy_host' and 'proxy_port' in details_dict:
+        proxy = details_dict['proxy_host'] + ":" + details_dict['proxy_port']
+        return bash_template.proxy_code.format(proxy=proxy)
     else:
         return ""
 

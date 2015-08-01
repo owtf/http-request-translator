@@ -14,6 +14,7 @@ except ImportError:
 
 from tornado.httputil import HTTPHeaders
 from plugin_manager import generate_script
+from url import get_url, check_valid_url
 
 
 def take_arguments():
@@ -54,7 +55,15 @@ def take_arguments():
 
 
 def process_arguments(args):
-    # TODO: Docstring and comments.
+    """Process the arguments provided to the translator and places values in separate headers and details dictionaries.
+
+    :param class `argparse.Namespace`: `argparse` class object containing arguments passed to the translator.
+
+    :raises ValueError: When proxy provided is invalid.
+
+    :return: A dictionaries of arguments passed.
+    :rtype: `dict`
+    """
     argdict = vars(args)
     try:
         script_list = argdict['output'][0].split(',')
@@ -76,7 +85,17 @@ def process_arguments(args):
         else:
             details['data'] = None
         if args.proxy:
-            details['proxy'] = args.proxy
+            # If proxy already doesn't starts with http and is like 127.0.0.1:8010
+            if not args.proxy.startswith(('http', 'https')):
+                proxy = get_url(args.proxy)  # Fix proxy to add appropriate scheme
+            else:
+                proxy = args.proxy.strip()
+            if not check_valid_url(proxy):
+                raise ValueError("Proxy provided is invalid.")
+            try:
+                details['proxy_host'], details['proxy_port'] = proxy.rsplit(":", 1)
+            except IndexError:
+                raise ValueError("Proxy provided is invalid.")
         if not details['data'] and details['method'].strip().upper() == "POST":
             print("Hi there. Send some data to POST, use --data for sending data.")
             sys.exit(-1)
