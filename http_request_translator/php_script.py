@@ -34,10 +34,14 @@ def generate_script(header_dict, details_dict, searchString=None):
     skeleton_code = php_template.begin_code.format(url=url)
     skeleton_code += generate_request_headers(header_dict)
     if method == "GET":
-        skeleton_code += generate_req_code(details_dict, searchString)
+        pass
     elif method == "POST":
         skeleton_code += php_template.post_request.format(body=generate_body_code(details_dict['data']))
-        skeleton_code += generate_req_code(details_dict, searchString)
+    else:
+        print("Only GET and POST requests are supported yet!")
+        return ""
+
+    skeleton_code += generate_req_code(details_dict, searchString)
 
     return skeleton_code
 
@@ -50,11 +54,11 @@ def generate_request_headers(header_dict):
     :return: A string of php code which places headers in the request.
     :rtype:`str`
     """
-    skeleton = ""
+    skeleton_code = ""
     for key, value in header_dict.items():
-        skeleton_ = php_template.request_header.format(header=str(key), header_value=str(value))
-        skeleton += skeleton_
-    return skeleton
+        skeleton_code += php_template.request_header.format(header=str(key), header_value=str(value))
+
+    return skeleton_code
 
 
 def generate_req_code(details_dict, searchString):

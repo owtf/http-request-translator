@@ -32,10 +32,15 @@ def generate_script(header_dict, details_dict, searchString=None):
         encoded_data = quote(details_dict['data'], '')
         url = url + encoded_data
     skeleton_code = python_template.begin_code
+    skeleton_code += generate_req_code(header_dict, details_dict, url) + generate_search_code(searchString)
     if method == "GET":
-        skeleton_code += generate_req_code(header_dict, details_dict, url) + generate_search_code(searchString)
+        pass
     elif method == "POST":
-        skeleton_code += generate_req_code(header_dict, details_dict, url) + generate_search_code(searchString)
+        pass
+    else:
+        print("Only GET and POST requests are supported yet!")
+        return ""
+
     return skeleton_code
 
 

@@ -39,16 +39,17 @@ def generate_script(header_dict, details_dict, searchString=None):
 
     if method == "GET":
         skeleton_code += ruby_template.get_request
-        skeleton_code += generate_request_headers(header_dict)
-        skeleton_code += generate_proxy_code(details_dict)
-        skeleton_code += generate_https_code(url)
 
     elif method == "POST":
         body = details_dict['data']
         skeleton_code += ruby_template.post_request.format(body=generate_body_code(body))
-        skeleton_code += generate_request_headers(header_dict)
-        skeleton_code += generate_proxy_code(details_dict)
-        skeleton_code += generate_https_code(url)
+    else:
+        print("Only GET and POST requests are supported yet!")
+        return ""
+
+    skeleton_code += generate_request_headers(header_dict)
+    skeleton_code += generate_proxy_code(details_dict)
+    skeleton_code += generate_https_code(url)
 
     if searchString:
         skeleton_code += ruby_template.body_code_search.format(search_string=searchString)
@@ -65,11 +66,10 @@ def generate_request_headers(header_dict):
     :return: A string of ruby code which places headers in the request.
     :rtype:`str`
     """
-    skeleton = ""
+    skeleton_code = ""
     for key, value in header_dict.items():
-        skeleton_ = ruby_template.request_header.format(header=str(key), header_value=str(value))
-        skeleton += skeleton_
-    return skeleton
+        skeleton_code += ruby_template.request_header.format(header=str(key), header_value=str(value))
+    return skeleton_code
 
 
 def generate_https_code(url):

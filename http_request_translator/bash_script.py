@@ -36,15 +36,16 @@ def generate_script(header_dict, details_dict, searchString=None):
         raise ValueError("Invalid URL")
 
     skeleton_code = bash_template.begin_code
+    skeleton_code += generate_proxy_code(details_dict)
     headers = generate_request_headers(header_dict)
+    skeleton_code += bash_template.code_simple.format(method=method, url=url, headers=headers)
     if method == "GET":
-        skeleton_code += generate_proxy_code(details_dict)
-        skeleton_code += bash_template.code_simple.format(method=method, url=url, headers=headers)
-
+        pass
     elif method == "POST":
-        skeleton_code += generate_proxy_code(details_dict)
-        skeleton_code += bash_template.code_simple.format(method=method, url=url, headers=headers)
         skeleton_code += generate_body_code(details_dict['data'])
+    else:
+        print("Only GET and POST requests are supported yet!")
+        return ""
 
     if searchString:
         skeleton_code += generate_search_code(searchString)
@@ -59,11 +60,11 @@ def generate_request_headers(header_dict):
     :return: A string of bash code which places headers in the request.
     :rtype:`str`
     """
-    skeleton = ""
+    skeleton_code = ""
     for key, value in header_dict.items():
-        skeleton += bash_template.request_header.format(header=str(key), header_value=str(value))
+        skeleton_code += bash_template.request_header.format(header=str(key), header_value=str(value))
 
-    return skeleton
+    return skeleton_code
 
 
 def generate_search_code(searchString):
