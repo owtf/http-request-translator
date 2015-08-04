@@ -2,7 +2,7 @@ begin_code = """
 #!/usr/bin/env bash
 curl"""
 
-request_header = """ --header "{header} : {header_value}" """
+request_header = """ --header "{header}:{header_value}" """
 
 code_search = " | egrep --color ' {search_string} |$'"
 

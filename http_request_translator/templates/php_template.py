@@ -11,7 +11,7 @@ $headers = array();
 """
 
 request_header = """
-$headers[] = "{header}: {header_value}";
+$headers[] = "{header}:{header_value}";
 """
 
 post_request = """

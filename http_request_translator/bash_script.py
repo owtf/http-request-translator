@@ -61,8 +61,9 @@ def generate_request_headers(header_dict):
     :rtype:`str`
     """
     skeleton_code = ""
-    for key, value in header_dict.items():
-        skeleton_code += bash_template.request_header.format(header=str(key), header_value=str(value))
+    for item in header_dict['raw_headers']:
+        header, value = item.split(":", 1)
+        skeleton_code += bash_template.request_header.format(header=str(header), header_value=str(value))
 
     return skeleton_code
 

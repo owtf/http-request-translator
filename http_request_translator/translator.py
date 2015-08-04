@@ -12,7 +12,16 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from tornado.httputil import HTTPHeaders
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+try:
+    from BaseHTTPServer import BaseHTTPRequestHandler  # Python 2.x
+except ImportError:
+    from http.server import BaseHTTPRequestHandler  # Python 3.x
+
+from collections import OrderedDict
 from plugin_manager import generate_script
 from url import get_url, check_valid_url
 
@@ -179,12 +188,37 @@ def parse_raw_request(request):
     :rtype: dict,dict
     """
     try:
-        new_request_method, new_request = request.split('\n', 1)[0], request.split('\n', 1)[1]
+        new_request_method, _ = request.split('\n', 1)[0], request.split('\n', 1)[1]
     except IndexError:
         raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
-    header_dict = dict(HTTPHeaders.parse(new_request))
+
+    class HTTPRequest(BaseHTTPRequestHandler):
+        def __init__(self, request_text):
+            self.rfile = StringIO(request_text)
+            self.raw_requestline = self.rfile.readline()
+            self.error_code = self.error_message = None
+            self.parse_request()
+
+    parsed_request = HTTPRequest(request)
+    new_dict = vars(parsed_request.headers)
+    header_list = []
+    header_dict = OrderedDict()  # keeping the dictionary, if needed to access a particular header at any point in time.
+    for item in new_dict['headers']:
+        if item.endswith('\n'):
+            item = item.strip('\n')  # Remove any new_line at the end of the header,value pair
+        header_list.append(item)
+        header, value = item.split(":", 1)
+        # If duplicate header then do smth this "Cache-Control : no-store, no-cache"
+        if header in header_dict:
+            header_dict[header] += ","+value
+        else:
+            header_dict[header] = value
+
+    header_dict['raw_headers'] = header_list
+    print(header_dict)
     details_dict = {}
-    details_dict['method'] = new_request_method.split(' ', 2)[0].strip()
+    details_dict['method'] = parsed_request.command
+    # Not using whatever stored in parsed_request for the reason to keep the request as original as possible
     try:  # try to split the path from request if one is passed.
         proto_ver = new_request_method.split(' ', 2)[2].split('/', 1)
         details_dict['protocol'] = proto_ver[0].strip()
