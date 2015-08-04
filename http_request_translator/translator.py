@@ -192,8 +192,10 @@ def parse_raw_request(request):
             self.raw_requestline = self.rfile.readline()
             self.error_code = self.error_message = None
             self.parse_request()
-
-    parsed_request = HTTPRequest(request)
+    try:
+        parsed_request = HTTPRequest(request)
+    except ValueError:
+        raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
     new_dict = vars(parsed_request.headers)
     header_list = []
     for item in new_dict['headers']:
