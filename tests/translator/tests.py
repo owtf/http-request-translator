@@ -12,7 +12,7 @@ class TestTranslator(unittest.TestCase):
         self.assertEqual(
             result,
             (
-                {'Host': 'google.com'},
+                ['Host: google.com'],
                 {
                     'protocol': 'HTTP',
                     'pre_scheme': 'https://',
@@ -31,7 +31,7 @@ class TestTranslator(unittest.TestCase):
         self.assertEqual(
             result,
             (
-                {'Host': 'google.com:31337'},
+                ['Host: google.com:31337'],
                 {
                     'protocol': 'HTTP',
                     'pre_scheme': 'https://',
@@ -50,7 +50,7 @@ class TestTranslator(unittest.TestCase):
         self.assertEqual(
             result,
             (
-                {'Host': '127.0.0.1'},
+                ['Host: 127.0.0.1'],
                 {
                     'protocol': 'HTTP',
                     'pre_scheme': 'https://',
@@ -69,7 +69,7 @@ class TestTranslator(unittest.TestCase):
         self.assertEqual(
             result,
             (
-                {'Host': '127.0.0.1:31337'},
+                ['Host: 127.0.0.1:31337'],
                 {
                     'protocol': 'HTTP',
                     'pre_scheme': 'https://',
@@ -88,7 +88,7 @@ class TestTranslator(unittest.TestCase):
         self.assertEqual(
             result,
             (
-                {'Host': '[::1]'},
+                ['Host: [::1]'],
                 {
                     'protocol': 'HTTP',
                     'pre_scheme': 'https://',
@@ -107,7 +107,7 @@ class TestTranslator(unittest.TestCase):
         self.assertEqual(
             result,
             (
-                {'Host': '[::1]:31337'},
+                ['Host: [::1]:31337'],
                 {
                     'protocol': 'HTTP',
                     'pre_scheme': 'https://',

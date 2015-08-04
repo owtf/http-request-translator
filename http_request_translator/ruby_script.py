@@ -10,10 +10,10 @@ from url import check_valid_url, get_url
 from templates import ruby_template
 
 
-def generate_script(header_dict, details_dict, searchString=None):
+def generate_script(header_list, details_dict, searchString=None):
     """Generate the ruby script for the passed request.
 
-    :param dict header_dict: Header dictionary containing fields like 'Host','User-Agent'.
+    :param list header_list: Header list containing fields like 'Host','User-Agent'.
     :param dict details_dict: Request specific details like body and method for the request.
     :param str searchString: String to search for in the response to the request. By default remains None.
 
@@ -23,7 +23,7 @@ def generate_script(header_dict, details_dict, searchString=None):
     :rtype:`str`
     """
     method = details_dict['method']
-    url = get_url(header_dict['Host'], details_dict['pre_scheme'])
+    url = get_url(details_dict['Host'], details_dict['pre_scheme'])
     url += details_dict['path']
 
     encoding_list = ['HEAD', 'OPTIONS', 'GET']
@@ -47,7 +47,7 @@ def generate_script(header_dict, details_dict, searchString=None):
         print("Only GET and POST requests are supported yet!")
         return ""
 
-    skeleton_code += generate_request_headers(header_dict)
+    skeleton_code += generate_request_headers(header_list)
     skeleton_code += generate_proxy_code(details_dict)
     skeleton_code += generate_https_code(url)
 
@@ -58,16 +58,16 @@ def generate_script(header_dict, details_dict, searchString=None):
     return skeleton_code
 
 
-def generate_request_headers(header_dict):
+def generate_request_headers(header_list):
     """Place the request headers in ruby script from header dictionary.
 
-    :param dict header_dict: Header dictionary containing fields like 'Host','User-Agent'.
+    :param list header_list: Header list containing fields like 'Host','User-Agent'.
 
     :return: A string of ruby code which places headers in the request.
     :rtype:`str`
     """
     skeleton_code = ""
-    for item in header_dict['raw_headers']:
+    for item in header_list:
         header, value = item.split(":", 1)
         skeleton_code += ruby_template.request_header.format(header=str(header), header_value=str(value))
     return skeleton_code

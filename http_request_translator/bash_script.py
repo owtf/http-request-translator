@@ -10,10 +10,10 @@ from url import get_url, check_valid_url
 from templates import bash_template
 
 
-def generate_script(header_dict, details_dict, searchString=None):
+def generate_script(header_list, details_dict, searchString=None):
     """Generate the bash script for the passed request.
 
-    :param dict header_dict: Header dictionary containing fields like 'Host','User-Agent'.
+    :param list header_list: Header list containing fields like 'Host','User-Agent'.
     :param dict details_dict: Request specific details like body and method for the request.
     :param str searchString: String to search for in the response to the request. By default remains None.
 
@@ -23,7 +23,7 @@ def generate_script(header_dict, details_dict, searchString=None):
     :rtype:`str`
     """
     method = details_dict['method']
-    url = get_url(header_dict['Host'], details_dict['pre_scheme'])
+    url = get_url(details_dict['Host'], details_dict['pre_scheme'])
     url += details_dict['path']
 
     encoding_list = ['HEAD', 'OPTIONS', 'GET']
@@ -37,7 +37,7 @@ def generate_script(header_dict, details_dict, searchString=None):
 
     skeleton_code = bash_template.begin_code
     skeleton_code += generate_proxy_code(details_dict)
-    headers = generate_request_headers(header_dict)
+    headers = generate_request_headers(header_list)
     skeleton_code += bash_template.code_simple.format(method=method, url=url, headers=headers)
     if method == "GET":
         pass
@@ -52,16 +52,16 @@ def generate_script(header_dict, details_dict, searchString=None):
     return skeleton_code
 
 
-def generate_request_headers(header_dict):
+def generate_request_headers(header_list):
     """Place the request headers in bash script from header dictionary.
 
-    :param dict header_dict: Header dictionary containing fields like 'Host','User-Agent'.
+    :param list header_list: Header list containing fields like 'Host','User-Agent'.
 
     :return: A string of bash code which places headers in the request.
     :rtype:`str`
     """
     skeleton_code = ""
-    for item in header_dict['raw_headers']:
+    for item in header_list:
         header, value = item.split(":", 1)
         skeleton_code += bash_template.request_header.format(header=str(header), header_value=str(value))
 

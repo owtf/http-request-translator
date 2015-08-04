@@ -10,10 +10,10 @@ from url import get_url, check_valid_url
 from templates import php_template
 
 
-def generate_script(header_dict, details_dict, searchString=None):
+def generate_script(header_list, details_dict, searchString=None):
     """Generate the php script for the passed request.
 
-    :param dict header_dict: Header dictionary containing fields like 'Host','User-Agent'.
+    :param list header_list: Header list containing fields like 'Host','User-Agent'.
     :param dict details_dict: Request specific details like body and method for the request.
     :param str searchString: String to search for in the response to the request. By default remains None.
 
@@ -22,7 +22,7 @@ def generate_script(header_dict, details_dict, searchString=None):
     :return: A combined string of generated code
     :rtype:`str`
     """
-    url = get_url(header_dict['Host'], details_dict['pre_scheme'])
+    url = get_url(details_dict['Host'], details_dict['pre_scheme'])
     method = details_dict['method']
     url += details_dict['path']
     if not check_valid_url(url):
@@ -32,7 +32,7 @@ def generate_script(header_dict, details_dict, searchString=None):
         encoded_data = quote(details_dict['data'], '')
         url = url + encoded_data
     skeleton_code = php_template.begin_code.format(url=url)
-    skeleton_code += generate_request_headers(header_dict)
+    skeleton_code += generate_request_headers(header_list)
     if method == "GET":
         pass
     elif method == "POST":
@@ -46,16 +46,16 @@ def generate_script(header_dict, details_dict, searchString=None):
     return skeleton_code
 
 
-def generate_request_headers(header_dict):
+def generate_request_headers(header_list):
     """Place the request headers in php script from header dictionary.
 
-    :param dict header_dict: Header dictionary containing fields like 'Host','User-Agent'.
+    :param list header_list: Header list containing fields like 'Host','User-Agent'.
 
     :return: A string of php code which places headers in the request.
     :rtype:`str`
     """
     skeleton_code = ""
-    for item in header_dict['raw_headers']:
+    for item in header_list:
         header, value = item.split(":", 1)
         skeleton_code += php_template.request_header.format(header=str(header), header_value=str(value))
 

@@ -9,19 +9,13 @@ except NameError:
     pass  # Python 3.x
 try:
     from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
-
-try:
     from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-try:
     from BaseHTTPServer import BaseHTTPRequestHandler  # Python 2.x
 except ImportError:
+    from urllib.parse import urlparse
+    from io import StringIO
     from http.server import BaseHTTPRequestHandler  # Python 3.x
 
-from collections import OrderedDict
 from plugin_manager import generate_script
 from url import get_url, check_valid_url
 
@@ -188,7 +182,7 @@ def parse_raw_request(request):
     :rtype: dict,dict
     """
     try:
-        new_request_method, _ = request.split('\n', 1)[0], request.split('\n', 1)[1]
+        new_request_method = request.split('\n', 1)[0]
     except IndexError:
         raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
 
@@ -202,22 +196,18 @@ def parse_raw_request(request):
     parsed_request = HTTPRequest(request)
     new_dict = vars(parsed_request.headers)
     header_list = []
-    header_dict = OrderedDict()  # keeping the dictionary, if needed to access a particular header at any point in time.
     for item in new_dict['headers']:
-        if item.endswith('\n'):
-            item = item.strip('\n')  # Remove any new_line at the end of the header,value pair
+        if item.endswith(('\n', '\r\n')):
+            item = item.rstrip()  # Remove any new_line at the end of the header,value pair
         header_list.append(item)
         header, value = item.split(":", 1)
-        # If duplicate header then do smth this "Cache-Control : no-store, no-cache"
-        if header in header_dict:
-            header_dict[header] += ","+value
-        else:
-            header_dict[header] = value
 
-    header_dict['raw_headers'] = header_list
-    print(header_dict)
+        if header.lower() == "host":
+            host = value.strip()  # Keep hostname for further checks
+
     details_dict = {}
     details_dict['method'] = parsed_request.command
+    details_dict['Host'] = host
     # Not using whatever stored in parsed_request for the reason to keep the request as original as possible
     try:  # try to split the path from request if one is passed.
         proto_ver = new_request_method.split(' ', 2)[2].split('/', 1)
@@ -244,12 +234,11 @@ def parse_raw_request(request):
         path = path + "#" + frag
     details_dict['path'] = path
     # If scheme is specified in GET Path and Header 'Host' Field doesn't already starts with it
-    if scheme and not header_dict['Host'].startswith(scheme):
+    if scheme and not host.startswith(scheme):
         details_dict['pre_scheme'] = scheme + "://"  # Store the scheme defined in GET path for later checks
     else:
         details_dict['pre_scheme'] = ''
-    details_dict['Host'] = header_dict['Host']
-    return header_dict, details_dict
+    return header_list, details_dict
 
 
 def main():
