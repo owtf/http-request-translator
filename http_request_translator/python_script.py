@@ -31,42 +31,41 @@ def generate_script(header_list, details_dict, searchString=None):
     if details_dict['data'] and (details_dict['method'] in encoding_list):
         encoded_data = quote(details_dict['data'], '')
         url = url + encoded_data
-    skeleton_code = python_template.begin_code
-    skeleton_code += generate_req_code(header_list, details_dict, url) + generate_search_code(searchString)
+    skeleton_code = python_template.begin_code.format(url=url, header_list=str(header_list))
+    skeleton_code += generate_proxy_code(details_dict)
     if method == "GET":
         pass
     elif method == "POST":
-        pass
+        if details_dict['data']:
+            # Escape single quotes , double quotes are good here
+            body = re.sub(r"'", "\\'", details_dict['data'])
+        else:
+            body = ""
+        skeleton_code += python_template.post_code.format(post_body=body)
+
     else:
         print("Only GET and POST requests are supported yet!")
         return ""
 
+    skeleton_code += generate_https_code(url)
+    skeleton_code += generate_search_code(searchString)
     return skeleton_code
 
 
-def generate_req_code(header_list, details_dict, url):
-    """Generate python code for the body and proxy specific parts of the request.
+def generate_proxy_code(details_dict):
+    """Generate python code for proxy specific parts of the request.
 
-    :param list header_list: list of request headers.
     :param dict details_dict: Dictionary of request details like proxy,data etc.
-    :param str url: URL for the request.
 
     :return: A string of combined python code for specific proxy if one passed
     :rtype: `str`
     """
-    if details_dict['data']:
-        # Escape single quotes , double quotes are good here
-        body = re.sub(r"'", "\\'", details_dict['data'])
-    else:
-        body = ""
 
     if 'proxy_host' and 'proxy_port' in details_dict:
         return python_template.proxy_code.format(
-            headers=str(header_list), host=url, method=details_dict['method'], proxy_host=details_dict['proxy_host'],
-            proxy_port=details_dict['proxy_port'], body=str(body))
+            proxy_host=details_dict['proxy_host'], proxy_port=details_dict['proxy_port'])
     else:
-        return python_template.non_proxy_code.format(
-            headers=str(header_list), host=url, method=details_dict['method'], body=str(body))
+        return ""
 
 
 def generate_search_code(searchString):
@@ -82,3 +81,17 @@ def generate_search_code(searchString):
         return python_template.body_code_search.format(search_string=searchString)
     else:
         return python_template.body_code_simple
+
+
+def generate_https_code(url):
+    """Checks if url is 'https' and returns appropriate python code.
+
+    :param str url: Url for the request
+
+    :return: A string of python code
+    :rtype:`str`
+    """
+    if url.startswith('https'):
+        return python_template.https_code
+    else:
+        return ""
