@@ -7,6 +7,8 @@ $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, '{url}');
 // Set so curl_exec returns the result instead of outputting it.
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+// Set verbosity
+curl_setopt($ch, CURLOPT_VERBOSE, 1);
 $headers = array();
 """
 
