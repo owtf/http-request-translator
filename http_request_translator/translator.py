@@ -9,12 +9,8 @@ except NameError:
     pass  # Python 3.x
 try:
     from urlparse import urlparse
-    from StringIO import StringIO
-    from BaseHTTPServer import BaseHTTPRequestHandler  # Python 2.x
 except ImportError:
     from urllib.parse import urlparse
-    from io import StringIO
-    from http.server import BaseHTTPRequestHandler  # Python 3.x
 
 from plugin_manager import generate_script
 from url import get_url, check_valid_url
@@ -182,33 +178,22 @@ def parse_raw_request(request):
     :rtype: dict,dict
     """
     try:
-        new_request_method = request.split('\n', 1)[0]
+        new_request_method, headers = request.split('\n', 1)
     except IndexError:
         raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
 
-    class HTTPRequest(BaseHTTPRequestHandler):
-        def __init__(self, request_text):
-            self.rfile = StringIO(request_text)
-            self.raw_requestline = self.rfile.readline()
-            self.error_code = self.error_message = None
-            self.parse_request()
-    try:
-        parsed_request = HTTPRequest(request)
-    except ValueError:
-        raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
-    new_dict = vars(parsed_request.headers)
     header_list = []
-    for item in new_dict['headers']:
-        if item.endswith(('\n', '\r\n')):
-            item = item.rstrip()  # Remove any new_line at the end of the header,value pair
-        header_list.append(item)
-        header, value = item.split(":", 1)
-
+    for line in headers.splitlines():
+        header_list.append(line)
+        try:
+            header, value = line.split(":", 1)
+        except IndexError:
+            raise ValueError("Headers Malformed. Please Enter a Valid HTTP request.")
         if header.lower() == "host":
             host = value.strip()  # Keep hostname for further checks
 
     details_dict = {}
-    details_dict['method'] = parsed_request.command
+    details_dict['method'] = new_request_method.split(' ', 1)[0].strip()
     details_dict['Host'] = host
     # Not using whatever stored in parsed_request for the reason to keep the request as original as possible
     try:  # try to split the path from request if one is passed.
