@@ -63,6 +63,9 @@ def generate_request_headers(header_list):
     skeleton_code = ""
     for item in header_list:
         header, value = item.split(":", 1)
+        # Escape single quotes in headers
+        header = re.sub("'", "\\'", header)
+        value = re.sub("'", "\\'", value)
         skeleton_code += bash_template.request_header.format(header=str(header), header_value=str(value))
 
     return skeleton_code
