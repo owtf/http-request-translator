@@ -35,26 +35,23 @@ def generate_script(header_list, details_dict, searchString=None):
     if not check_valid_url(url):
         raise ValueError("Invalid URL")
 
-    skeleton_code = ruby_template.begin_code.format(host=url)
-
+    skeleton_code = ruby_template.begin_code.format(method=method)
+    skeleton_code += ruby_template.header_code.format(headers=generate_request_headers(header_list))
+    skeleton_code += generate_proxy_code(details_dict)
     if method == "GET":
-        skeleton_code += ruby_template.get_request
+        pass
 
     elif method == "POST":
         body = details_dict['data']
-        skeleton_code += ruby_template.post_request.format(body=generate_body_code(body))
+        skeleton_code += ruby_template.post_body_code.format(body=generate_body_code(body))
     else:
         print("Only GET and POST requests are supported yet!")
         return ""
 
-    skeleton_code += generate_request_headers(header_list)
-    skeleton_code += generate_proxy_code(details_dict)
-    skeleton_code += generate_https_code(url)
-
     if searchString:
-        skeleton_code += ruby_template.body_code_search.format(search_string=searchString)
+        skeleton_code += ruby_template.body_code_search.format(url=url, search_string=searchString)
     else:
-        skeleton_code += ruby_template.body_code_simple
+        skeleton_code += ruby_template.body_code_simple.format(url=url)
     return skeleton_code
 
 
@@ -73,20 +70,6 @@ def generate_request_headers(header_list):
     return skeleton_code
 
 
-def generate_https_code(url):
-    """Checks if url is 'https' and returns appropriate ruby code.
-
-    :param str url: Url for the request
-
-    :return: A string of ruby code
-    :rtype:`str`
-    """
-    if url.startswith('https'):
-        return ruby_template.https_code
-    else:
-        return ""
-
-
 def generate_proxy_code(details_dict):
     """Checks if proxy is provided and returns appropriate ruby code.
 
@@ -97,10 +80,10 @@ def generate_proxy_code(details_dict):
     """
     if 'proxy_host' and 'proxy_port' in details_dict:
         skeleton = ruby_template.proxy_code.format(
-            proxy_host=details_dict['proxy_host'], proxy_port=details_dict['proxy_port'])
+            proxy=details_dict['proxy_host'] + ":" + details_dict['proxy_port'])
         return skeleton
     else:
-        return ruby_template.non_proxy_code
+        return ""
 
 
 def generate_body_code(body):

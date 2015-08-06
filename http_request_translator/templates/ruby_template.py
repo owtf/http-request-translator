@@ -1,65 +1,91 @@
 begin_code = """
-require 'net/http'
-require 'uri'
+require "typhoeus"
 
-uri = URI('{host}')"""
-
-get_request = """
-req = Net::HTTP::Get.new(uri.request_uri)
+options = {{
+    followlocation: true,
+    verbose: true,
+    method: :{method},
 """
-
-post_request = """
-req = Net::HTTP::Post.new(uri.request_uri)
-req.body = '{body}'
+proxy_code = """
+    proxy: {proxy},
 """
 
 request_header = """
-req['{header}'] = '{header_value}'"""
+    '{header}' => '{header_value}',"""
 
-proxy_code = """
-proxy_host, proxy_port = '{proxy_host}', '{proxy_port}'
-http = Net::HTTP.new(uri.hostname, nil, proxy_host, proxy_port)
+header_code = """
+    headers: {{
+    {headers}
+    }},
 """
 
-# NON PROXY
-non_proxy_code = """
-http = Net::HTTP.new(uri.hostname, uri.port)
+post_body_code = """
+    body: '{body}'
+}}
 """
-# IF HTTPS
-https_code = """
-http.use_ssl=true
-"""
-
 body_code_search = """
-response = http.request(req)
-puts 'Response #{{response.code}} #{{response.message}}:'
+url = '{url}'
+req = Typhoeus::Request.new(url, options)
 
-begin
-    require 'colorize'
-    lib_available = true
-rescue LoadError
-    lib_available = false
-end
+req.on_complete do |response|
+  if response.success?
+    puts 'Response #{{response.code}}:'
+    begin
+        require 'colorize'
+        lib_available = true
+    rescue LoadError
+        lib_available = false
+    end
 
-matched = response.body.match /{search_string}/
+    matched = response.body.match /{search_string}/
 
-original = response.body
-if matched then
-    if lib_available then
-        for i in 0..matched.length
-            original.gsub! /#{{matched[i]}}/, "#{{matched[i]}}".green
-        end
-    else
-        for i in 0..matched.length
-            puts 'Matched item: #{{matched[i]}}'
+    original = response.body
+    if matched then
+        if lib_available then
+            for i in 0..matched.length
+                original.gsub! /#{{matched[i]}}/, "#{{matched[i]}}".green
+            end
+        else
+            for i in 0..matched.length
+                puts 'Matched item: #{{matched[i]}}'
+            end
         end
     end
+    puts original
+
+  elsif response.timed_out?
+    puts 'Request Timed Out!'
+  elsif response.code == 0
+    # Could not get an http response, something's wrong.
+    puts response.return_message
+  else
+    # Received a non-successful http response.
+    puts 'HTTP request failed: ' + response.code.to_s
+  end
 end
-puts original
+
+req.run
 """
 
 body_code_simple = """
-response = http.request(req)
-puts "Response #{response.code} #{response.message}:
-          #{response.body}"
+url = '{url}'
+req = Typhoeus::Request.new(url, options)
+
+req.on_complete do |response|
+  if response.success?
+    puts 'Response #{{response.code}}'
+    puts response.body
+
+  elsif response.timed_out?
+    puts 'Request Timed Out!'
+  elsif response.code == 0
+    # Could not get an http response, something's wrong.
+    puts response.return_message
+  else
+    # Received a non-successful http response.
+    puts 'HTTP request failed: ' + response.code.to_s
+  end
+end
+
+req.run
 """
