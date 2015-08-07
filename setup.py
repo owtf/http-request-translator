@@ -13,6 +13,6 @@ setup(name='http_request_translator',
       author='Ramana Subramanyam, Arun Sori, cjdupreez',
       author_email='owasp_owtf_developers@lists.owasp.org',
       license='3-clause BSD',
-      install_requires=["tornado", "termcolor"],
-      packages=['http_request_translator'],
+      install_requires=[],
+      packages=['http_request_translator', 'http_request_translator.templates'],
       )
