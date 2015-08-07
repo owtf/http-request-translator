@@ -80,7 +80,7 @@ def generate_proxy_code(details_dict):
     """
     if 'proxy_host' and 'proxy_port' in details_dict:
         skeleton = ruby_template.proxy_code.format(
-            proxy=details_dict['proxy_host'] + ":" + details_dict['proxy_port'])
+            proxy_host=details_dict['proxy_host'], proxy_port=details_dict['proxy_port'])
         return skeleton
     else:
         return ""

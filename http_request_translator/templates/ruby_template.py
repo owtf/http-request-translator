@@ -7,7 +7,7 @@ options = {{
     method: :{method},
 """
 proxy_code = """
-    proxy: {proxy},
+    proxy: '{proxy_host}:{proxy_port}',
 """
 
 request_header = """
