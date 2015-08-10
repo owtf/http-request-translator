@@ -37,10 +37,10 @@ def take_arguments():
         const='127.0.0.1:8009',
         help='Generates command/script with relevant, specified proxy')
     conflicting_group.add_argument(
-        '--string_search', '-s',
+        '--search_string', '-ss',
         help='Sends the request and searches for the required string in the response (i.e literal match)')
     conflicting_group.add_argument(
-        '--regex_search', '-re',
+        '--search_regex', '-se',
         help='Sends the request and searches for the required regex in the response (i.e regex match)')
     parser.add_argument(
         '--interactive', '-i',
@@ -103,10 +103,10 @@ def process_arguments(args):
             print("Hi there. Send some data to POST, use --data for sending data.")
             sys.exit(-1)
         arg_option = None
-        if args.string_search:
-            arg_option = args.string_search
-        elif args.regex_search:
-            arg_option = args.regex_search
+        if args.search_string:
+            arg_option = args.search_string
+        elif args.search_regex:
+            arg_option = args.search_regex
         if len(script_list) == 0:
             # Default curl commands if --output option is not passed
             # Not implemented yet

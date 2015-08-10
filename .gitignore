@@ -3,4 +3,4 @@
 *.pyc
 *.swp
 # nose coverage
-.coverage/
+.coverage
