@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-import re
 try:
     from urllib import quote
 except ImportError:
@@ -10,104 +9,94 @@ from .url import get_url, check_valid_url
 from .templates import bash_template
 
 
-def generate_script(header_list, details_dict, searchString=None):
-    """Generate the bash script for the passed request.
+def generate_script(headers, details, search_string=None):
+    """Generate the bash script corresponding to the HTTP request.
 
-    :param list header_list: Header list containing fields like 'Host','User-Agent'.
-    :param dict details_dict: Request specific details like body and method for the request.
-    :param str searchString: String to search for in the response to the request. By default remains None.
+    :param list headers: Headers list containing fields like 'Host','User-Agent'.
+    :param dict details: Request specific details dictionary like body and method for the request.
+    :param str search_string: String to search for in the response to the request. By default remains None.
 
-    :raises ValueError: When url is Invalid
+    :raises ValueError: When url is invalid.
 
-    :return: A combined string of generated code
+    :return: Generated bash scriptA to send the HTTP request.
     :rtype:`str`
     """
-    method = details_dict['method']
-    url = get_url(details_dict['Host'], details_dict['pre_scheme'])
-    url += details_dict['path']
+    method = details['method'].lower()
+    url = get_url(details['Host'], details['pre_scheme']) + details['path']
 
-    encoding_list = ['HEAD', 'OPTIONS', 'GET']
-
-    if details_dict['data'] and (details_dict['method'] in encoding_list):
-        encoded_data = quote(details_dict['data'], '')
+    encoding_list = ['head', 'options', 'get']
+    if details['data'] and (method in encoding_list):
+        encoded_data = quote(details['data'], '')
         url = url + encoded_data
 
     if not check_valid_url(url):
-        raise ValueError("Invalid URL")
+        raise ValueError("Invalid URL '%s'." % url)
 
-    skeleton_code = bash_template.begin_code
-    skeleton_code += generate_proxy_code(details_dict)
-    headers = generate_request_headers(header_list)
-    skeleton_code += bash_template.code_simple.format(method=method, url=url, headers=headers)
-    if method == "GET":
+    # Format basic bash script with proxy and http request.
+    skeleton_code = bash_template.begin_code + generate_proxy_code(details) + bash_template.code_simple.format(
+        method=details['method'],
+        url=url,
+        headers=generate_request_headers(headers))
+    if method == 'get':
         pass
-    elif method == "POST":
-        skeleton_code += generate_body_code(details_dict['data'])
+    elif method == 'post':
+        skeleton_code += generate_body_code(details['data'])
     else:
-        print("Only GET and POST requests are supported yet!")
-        return ""
+        raise ValueError("'%s' is not supported. Only GET and POST requests are supported yet!" % details['method'])
 
-    if searchString:
-        skeleton_code += generate_search_code(searchString)
+    if search_string:
+        skeleton_code += generate_search_code(search_string)
     return skeleton_code
 
 
-def generate_request_headers(header_list):
-    """Place the request headers in bash script from header dictionary.
+def generate_request_headers(headers=[]):
+    """Generate request headers for the bash script.
 
-    :param list header_list: Header list containing fields like 'Host','User-Agent'.
+    :param list headers: Headers list containing fields like 'Host','User-Agent'.
 
-    :return: A string of bash code which places headers in the request.
+    :return: Bash script snippet with HTTP requests headers.
     :rtype:`str`
     """
-    skeleton_code = ""
-    for item in header_list:
-        header, value = item.split(":", 1)
-        # Escape single quotes in headers
-        header = re.sub("'", "\\'", header)
-        value = re.sub("'", "\\'", value)
-        skeleton_code += bash_template.request_header.format(header=str(header), header_value=str(value))
-
+    skeleton_code = ''
+    for item in headers:
+        header, value = item.split(':', 1)
+        skeleton_code += bash_template.request_header.format(
+            header=header.replace("'", "\\'"),
+            header_value=value.replace("'", "\\'"))
     return skeleton_code
 
 
-def generate_search_code(searchString):
-    """Generate bash code for `searchString` if one is passed.
+def generate_search_code(search_string=''):
+    """Generate search code for the bash script.
 
-    :param str searchString: String to be searched for in response to request
+    :param str search_string: String to be found in the HTTP response from the server.
 
-    :return: A string of combined bash code for searching given string in response
+    :return: Bash script snippet with the HTTP response search feature.
     :rtype: `str`
     """
-    if searchString:
-        # Quote single quotes in substring, double quotes are good here
-        searchString = re.sub("'", "\\'", searchString)
-        return bash_template.code_search.format(search_string=searchString)
+    return bash_template.code_search.format(search_string=search_string.replace("'", "\\'"))
 
 
-def generate_proxy_code(details_dict):
-    """Generate bash code for the specific proxy if one is passed.
+def generate_proxy_code(details={}):
+    """Generate proxy code for the bash script.
 
-    :param dict details_dict: Dictionary of request details containing proxy specific information.
+    :param dict details: Dictionary of request details containing proxy specific information.
 
-    :return: A string of combined bash code for specific proxy
+    :return: Bash script snippet with the proxy code.
     :rtype: `str`
     """
-    if 'proxy_host' and 'proxy_port' in details_dict:
-        proxy = details_dict['proxy_host'] + ":" + details_dict['proxy_port']
+    if 'proxy_host' and 'proxy_port' in details:
+        proxy = '%s:%d' % (details['proxy_host'], details['proxy_port'])
         return bash_template.proxy_code.format(proxy=proxy)
-    else:
-        return ""
+    return ''
 
 
-def generate_body_code(body):
-    """Generate bash code for the body of the request if one is passed.
+def generate_body_code(body=''):
+    """Generate body code for the bash script.
 
-    :param dict details_dict: Dictionary of request details containing data to be sent.
+    :param str body: Body of the request to be sent.
 
-    :return: A string of combined bash code for the body of the request.
+    :return: Bash script snippet with  the body code.
     :rtype: `str`
     """
-    # Escape single quotes , double quotes are good here
-    body = re.sub(r"'", "\\'", body)
-    return bash_template.body_code.format(body=str(body))
+    return bash_template.body_code.format(body=body.replace("'", "\\'"))
