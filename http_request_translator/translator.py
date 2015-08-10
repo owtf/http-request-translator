@@ -1,8 +1,6 @@
-#!/usr/bin/python
 from __future__ import print_function
 
 import sys
-import argparse
 try:
     input = raw_input  # Python 2.x
 except NameError:
@@ -14,47 +12,6 @@ except ImportError:
 
 from .plugin_manager import generate_script
 from .url import get_url, check_valid_url
-
-
-def take_arguments():
-    """Entry point for the translator. Parses arguments using `argparse` library.
-
-    :return:`argparse` class object containing arguments passed to the translator.
-    :rtype:class `argparse.Namespace`
-    """
-    parser = argparse.ArgumentParser(
-        description="Request Translator is a standalone tool that can translate "
-                    "raw HTTP requests into curl commands or bash/python/php/ruby/PowerShell scripts")
-    conflicting_group = parser.add_mutually_exclusive_group()
-    parser.add_argument(
-        '--output', '-o',
-        action='append',
-        help="Generates a script for given HTTP request. "
-             "If you want to generate multiple scripts, separate the script's name with a <,>")
-    parser.add_argument(
-        '--proxy', '-p',
-        nargs='?',
-        const='127.0.0.1:8009',
-        help='Generates command/script with relevant, specified proxy')
-    conflicting_group.add_argument(
-        '--search_string', '-ss',
-        help='Sends the request and searches for the required string in the response (i.e literal match)')
-    conflicting_group.add_argument(
-        '--search_regex', '-se',
-        help='Sends the request and searches for the required regex in the response (i.e regex match)')
-    parser.add_argument(
-        '--interactive', '-i',
-        action='store_true',
-        help="Interactive mode: read raw HTTP request from keyboard, hit enter when ready."
-             "Type ':q!' to exit from the interactive mode.")
-    parser.add_argument(
-        '--data', '-d',
-        help='Add the data that you want to send along with the header')
-    parser.add_argument(
-        '--request', '-r',
-        help='Input the HTTP request')
-    process_arguments(parser.parse_args())
-    return parser.parse_args()
 
 
 def process_arguments(args):
@@ -232,9 +189,3 @@ def parse_raw_request(request):
     return header_list, details_dict
 
 
-def main():
-    # TODO: Docstring and comments.
-    take_arguments()
-
-if __name__ == '__main__':
-    main()
