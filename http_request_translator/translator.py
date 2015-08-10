@@ -12,8 +12,8 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from plugin_manager import generate_script
-from url import get_url, check_valid_url
+from .plugin_manager import generate_script
+from .url import get_url, check_valid_url
 
 
 def take_arguments():

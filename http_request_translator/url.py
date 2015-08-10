@@ -4,7 +4,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from util import re_ipv4_address, re_ipv6_address, re_domain
+from .util import re_ipv4_address, re_ipv6_address, re_domain
 
 
 def check_valid_url(url):
