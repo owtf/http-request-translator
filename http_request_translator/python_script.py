@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-import re
 try:
     from urllib import quote
 except ImportError:
@@ -10,88 +9,88 @@ from .url import get_url, check_valid_url
 from .templates import python_template
 
 
-def generate_script(header_list, details_dict, searchString=None):
-    """Generate the python script for the passed request.
+def generate_script(headers, details, search_string=None):
+    """Generate the python script corresponding to the HTTP request.
 
-    :param list header_list: Header list containing fields like 'Host','User-Agent'.
-    :param dict details_dict: Request specific details like body and method for the request.
-    :param str searchString: String to search for in the response to the request. By default remains None.
+    :param list headers: Headers list containing fields like 'Host', 'User-Agent', etc.
+    :param dict details: Request specific details dictionary like body and method of the request.
+    :param str search_string: String to search for in the response to the request. By default remains None.
 
-    :raises ValueError: When url is Invalid
+    :raises ValueError: When url is invalid.
 
-    :return: A combined string of generated code
+    :return: Generated python script to send the HTTP request.
     :rtype:`str`
     """
-    url = get_url(details_dict['Host'], details_dict['pre_scheme'])
-    method = details_dict['method']
-    url += details_dict['path']
+    method = details['method'].lower()
+    url = get_url(details['Host'], details['pre_scheme']) + details['path']
     if not check_valid_url(url):
-        raise ValueError("Invalid URL")
-    encoding_list = ['HEAD', 'OPTIONS', 'GET']
-    if details_dict['data'] and (details_dict['method'] in encoding_list):
-        encoded_data = quote(details_dict['data'], '')
-        url = url + encoded_data
-    skeleton_code = python_template.begin_code.format(url=url, header_list=str(header_list))
-    skeleton_code += generate_proxy_code(details_dict)
-    if method == "GET":
-        pass
-    elif method == "POST":
-        if details_dict['data']:
-            # Escape single quotes , double quotes are good here
-            body = re.sub(r"'", "\\'", details_dict['data'])
-        else:
-            body = ""
-        skeleton_code += python_template.post_code.format(post_body=body)
+        raise ValueError("Invalid URL '%s'." % url)
 
+    encoding_list = ['head', 'options', 'get']
+    if details['data'] and (method in encoding_list):
+        encoded_data = quote(details['data'], '')
+        url = url + encoded_data
+
+    # Format basic python script with proxy and http request.
+    skeleton_code = python_template.begin_code.format(url=url, headers=str(headers)) + generate_proxy_code(details)
+    if method == 'get':
+        pass
+    elif method == 'post':
+        skeleton_code += generate_post_body_code(post_body=details['data'])
     else:
-        print("Only GET and POST requests are supported yet!")
-        return ""
+        raise ValueError("'%s' is not supported. Only GET and POST requests are supported yet!" % details['method'])
 
     skeleton_code += generate_https_code(url)
-    skeleton_code += generate_search_code(searchString)
+    skeleton_code += generate_search_code(search_string)
     return skeleton_code
 
 
-def generate_proxy_code(details_dict):
-    """Generate python code for proxy specific parts of the request.
+def generate_search_code(search_string=''):
+    """Generate search code for the python script.
 
-    :param dict details_dict: Dictionary of request details like proxy,data etc.
+    :param str search_string: String to be found in the HTTP response from the server.
 
-    :return: A string of combined python code for specific proxy if one passed
+    :return: Python script snippet with the HTTP response search feature.
     :rtype: `str`
     """
-
-    if 'proxy_host' and 'proxy_port' in details_dict:
-        return python_template.proxy_code.format(
-            proxy_host=details_dict['proxy_host'], proxy_port=details_dict['proxy_port'])
-    else:
-        return ""
-
-
-def generate_search_code(searchString):
-    """Generate python code to match the searchString in the response of given request.
-
-    :param str searchString: String to be searched for in response to request.
-
-    :return: A string of python code for searching the passed string in response.
-    :rtype: `str`
-    """
-    if searchString:
-        searchString = re.sub("'", "\\'", searchString)
-        return python_template.body_code_search.format(search_string=searchString)
-    else:
-        return python_template.body_code_simple
+    if search_string:
+        return python_template.body_code_search.format(search_string=search_string.replace("'", "\\'"))
+    return python_template.body_code_simple
 
 
 def generate_https_code(url):
-    """Checks if url is 'https' and returns appropriate python code.
+    """Generate SSL code for the python script.
 
-    :param str url: Url for the request
+    :param str url: URL for the request.
 
-    :return: A string of python code
+    :return: Python script sni[et with the HTTPS setup.
     :rtype:`str`
     """
     if url.startswith('https'):
         return python_template.https_code
-    else:
-        return ""
+    return ''
+
+
+def generate_proxy_code(details={}):
+    """Generate proxy code for the python script.
+
+    :param dict details: Dictionary of request details containing proxy specific information.
+
+    :return: Python script snippet with the proxy code.
+    :rtype: `str`
+    """
+    if 'proxy_host' and 'proxy_port' in details:
+        proxy = '%s:%s' % (details['proxy_host'], details['proxy_port'])
+        return python_template.proxy_code.format(proxy=proxy)
+    return ''
+
+
+def generate_post_body_code(post_body=''):
+    """Generate body code for the python script.
+
+    :param str post_body: Body of the request to be sent.
+
+    :return: Python script snippet with the body code.
+    :rtype: `str`
+    """
+    return python_template.post_code.format(post_body=post_body.replace("'", "\\'"))

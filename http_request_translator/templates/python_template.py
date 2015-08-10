@@ -13,7 +13,7 @@ def main():
     c = pycurl.Curl()
     c.setopt(c.URL, '{url}')
     c.setopt(c.WRITEDATA, buffer)
-    c.setopt(c.HTTPHEADER, {header_list})
+    c.setopt(c.HTTPHEADER, {headers})
     # for verbosity
     c.setopt(c.VERBOSE, True)
     # Follow redirects
@@ -22,20 +22,26 @@ def main():
     #c.setopt(c.WRITEFUNCTION, buffer.write)
 """
 
+
 proxy_code = """
-    c.setopt(c.PROXY, '{proxy_host}:{proxy_port}')
+    c.setopt(c.PROXY, '{proxy}')
 """
+
 
 post_code = """
     # Sets request method to POST
     c.setopt(c.POSTFIELDS, '{post_body}')  #expects body to urlencoded
 """
+
+
 https_code = """
     c.setopt(pycurl.SSL_VERIFYPEER, 1)
     c.setopt(pycurl.SSL_VERIFYHOST, 2)
     # If providing updated certs
     # c.setopt(pycurl.CAINFO, "/path/to/updated-certificate-chain.crt")
 """
+
+
 body_code_search = """
     try:
         c.perform()
@@ -69,6 +75,7 @@ body_code_search = """
 if __name__ == '__main__':
     main()
 """
+
 
 body_code_simple = """
     try:
