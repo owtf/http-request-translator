@@ -12,25 +12,24 @@ from .templates import bash_template
 def generate_script(headers, details, search_string=None):
     """Generate the bash script corresponding to the HTTP request.
 
-    :param list headers: Headers list containing fields like 'Host','User-Agent'.
-    :param dict details: Request specific details dictionary like body and method for the request.
+    :param list headers: Headers list containing fields like 'Host', 'User-Agent', etc.
+    :param dict details: Request specific details dictionary like body and method of the request.
     :param str search_string: String to search for in the response to the request. By default remains None.
 
     :raises ValueError: When url is invalid.
 
-    :return: Generated bash scriptA to send the HTTP request.
+    :return: Generated bash script to send the HTTP request.
     :rtype:`str`
     """
     method = details['method'].lower()
     url = get_url(details['Host'], details['pre_scheme']) + details['path']
+    if not check_valid_url(url):
+        raise ValueError("Invalid URL '%s'." % url)
 
     encoding_list = ['head', 'options', 'get']
     if details['data'] and (method in encoding_list):
         encoded_data = quote(details['data'], '')
         url = url + encoded_data
-
-    if not check_valid_url(url):
-        raise ValueError("Invalid URL '%s'." % url)
 
     # Format basic bash script with proxy and http request.
     skeleton_code = bash_template.begin_code + generate_proxy_code(details) + bash_template.code_simple.format(
@@ -40,7 +39,7 @@ def generate_script(headers, details, search_string=None):
     if method == 'get':
         pass
     elif method == 'post':
-        skeleton_code += generate_body_code(details['data'])
+        skeleton_code += generate_post_body_code(post_body=details['data'])
     else:
         raise ValueError("'%s' is not supported. Only GET and POST requests are supported yet!" % details['method'])
 
@@ -86,17 +85,17 @@ def generate_proxy_code(details={}):
     :rtype: `str`
     """
     if 'proxy_host' and 'proxy_port' in details:
-        proxy = '%s:%d' % (details['proxy_host'], details['proxy_port'])
+        proxy = '%s:%s' % (details['proxy_host'], details['proxy_port'])
         return bash_template.proxy_code.format(proxy=proxy)
     return ''
 
 
-def generate_body_code(body=''):
+def generate_post_body_code(post_body=''):
     """Generate body code for the bash script.
 
-    :param str body: Body of the request to be sent.
+    :param str post_body: Body of the request to be sent.
 
     :return: Bash script snippet with  the body code.
     :rtype: `str`
     """
-    return bash_template.body_code.format(body=body.replace("'", "\\'"))
+    return bash_template.post_code.format(post_body=post_body.replace("'", "\\'"))
