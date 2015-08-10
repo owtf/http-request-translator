@@ -17,7 +17,11 @@ from url import get_url, check_valid_url
 
 
 def take_arguments():
-    # TODO: Docstring and comments.
+    """Entry point for the translator. Parses arguments using `argparse` library.
+
+    :return:`argparse` class object containing arguments passed to the translator.
+    :rtype:class `argparse.Namespace`
+    """
     parser = argparse.ArgumentParser(
         description="Request Translator is a standalone tool that can translate "
                     "raw HTTP requests into curl commands or bash/python/php/ruby/PowerShell scripts")
@@ -28,15 +32,15 @@ def take_arguments():
         help="Generates a script for given HTTP request. "
              "If you want to generate multiple scripts, separate the script's name with a <,>")
     parser.add_argument(
-        '--proxy',
+        '--proxy', '-p',
         nargs='?',
         const='127.0.0.1:8009',
         help='Generates command/script with relevant, specified proxy')
     conflicting_group.add_argument(
-        '--stringSearch',
+        '--string_search', '-s',
         help='Sends the request and searches for the required string in the response (i.e literal match)')
     conflicting_group.add_argument(
-        '--regexSearch',
+        '--regex_search', '-re',
         help='Sends the request and searches for the required regex in the response (i.e regex match)')
     parser.add_argument(
         '--interactive', '-i',
@@ -47,7 +51,7 @@ def take_arguments():
         '--data', '-d',
         help='Add the data that you want to send along with the header')
     parser.add_argument(
-        '--Request',
+        '--request', '-r',
         help='Input the HTTP request')
     process_arguments(parser.parse_args())
     return parser.parse_args()
@@ -75,10 +79,10 @@ def process_arguments(args):
             print("\nThanks for using the interactive mode! Exiting!")
             sys.exit(0)
     else:
-        if not args.Request:
+        if not args.request:
             print("Input a raw HTTP Request and try again.\nElse try using the interactive option")
             sys.exit(-1)
-        headers, details = parse_raw_request(args.Request)
+        headers, details = parse_raw_request(args.request)
         if args.data:
             details['data'] = args.data
         else:
@@ -99,10 +103,10 @@ def process_arguments(args):
             print("Hi there. Send some data to POST, use --data for sending data.")
             sys.exit(-1)
         arg_option = None
-        if args.stringSearch:
-            arg_option = args.stringSearch
-        elif args.regexSearch:
-            arg_option = args.regexSearch
+        if args.string_search:
+            arg_option = args.string_search
+        elif args.regex_search:
+            arg_option = args.regex_search
         if len(script_list) == 0:
             # Default curl commands if --output option is not passed
             # Not implemented yet
