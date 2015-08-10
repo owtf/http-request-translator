@@ -5,12 +5,122 @@ from http_request_translator import translator
 
 class TestTranslator(unittest.TestCase):
 
+    ###
+    # translator.parse_raw_request
+    ###
+    def test_parse_raw_request_http_version_with_path(self):
+        for i in range(0, 10):
+            for j in range(0, 10):
+                raw_request = "GET /robots.txt HTTP/%d.%d\n"\
+                              "Host: foo.bar" % (i, j)
+                self.assertEqual(
+                    translator.parse_raw_request(raw_request),
+                    (
+                        ['Host: foo.bar'],
+                        {
+                            'protocol': 'HTTP',
+                            'pre_scheme': '',
+                            'Host': 'foo.bar',
+                            'version': '%d.%d' % (i, j),
+                            'path': '/robots.txt',
+                            'method': 'GET'
+                        }
+                    ),
+                    'Invalid parsing of HTTP/%d.%d request!' % (i, j))
+
+    def test_parse_raw_request_http_version_invalid(self):
+        raw_request = "GET /\n"\
+                      "Host: foo.bar"
+        self.assertEqual(
+            translator.parse_raw_request(raw_request),
+            (
+                ['Host: foo.bar'],
+                {
+                    'protocol': '',
+                    'pre_scheme': '',
+                    'Host': 'foo.bar',
+                    'version': '',
+                    'path': '',
+                    'method': 'GET'
+                }
+            ),
+            'Invalid parsing of request!')
+        raw_request = "GET / HTTP//1.b\n"\
+                      "Host: foo.bar"
+        self.assertEqual(
+            translator.parse_raw_request(raw_request),
+            (
+                ['Host: foo.bar'],
+                {
+                    'protocol': 'HTTP',
+                    'pre_scheme': '',
+                    'Host': 'foo.bar',
+                    'version': '/1.b',
+                    'path': '/',
+                    'method': 'GET'
+                }
+            ),
+            'Invalid parsing of HTTP//1.b request!')
+
+    def test_parse_raw_request_http_with_parameter(self):
+        raw_request = "GET /?foo=bar HTTP/1.1\n"\
+                      "Host: foo.bar"
+        self.assertEqual(
+            translator.parse_raw_request(raw_request),
+            (
+                ['Host: foo.bar'],
+                {
+                    'protocol': 'HTTP',
+                    'pre_scheme': '',
+                    'Host': 'foo.bar',
+                    'version': '1.1',
+                    'path': '/?foo=bar',
+                    'method': 'GET'
+                }
+            ),
+            'Invalid parsing of request with parameter in path!')
+
+    def test_parse_raw_request_http_with_comment(self):
+        raw_request = "GET /#foo=bar HTTP/1.1\n"\
+                      "Host: foo.bar"
+        self.assertEqual(
+            translator.parse_raw_request(raw_request),
+            (
+                ['Host: foo.bar'],
+                {
+                    'protocol': 'HTTP',
+                    'pre_scheme': '',
+                    'Host': 'foo.bar',
+                    'version': '1.1',
+                    'path': '/#foo=bar',
+                    'method': 'GET'
+                }
+            ),
+            'Invalid parsing of request with comment in path!')
+
+    def test_parse_raw_request_http_with_coma(self):
+        raw_request = "GET /;foo=bar HTTP/1.1\n"\
+                      "Host: foo.bar"
+        self.assertEqual(
+            translator.parse_raw_request(raw_request),
+            (
+                ['Host: foo.bar'],
+                {
+                    'protocol': 'HTTP',
+                    'pre_scheme': '',
+                    'Host': 'foo.bar',
+                    'version': '1.1',
+                    'path': '/;foo=bar',
+                    'method': 'GET'
+                }
+            ),
+            'Invalid parsing of request with coma in path!')
+
     def test_parse_raw_request_https_domain_no_port(self):
         raw_request = "GET https://google.com/robots.txt HTTP/1.1\n"\
                       "Host: google.com"
-        result = translator.parse_raw_request(raw_request)
         self.assertEqual(
-            result,
+            translator.parse_raw_request(raw_request),
             (
                 ['Host: google.com'],
                 {
@@ -27,9 +137,8 @@ class TestTranslator(unittest.TestCase):
     def test_parse_raw_request_https_domain_port(self):
         raw_request = "GET https://google.com:31337/robots.txt HTTP/1.1\n"\
                       "Host: google.com:31337"
-        result = translator.parse_raw_request(raw_request)
         self.assertEqual(
-            result,
+            translator.parse_raw_request(raw_request),
             (
                 ['Host: google.com:31337'],
                 {
@@ -46,9 +155,8 @@ class TestTranslator(unittest.TestCase):
     def test_parse_raw_request_https_ipv4_no_port(self):
         raw_request = "GET https://127.0.0.1/robots.txt HTTP/1.1\n"\
                       "Host: 127.0.0.1"
-        result = translator.parse_raw_request(raw_request)
         self.assertEqual(
-            result,
+            translator.parse_raw_request(raw_request),
             (
                 ['Host: 127.0.0.1'],
                 {
@@ -65,9 +173,8 @@ class TestTranslator(unittest.TestCase):
     def test_parse_raw_request_https_ipv4_port(self):
         raw_request = "GET https://127.0.0.1:31337/robots.txt HTTP/1.1\n"\
                       "Host: 127.0.0.1:31337"
-        result = translator.parse_raw_request(raw_request)
         self.assertEqual(
-            result,
+            translator.parse_raw_request(raw_request),
             (
                 ['Host: 127.0.0.1:31337'],
                 {
@@ -84,9 +191,8 @@ class TestTranslator(unittest.TestCase):
     def test_parse_raw_request_https_ipv6_no_port(self):
         raw_request = "GET https://[::1]/robots.txt HTTP/1.1\n"\
                       "Host: [::1]"
-        result = translator.parse_raw_request(raw_request)
         self.assertEqual(
-            result,
+            translator.parse_raw_request(raw_request),
             (
                 ['Host: [::1]'],
                 {
@@ -103,9 +209,8 @@ class TestTranslator(unittest.TestCase):
     def test_parse_raw_request_https_ipv6_port(self):
         raw_request = "GET https://[::1]:31337/robots.txt HTTP/1.1\n"\
                       "Host: [::1]:31337"
-        result = translator.parse_raw_request(raw_request)
         self.assertEqual(
-            result,
+            translator.parse_raw_request(raw_request),
             (
                 ['Host: [::1]:31337'],
                 {
@@ -118,6 +223,46 @@ class TestTranslator(unittest.TestCase):
                 }
             ),
             'Invalid parsing of HTTP request with IPv6 host and custom port!')
+
+    def test_parse_raw_request_multiple_host_header(self):
+        raw_request = "GET https://foo.bar HTTP/1.1\n"\
+                      "Host: foo.bar\n"\
+                      "HoSt: foo.bar\n"\
+                      "HOST: foo.bar \n"\
+                      "host: foo.bar\n"\
+                      "host:     foo.bar\n"
+        self.assertEqual(
+            translator.parse_raw_request(raw_request),
+            (
+                [
+                    'Host: foo.bar',
+                    'HoSt: foo.bar',
+                    'HOST: foo.bar ',
+                    'host: foo.bar',
+                    'host:     foo.bar',
+                ],
+                {
+                    'protocol': 'HTTP',
+                    'pre_scheme': 'https://',
+                    'Host': 'foo.bar',
+                    'version': '1.1',
+                    'path': '',
+                    'method': 'GET'
+                }
+            ),
+            'Invalid parsing of HTTP request with multiple Host headers!')
+
+    def test_parse_raw_request_invalid_header(self):
+        raw_request = "GET https://foo.bar HTTP/1.1\n"\
+                      "Host"
+        with self.assertRaises(ValueError):
+            translator.parse_raw_request(raw_request)
+
+    def test_parse_raw_request_no_path(self):
+        raw_request = "GET\n"\
+                      "Host: foo.bar"
+        with self.assertRaises(ValueError):
+            translator.parse_raw_request(raw_request)
 
 
 if __name__ == '__main__':
