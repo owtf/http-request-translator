@@ -6,8 +6,8 @@ try:
 except ImportError:
     from urllib.parse import quote
 
-from url import check_valid_url, get_url
-from templates import ruby_template
+from .url import check_valid_url, get_url
+from .templates import ruby_template
 
 
 def generate_script(header_list, details_dict, searchString=None):

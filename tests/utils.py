@@ -1,4 +1,4 @@
-generated_search_string = """
+python_generated_search_string = """
     try:
         c.perform()
     except pycurl.error, error:
@@ -32,7 +32,8 @@ if __name__ == '__main__':
     main()
 """
 
-generated_script = """
+
+python_generated_script = """
 #!/usr/bin/python
 from __future__ import print_function
 import re
