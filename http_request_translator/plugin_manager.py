@@ -1,36 +1,36 @@
 from __future__ import print_function
 
+from .script import BashScript, PHPScript, PythonScript, RubyScript
+
 
 def hardcoded_script_import(script_name):
-    """Manually import the generate_script function of the script.
+    """Manually find the class of the script.
 
     :param str script_name: Name of the script from which to import the function.
 
     :raises ValueError: When the script is not supported.
 
-    :return: The generate_script function of the `script_name` script.
-    :rtype: function
+    :return: The class of the `script_name` script.
+    :rtype: :class:`AbstractScript`
     """
     if script_name == 'bash':
-        from .bash_script import generate_script as gs
+        return BashScript
     elif script_name == 'php':
-        from .php_script import generate_script as gs
+        return PHPScript
     elif script_name == 'python':
-        from .python_script import generate_script as gs
+        return PythonScript
     elif script_name == 'ruby':
-        from .ruby_script import generate_script as gs
-    else:
-        raise ValueError("The '%s' language is not supported yet." % script_name)
-    return gs
+        return RubyScript
+    raise ValueError("The '%s' language is not supported yet." % script_name)
 
 
 def plugin_manager(script_list, parsed_tuple, search_string=None):
     # TODO: Docstring and comments.
     default = len(script_list) or False
     for script in script_list:
-        generate_script = hardcoded_script_import(script.strip().lower())
-        header_dict, details_dict = parsed_tuple
-        generate_script(header_dict, details_dict, search_string)
+        class_script = hardcoded_script_import(script.strip().lower())
+        headers, details = parsed_tuple
+        class_script(headers=headers, details=details, search=search_string).generate_script()
     if default:
         # TODO: Generates the default Curl command.
         pass
@@ -47,5 +47,5 @@ def generate_script(script, headers, details, search_string=None):
     :return: A combined string of generated code
     :rtype:`str`
     """
-    generate_script = hardcoded_script_import(script.strip().lower())
-    return generate_script(headers, details, search_string)
+    class_script = hardcoded_script_import(script.strip().lower())
+    return class_script(headers=headers, details=details, search=search_string).generate_script()

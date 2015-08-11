@@ -1,4 +1,4 @@
-begin_code = """
+code_begin = """
 require "typhoeus"
 
 url = '{url}'
@@ -9,25 +9,30 @@ options = {{
     method: :{method},
 """
 
-proxy_code = """
+
+code_proxy = """
     proxy: '{proxy}',
 """
 
-request_header = """
-    '{header}' => '{header_value}',"""
 
-header_code = """
+code_header = """
+    '{header}' => '{value}',"""
+
+
+code_headers = """
     headers: {{
     {headers}
     }},
 """
 
-post_body_code = """
-    body: '{post_body}'
+
+code_post = """
+    body: '{data}'
 }}
 """
 
-body_code_search = """
+
+code_search = """
 req = Typhoeus::Request.new(url, options)
 req.on_complete do |response|
   if response.success?
@@ -69,7 +74,8 @@ end
 req.run
 """
 
-body_code_simple = """
+
+code_nosearch = """
 req = Typhoeus::Request.new(url, options)
 req.on_complete do |response|
   if response.success?
