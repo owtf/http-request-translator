@@ -1,13 +1,16 @@
 begin_code = """
 require "typhoeus"
 
+url = '{url}'
+
 options = {{
     followlocation: true,
     verbose: true,
     method: :{method},
 """
+
 proxy_code = """
-    proxy: '{proxy_host}:{proxy_port}',
+    proxy: '{proxy}',
 """
 
 request_header = """
@@ -20,13 +23,12 @@ header_code = """
 """
 
 post_body_code = """
-    body: '{body}'
+    body: '{post_body}'
 }}
 """
-body_code_search = """
-url = '{url}'
-req = Typhoeus::Request.new(url, options)
 
+body_code_search = """
+req = Typhoeus::Request.new(url, options)
 req.on_complete do |response|
   if response.success?
     puts 'Response #{{response.code}}:'
@@ -68,9 +70,7 @@ req.run
 """
 
 body_code_simple = """
-url = '{url}'
 req = Typhoeus::Request.new(url, options)
-
 req.on_complete do |response|
   if response.success?
     puts 'Response #{{response.code}}'

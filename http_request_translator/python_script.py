@@ -16,7 +16,7 @@ def generate_script(headers, details, search_string=None):
     :param dict details: Request specific details dictionary like body and method of the request.
     :param str search_string: String to search for in the response to the request. By default remains None.
 
-    :raises ValueError: When url is invalid.
+    :raises ValueError: When url is invalid or unsupported request method is passed.
 
     :return: Generated python script to send the HTTP request.
     :rtype:`str`
@@ -63,7 +63,7 @@ def generate_https_code(url):
 
     :param str url: URL for the request.
 
-    :return: Python script sni[et with the HTTPS setup.
+    :return: Python script snippet with the HTTPS setup.
     :rtype:`str`
     """
     if url.startswith('https'):
