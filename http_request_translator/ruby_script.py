@@ -33,9 +33,9 @@ def generate_script(headers, details, search_string=None):
 
     skeleton_code = ruby_template.begin_code.format(url=url, method=method) + ruby_template.header_code.format(
         headers=generate_request_headers(headers)) + generate_proxy_code(details)
-    if method == "get":
+    if method == 'get':
         pass
-    elif method == "post":
+    elif method == 'post':
         skeleton_code += generate_post_body_code(post_body=details['data'])
     else:
         raise ValueError("'%s' is not supported. Only GET and POST requests are supported yet!" % details['method'])
@@ -61,11 +61,11 @@ def generate_request_headers(headers=[]):
 
 
 def generate_proxy_code(details={}):
-    """Checks if proxy is provided and returns appropriate ruby code.
+    """Generate proxy code for the ruby script.
 
     :param dict details: Dictionary of request details containing proxy specific information.
 
-    :return: A string of ruby code
+    :return: Ruby script snippet with the proxy code.
     :rtype:`str`
     """
     if 'proxy_host' and 'proxy_port' in details:

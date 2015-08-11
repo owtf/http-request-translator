@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-import re
 try:
     from urllib import quote
 except ImportError:
@@ -10,89 +9,103 @@ from .url import get_url, check_valid_url
 from .templates import php_template
 
 
-def generate_script(header_list, details_dict, searchString=None):
-    """Generate the php script for the passed request.
+def generate_script(headers, details, search_string=None):
+    """Generate the php script corresponding to the passed request.
 
-    :param list header_list: Header list containing fields like 'Host','User-Agent'.
-    :param dict details_dict: Request specific details like body and method for the request.
-    :param str searchString: String to search for in the response to the request. By default remains None.
+    :param list headers: Header list containing fields like 'Host','User-Agent'.
+    :param dict details: Request specific details dictionary like body and method of the request.
+    :param str search_string: String to search for in the response to the request. By default remains None.
 
-    :raises ValueError: When url is Invalid
+    :raises ValueError: When Url is invalid or unsupported request method is passed.
 
-    :return: A combined string of generated code
+    :return: Generated php script to send the request.
     :rtype:`str`
     """
-    url = get_url(details_dict['Host'], details_dict['pre_scheme'])
-    method = details_dict['method']
-    url += details_dict['path']
+    method = details['method'].lower()
+    url = get_url(details['Host'], details['pre_scheme']) + details['path']
     if not check_valid_url(url):
-        raise ValueError("Invalid URL")
-    encoding_list = ['HEAD', 'OPTIONS', 'GET']
-    if details_dict['data'] and (details_dict['method'] in encoding_list):
-        encoded_data = quote(details_dict['data'], '')
+        raise ValueError("Invalid URL '%s'." % url)
+
+    encoding_list = ['head', 'options', 'get']
+    if details['data'] and (method in encoding_list):
+        encoded_data = quote(details['data'], '')
         url = url + encoded_data
-    skeleton_code = php_template.begin_code.format(url=url)
-    skeleton_code += generate_request_headers(header_list)
-    if method == "GET":
+
+    skeleton_code = php_template.begin_code.format(
+        url=url) + generate_request_headers(headers) + generate_proxy_code(details)
+    if method == 'get':
         pass
-    elif method == "POST":
-        skeleton_code += php_template.post_request.format(body=generate_body_code(details_dict['data']))
+    elif method == 'post':
+        skeleton_code += generate_post_body_code(post_body=details['data'])
     else:
-        print("Only GET and POST requests are supported yet!")
-        return ""
+        raise ValueError("'%s' is not supported. Only GET and POST requests are supported yet!" % details['method'])
 
-    skeleton_code += generate_req_code(details_dict, searchString)
-
+    skeleton_code += generate_https_code(url)
+    skeleton_code += generate_search_code(search_string)
     return skeleton_code
 
 
-def generate_request_headers(header_list):
+def generate_request_headers(headers=[]):
     """Place the request headers in php script from header dictionary.
 
-    :param list header_list: Header list containing fields like 'Host','User-Agent'.
+    :param list headers: Headers list containing fields like 'Host','User-Agent'.
 
     :return: A string of php code which places headers in the request.
     :rtype:`str`
     """
     skeleton_code = ""
-    for item in header_list:
+    for item in headers:
         header, value = item.split(":", 1)
         skeleton_code += php_template.request_header.format(header=str(header), header_value=str(value))
-
     return skeleton_code
 
 
-def generate_req_code(details_dict, searchString):
-    """Generate php code for the body and proxy specific parts of the request.
+def generate_post_body_code(post_body=''):
+    """Generate body code for the php script.
 
-    :param dict details_dict: Dictionary of request details like proxy,data etc.
-    :param str searchString: String to search for in response of the request
+    :param str post_body: Body of the request to be sent.
 
-    :return: A string of combined php code for specific proxy and searchString if one passed
+    :return: php script snippet with the body code.
     :rtype: `str`
     """
-    skeleton = ""
-    if 'proxy_host' and 'proxy_port' in details_dict:
-        skeleton += php_template.proxy_code.format(
-            proxy_host=details_dict['proxy_host'], proxy_port=details_dict['proxy_port'])
-    skeleton += php_template.req_code
-    if searchString:
-        searchString = re.sub("'", "\\'", searchString)
-        skeleton += php_template.search_code.format(search_string=searchString)
-    else:
-        skeleton += php_template.non_search_code
-    return skeleton
+    return php_template.post_body_code.format(post_body=post_body.replace("'", "\\'"))
 
 
-def generate_body_code(body):
-    """Generate string for body part of the request.
+def generate_proxy_code(details={}):
+    """Generate proxy code for the php script.
 
-    :param str body:Passed body of the request
+    :param dict details: Dictionary of request details containing proxy specific information.
 
-    :return: A formatted string of body code
-    :rtype:`str`
-
+    :return: php script snippet with the proxy code.
+    :rtype: `str`
     """
-    # Escape single quotes , double quotes are good here
-    body = re.sub(r"'", "\\'", body)
-    return str(body)
+    if 'proxy_host' and 'proxy_port' in details:
+        proxy = '%s:%s' % (details['proxy_host'], details['proxy_port'])
+        skeleton = php_template.proxy_code.format(proxy=proxy)
+        return skeleton
+    return ''
+
+
+def generate_search_code(search_string=''):
+    """Generate search code for the php script.
+
+    :param str search_string: String to be found in the HTTP response from the server.
+
+    :return: php script snippet with the HTTP response search feature.
+    :rtype: `str`
+    """
+    if search_string:
+        return php_template.body_code_search.format(search_string=search_string.replace("'", "\\'"))
+    else:
+        return php_template.body_code_simple
+
+
+def generate_https_code(url):
+    """Dummy function.
+
+    :param str url: URL for the request.
+
+    :return: Empty String
+    :rtype:`str`
+    """
+    return ''

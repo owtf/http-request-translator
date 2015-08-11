@@ -16,28 +16,25 @@ request_header = """
 $headers[] = "{header}:{header_value}";
 """
 
-post_request = """
-$content = '{body}';
+post_body_code = """
+$content = '{post_body}';
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
 """
 
 proxy_code = """
-curl_setopt($ch, CURLOPT_PROXYPORT, {proxy_port});
-curl_setopt($ch, CURLOPT_PROXY, {proxy_host});
+curl_setopt($ch, CURLOPT_PROXY, '{proxy}');
 """
 
-req_code = """
+body_code_search = """
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 $response = curl_exec($ch);
 
-if (curl_errno($ch)) {
+if (curl_errno($ch)) {{
  print curl_error($ch);
-} else {
+}} else {{
  curl_close($ch);
-}
-"""
-search_code = """
+}}
 print $response;
 $string = '{search_string}';
 // Blindly copied from http://stackoverflow.com/questions/10778318/test-if-a-string-is-regex
@@ -54,6 +51,14 @@ else {{
 }}
 """
 
-non_search_code = """
+body_code_simple = """
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+$response = curl_exec($ch);
+
+if (curl_errno($ch)) {
+ print curl_error($ch);
+} else {
+ curl_close($ch);
+}
 print $response;
 """

@@ -43,8 +43,8 @@ def generate_script(headers, details, search_string=None):
     else:
         raise ValueError("'%s' is not supported. Only GET and POST requests are supported yet!" % details['method'])
 
-    if search_string:
-        skeleton_code += generate_search_code(search_string)
+    skeleton_code += generate_https_code(url)
+    skeleton_code += generate_search_code(search_string)
     return skeleton_code
 
 
@@ -73,7 +73,10 @@ def generate_search_code(search_string=''):
     :return: Bash script snippet with the HTTP response search feature.
     :rtype: `str`
     """
-    return bash_template.code_search.format(search_string=search_string.replace("'", "\\'"))
+    if search_string:
+        return bash_template.code_search.format(search_string=search_string.replace("'", "\\'"))
+    else:
+        return ''
 
 
 def generate_proxy_code(details={}):
@@ -99,3 +102,14 @@ def generate_post_body_code(post_body=''):
     :rtype: `str`
     """
     return bash_template.post_code.format(post_body=post_body.replace("'", "\\'"))
+
+
+def generate_https_code(url):
+    """Dummy function.
+
+    :param str url: URL for the request.
+
+    :return: Empty String
+    :rtype:`str`
+    """
+    return ''
