@@ -56,6 +56,8 @@ def main():
     # For older PycURL versions:
     #c.setopt(c.WRITEFUNCTION, buffer.write)
 
+    c.setopt(c.PROXY, 'http://xyz.com:2223')
+
     c.setopt(pycurl.SSL_VERIFYPEER, 1)
     c.setopt(pycurl.SSL_VERIFYHOST, 2)
     # If providing updated certs
@@ -78,4 +80,84 @@ def main():
 
 if __name__ == '__main__':
     main()
+"""
+
+ruby_generated_search_string = """
+}
+req = Typhoeus::Request.new(url, options)
+req.on_complete do |response|
+  if response.success?
+    puts 'Response #{response.code}:'
+    begin
+        require 'colorize'
+        lib_available = true
+    rescue LoadError
+        lib_available = false
+    end
+
+    matched = response.body.match /hello3131\'you\'are\'awesome/
+
+    original = response.body
+    if matched then
+        if lib_available then
+            for i in 0..matched.length
+                original.gsub! /#{matched[i]}/, "#{matched[i]}".green
+            end
+        else
+            for i in 0..matched.length
+                puts 'Matched item: #{matched[i]}'
+            end
+        end
+    end
+    puts original
+
+  elsif response.timed_out?
+    puts 'Request Timed Out!'
+  elsif response.code == 0
+    # Could not get an http response, something's wrong.
+    puts response.return_message
+  else
+    # Received a non-successful http response.
+    puts 'HTTP request failed: ' + response.code.to_s
+  end
+end
+
+req.run
+"""
+
+ruby_generated_script = """
+require "typhoeus"
+
+url = 'https://google.com/robots.txt'
+
+options = {
+    followlocation: true,
+    verbose: true,
+    method: :get,
+
+    headers: {
+    'Host' => ' google.com',
+    },
+
+    proxy: 'http://xyz.com:2223',
+
+}
+req = Typhoeus::Request.new(url, options)
+req.on_complete do |response|
+  if response.success?
+    puts 'Response #{response.code}'
+    puts response.body
+
+  elsif response.timed_out?
+    puts 'Request Timed Out!'
+  elsif response.code == 0
+    # Could not get an http response, something's wrong.
+    puts response.return_message
+  else
+    # Received a non-successful http response.
+    puts 'HTTP request failed: ' + response.code.to_s
+  end
+end
+
+req.run
 """

@@ -20,19 +20,18 @@ code_header = """
 
 
 code_headers = """
-    headers: {{
-    {headers}
+    headers: {{{headers}
     }},
 """
 
 
 code_post = """
     body: '{data}'
-}}
 """
 
 
 code_search = """
+}}
 req = Typhoeus::Request.new(url, options)
 req.on_complete do |response|
   if response.success?
@@ -76,10 +75,11 @@ req.run
 
 
 code_nosearch = """
+}
 req = Typhoeus::Request.new(url, options)
 req.on_complete do |response|
   if response.success?
-    puts 'Response #{{response.code}}'
+    puts 'Response #{response.code}'
     puts response.body
 
   elsif response.timed_out?
