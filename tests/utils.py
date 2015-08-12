@@ -11,7 +11,7 @@ python_generated_search_string = """
     # end up with a Unicode string.
     response = body.decode('iso-8859-1')
 
-    match = re.findall(r'hello3131\\'you\\'are\\'awesome', str(response))
+    match = re.findall(r'hello3131\'you\'are\'awesome', str(response))
     try:
         from termcolor import colored
         lib_available = True

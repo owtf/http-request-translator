@@ -1,18 +1,18 @@
-begin_code = """
+code_begin = """
 #!/usr/bin/env bash
 curl"""
 
 
-request_header = """ --header '{header}:{header_value}' """
+code_header = """ --header '{header}:{value}' """
+
+
+code_proxy = " -x {proxy}"
+
+
+code_post = " --data '{data}'"
 
 
 code_search = " | egrep --color ' {search_string} |$'"
 
 
-code_simple = " -v --request {method} {url} {headers} --include"
-
-
-proxy_code = " -x {proxy}"
-
-
-post_code = " --data '{post_body}'"
+code_nosearch = " -v --request {method} {url} {headers} --include"

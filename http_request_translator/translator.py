@@ -187,5 +187,3 @@ def parse_raw_request(request):
     else:
         details_dict['pre_scheme'] = ''
     return header_list, details_dict
-
-

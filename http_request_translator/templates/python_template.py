@@ -1,4 +1,4 @@
-begin_code = """
+code_begin = """
 #!/usr/bin/python
 from __future__ import print_function
 import re
@@ -23,18 +23,18 @@ def main():
 """
 
 
-proxy_code = """
+code_proxy = """
     c.setopt(c.PROXY, '{proxy}')
 """
 
 
-post_code = """
+code_post = """
     # Sets request method to POST
-    c.setopt(c.POSTFIELDS, '{post_body}')  #expects body to urlencoded
+    c.setopt(c.POSTFIELDS, '{data}')  #expects body to urlencoded
 """
 
 
-https_code = """
+code_https = """
     c.setopt(pycurl.SSL_VERIFYPEER, 1)
     c.setopt(pycurl.SSL_VERIFYHOST, 2)
     # If providing updated certs
@@ -42,7 +42,7 @@ https_code = """
 """
 
 
-body_code_search = """
+code_search = """
     try:
         c.perform()
     except pycurl.error, error:
@@ -77,7 +77,7 @@ if __name__ == '__main__':
 """
 
 
-body_code_simple = """
+code_nosearch = """
     try:
         c.perform()
     except pycurl.error, error:

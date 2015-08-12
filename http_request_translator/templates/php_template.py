@@ -1,4 +1,4 @@
-begin_code = """
+code_begin = """
 if (!extension_loaded('curl')) {{
     print 'Curl Extension not found. Exiting';
     exit;
@@ -12,21 +12,25 @@ curl_setopt($ch, CURLOPT_VERBOSE, 1);
 $headers = array();
 """
 
-request_header = """
-$headers[] = "{header}:{header_value}";
+
+code_header = """
+$headers[] = "{header}:{value}";
 """
 
-post_body_code = """
-$content = '{post_body}';
+
+code_proxy = """
+curl_setopt($ch, CURLOPT_PROXY, '{proxy}');
+"""
+
+
+code_post = """
+$content = '{data}';
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
 """
 
-proxy_code = """
-curl_setopt($ch, CURLOPT_PROXY, '{proxy}');
-"""
 
-body_code_search = """
+code_search = """
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 $response = curl_exec($ch);
 
@@ -51,7 +55,8 @@ else {{
 }}
 """
 
-body_code_simple = """
+
+code_nosearch = """
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 $response = curl_exec($ch);
 
