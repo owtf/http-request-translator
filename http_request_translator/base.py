@@ -84,21 +84,21 @@ class AbstractScript(object):
         return self.code_begin
 
     def _generate_headers(self):
-        """Default generation of the headers of the code.
+        """Default generation of request headers.
 
-        :return: Headers of the code.
+        :return: Code snippet with HTTP requests headers.
         :rtype: str
         """
         code = ''
         for item in self.headers:
             header, value = item.split(':', 1)
-            code += self.code_header.format(header=header.replace("'", "\\'"), value=value.replace("'", "\\'"))
+            code += self.code_header.format(header=header.replace("'", "\'"), value=value.replace("'", "\'"))
         return code
 
     def _generate_proxy(self):
-        """Default generation of the proxy of the code.
+        """Default generation of the proxy specific code.
 
-        :return: Proxy of the code.
+        :return: Code snippet with the proxy information.
         :rtype: str
         """
         if 'proxy_host' in self.details and 'proxy_port' in self.details:
@@ -106,48 +106,50 @@ class AbstractScript(object):
         return ''
 
     def _generate_post(self):
-        """Default generation of the post of the code.
+        """Default generation of the post body code.
 
-        :return: Post of the code.
+        :return: Code snippet containing body to be sent in request.
         :rtype: str
         """
-        return self.code_post.format(data=self.details.get('data', ''))
+        return self.code_post.format(data=self.details.get('data', '').replace("'", "\'"))
 
     def _generate_https(self):
-        """Default generation of the HTTPS of the code.
+        """Default generation of the HTTPS specific code.
 
-        :return: HTTPS of the code.
+        :return: Code snippet with HTTPS setup.
         :rtype: str
         """
         return self.code_https
 
     def _generate_request(self):
-        """Default generation of the request of the code.
+        """Default generation of the request code.
 
-        :return: Request of the code.
+        :return: Code snippet for the request to send.
         :rtype: str
         """
         code = ''
         if self.search:
             if self.code_search:
-                code += self._generate_search()
+                code += self._generate_search(self.search)
         else:
             if self.code_nosearch:
                 code += self._generate_nosearch()
         return code
 
-    def _generate_search(self):
-        """Default generation of the search of the code.
+    def _generate_search(self, search_string=''):
+        """Default generation of the code having search functionality.
 
-        :return: Search of the code.
+        :param str search_string: String to search for in the response to the request.
+
+        :return: Code snippet with the HTTP response search feature.
         :rtype: str
         """
-        return self.code_search
+        return self.code_search.format(search_string=search_string.replace("'", "\'"))
 
     def _generate_nosearch(self):
-        """Default generation of the no search of the code.
+        """Default generation of the code having no search functionality.
 
-        :return: No search of the code.
+        :return: Code snippet absent of HTTP response search feature.
         :rtype: str
         """
         return self.code_nosearch

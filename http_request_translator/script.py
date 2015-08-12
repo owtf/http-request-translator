@@ -9,7 +9,10 @@ from .templates import bash_template, php_template, python_template, ruby_templa
 
 
 class BashScript(AbstractScript):
-
+    """Extended `AbstractScript` class for Bash script code generation.
+    Fills code variables for the request from `bash_template`.
+    Overrides `_generate_request` method to generate bash specific code.
+    """
     code_begin = bash_template.code_begin
     code_header = bash_template.code_header
     code_proxy = bash_template.code_proxy
@@ -28,7 +31,10 @@ class BashScript(AbstractScript):
 
 
 class PHPScript(AbstractScript):
-
+    """Extended `AbstractScript` class for PHP script code generation.
+    Fills code variables for the request from `php_template`.
+    Overrides `_generate_begin` method to generate php specific code.
+    """
     code_begin = php_template.code_begin
     code_header = php_template.code_header
     code_proxy = php_template.code_proxy
@@ -41,7 +47,10 @@ class PHPScript(AbstractScript):
 
 
 class PythonScript(AbstractScript):
-
+    """Extended `AbstractScript` class for Python script code generation.
+    Fills code variables for the request from `python_template`.
+    Overrides `_generate_begin` method to generate python specific code.
+    """
     code_begin = python_template.code_begin
     code_proxy = python_template.code_proxy
     code_post = python_template.code_post
@@ -54,7 +63,10 @@ class PythonScript(AbstractScript):
 
 
 class RubyScript(AbstractScript):
-
+    """Extended `AbstractScript` class for Ruby script code generation.
+    Fills code variables for the request from `ruby_template`.
+    Overrides `_generate_begin` method to generate Ruby specific code.
+    """
     code_begin = ruby_template.code_begin
     code_header = ruby_template.code_header
     code_proxy = ruby_template.code_proxy
