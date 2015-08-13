@@ -33,7 +33,7 @@ class AbstractScript(object):
 
         :raises ValueError: When url is invalid.
         """
-        self.script = ''
+        self._script = ''
         self.headers = headers
         self.details = details
         self.search = search
@@ -48,7 +48,7 @@ class AbstractScript(object):
         :param dict details: Request specific details dictionary like body and method of the request.
         :param str search: String to search for in the response to the request.
 
-        :raises ValueError: when unsupported HTTP method.
+        :raises ValueError: when unsupported HTTP method, invalid `headers` or `details` values.
 
         :return: Generated script code.
         :rtype: str
@@ -56,24 +56,28 @@ class AbstractScript(object):
         self.headers = headers or self.headers
         self.details = details or self.details
         self.search = search or self.search
+        if not self.headers:
+            raise ValueError("'headers' cannot be equal to '%s'" % self.headers)
+        elif not self.details:
+            raise ValueError("'details' cannot be equal to '%s'" % self.details)
         if not self.url and self.details:
             self.url = self.encode_url(self.create_url())
         if self.code_begin:
-            self.script += self._generate_begin()
+            self._script += self._generate_begin()
         if self.code_proxy:
-            self.script += self._generate_proxy()
+            self._script += self._generate_proxy()
         method = self.details.get('method', '').strip().lower()
         if method == 'get':
             pass
         elif method == 'post':
             if self.code_post:
-                self.script += self._generate_post()
+                self._script += self._generate_post()
         else:
             raise ValueError("'%s' is not supported. Only GET and POST requests are supported yet!" % details['method'])
         if self.code_https:
-            self.script += self._generate_https()
-        self.script += self._generate_request()
-        return self.script
+            self._script += self._generate_https()
+        self._script += self._generate_request()
+        return self._script
 
     def _generate_begin(self):
         """Default generation of the beginning of the code.
