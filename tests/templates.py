@@ -1,4 +1,4 @@
-python_generated_search_string = """
+code_search_python = """
     try:
         c.perform()
     except pycurl.error, error:
@@ -33,7 +33,7 @@ if __name__ == '__main__':
 """
 
 
-python_generated_script = """
+code_python = """
 #!/usr/bin/python
 from __future__ import print_function
 import re
@@ -82,7 +82,7 @@ if __name__ == '__main__':
     main()
 """
 
-ruby_generated_search_string = """
+code_search_ruby = """
 }
 req = Typhoeus::Request.new(url, options)
 req.on_complete do |response|
@@ -125,7 +125,7 @@ end
 req.run
 """
 
-ruby_generated_script = """
+code_ruby = """
 require "typhoeus"
 
 url = 'https://google.com/robots.txt'

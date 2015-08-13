@@ -2,75 +2,68 @@
 import unittest
 
 from http_request_translator import script
-from .utils import (python_generated_search_string, python_generated_script,
-                    ruby_generated_search_string, ruby_generated_script)
+from .templates import (code_search_python, code_python,
+    code_search_ruby, code_ruby)
 
 
 class TestScripts(unittest.TestCase):
-    headers = ['Host: google.com']
-    details = {'protocol': 'HTTP',
-               'pre_scheme': 'https://',
-               'Host': 'google.com',
-               'version': '1.1',
-               'path': '/robots.txt',
-               'method': 'GET',
-               'proxy_port': '2223',
-               'proxy_host': 'http://xyz.com'
-               }
-    search_string = "hello3131'you'are'awesome"
-    ruby_script = script.RubyScript(headers=headers, details=details)
-    python_script = script.PythonScript(headers=headers, details=details)
-    script_list = [ruby_script, python_script]
 
-    def test_generate_search_code(self):
+    def setUp(self):
+        self.headers = ['Host: google.com']
+        self.details = {'protocol': 'HTTP',
+            'pre_scheme': 'https://',
+            'Host': 'google.com',
+            'version': '1.1',
+            'path': '/robots.txt',
+            'method': 'GET',
+            'proxy_port': '2223',
+            'proxy_host': 'http://xyz.com'}
+
+        self.code_search = "hello3131'you'are'awesome"
+        self.ruby_script = script.RubyScript(headers=self.headers, details=self.details)
+        self.python_script = script.PythonScript(headers=self.headers, details=self.details)
+        self.script_list = [self.ruby_script, self.python_script]
+
+    def test_generate_search(self):
         for script_name in self.script_list:
-            result = script_name._generate_search(self.search_string)
+            result = script_name._generate_search(self.code_search)
             if (isinstance(script_name, script.RubyScript)):
-                to_match = ruby_generated_search_string
+                code_search = code_search_ruby
             elif (isinstance(script_name, script.PythonScript)):
-                to_match = python_generated_search_string
+                code_search = code_search_python
 
-            self.assertEqual(result, to_match, 'Invalid generation of search code for {}'.format(
+            self.assertEqual(result, code_search, 'Invalid generation of search code for {}'.format(
                 script_name.__class__.__name__))
 
-    def test_generate_proxy_code(self):
+    def test_generate_proxy(self):
         for script_name in self.script_list:
             result = script_name._generate_proxy()
             if (isinstance(script_name, script.RubyScript)):
-                to_match = """
-    proxy: 'http://xyz.com:2223',
-"""
+                code_proxy = "\n    proxy: 'http://xyz.com:2223',\n"
             elif (isinstance(script_name, script.PythonScript)):
-                to_match = """
-    c.setopt(c.PROXY, 'http://xyz.com:2223')
-"""
-            self.assertEqual(result, to_match, 'Invalid generation of proxy code for {}'.format(
+                code_proxy = "\n    c.setopt(c.PROXY, 'http://xyz.com:2223')\n"
+            self.assertEqual(result, code_proxy, 'Invalid generation of proxy code for {}'.format(
                 script_name.__class__.__name__))
 
     def test_generate_script(self):
         for script_name in self.script_list:
             result = script_name.generate_script()
             if (isinstance(script_name, script.RubyScript)):
-                to_match = ruby_generated_script
+                code = code_ruby
             elif (isinstance(script_name, script.PythonScript)):
-                to_match = python_generated_script
-            self.assertEqual(result, to_match, 'Invalid generation of script for {}'.format(
+                code = code_python
+            self.assertEqual(result, code, 'Invalid generation of script for {}'.format(
                 script_name.__class__.__name__))
 
-    def test_generate_post_code(self):
+    def test_generate_post(self):
         self.details['data'] = 'hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:"{}|_+!@#$%^&*()`'
         for script_name in self.script_list:
             result = script_name._generate_post()
             if (isinstance(script_name, script.RubyScript)):
-                to_match = """
-    body: 'hello7World'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:"{}|_+!@#$%^&*()`'
-"""
+                code_post = "\n    body: 'hello7World'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\"{}|_+!@#$%^&*()`'\n"
             elif (isinstance(script_name, script.PythonScript)):
-                to_match = """
-    # Sets request method to POST
-    c.setopt(c.POSTFIELDS, 'hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:"{}|_+!@#$%^&*()`')  #expects body to urlencoded
-"""
-            self.assertEqual(result, to_match, 'Invalid generation of post code for {}'.format(
+                code_post = "\n    # Sets request method to POST\n    c.setopt(c.POSTFIELDS, 'hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\"{}|_+!@#$%^&*()`')  #expects body to urlencoded\n"
+            self.assertEqual(result, code_post, 'Invalid generation of post code for {}'.format(
                 script_name.__class__.__name__))
 
 if __name__ == '__main__':
