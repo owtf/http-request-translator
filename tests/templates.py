@@ -82,6 +82,7 @@ if __name__ == '__main__':
     main()
 """
 
+
 code_search_ruby = """
 }
 req = Typhoeus::Request.new(url, options)
@@ -124,6 +125,7 @@ end
 
 req.run
 """
+
 
 code_ruby = """
 require "typhoeus"
