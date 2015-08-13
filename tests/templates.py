@@ -163,3 +163,65 @@ end
 
 req.run
 """
+
+code_search_bash = " | egrep --color ' hello3131\'you\'are\'awesome |$'"
+
+
+code_bash = """
+#!/usr/bin/env bash
+curl -x http://xyz.com:2223 -v --request GET https://google.com/robots.txt  --header 'Host: google.com'  --include"""
+
+
+code_search_php = """
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+$response = curl_exec($ch);
+
+if (curl_errno($ch)) {
+ print curl_error($ch);
+} else {
+ curl_close($ch);
+}
+print $response;
+$string = 'hello3131\'you\'are\'awesome';
+// Blindly copied from http://stackoverflow.com/questions/10778318/test-if-a-string-is-regex
+// Checks if the passed string is a regex or a simple string
+if( preg_match("/^\/.+\/[a-z]*$/i",$string)) {
+    if (preg_match($string, $response, $match)) {
+        print 'Found a match!';
+    }
+}
+else {
+    if (strpos($response,$string) !== false) {
+        print 'Found a match!';
+    }
+}
+"""
+
+
+code_php = """
+if (!extension_loaded('curl')) {
+    print 'Curl Extension not found. Exiting';
+    exit;
+}
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, 'https://google.com/robots.txt');
+// Set so curl_exec returns the result instead of outputting it.
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+// Set verbosity
+curl_setopt($ch, CURLOPT_VERBOSE, 1);
+$headers = array();
+
+$headers[] = "Host: google.com";
+
+curl_setopt($ch, CURLOPT_PROXY, 'http://xyz.com:2223');
+
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+$response = curl_exec($ch);
+
+if (curl_errno($ch)) {
+ print curl_error($ch);
+} else {
+ curl_close($ch);
+}
+print $response;
+"""
