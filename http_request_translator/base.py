@@ -92,7 +92,7 @@ class AbstractScript(object):
         code = ''
         for item in self.headers:
             header, value = item.split(':', 1)
-            code += self.code_header.format(header=header.replace("'", "\'"), value=value.replace("'", "\'"))
+            code += self.code_header.format(header=header.replace('"', '\\"'), value=value.replace('"', '\\"'))
         return code
 
     def _generate_proxy(self):
@@ -111,7 +111,7 @@ class AbstractScript(object):
         :return: Code snippet containing body to be sent in request.
         :rtype: str
         """
-        return self.code_post.format(data=self.details.get('data', '').replace("'", "\'"))
+        return self.code_post.format(data=self.details.get('data', '').replace('"', '\\"'))
 
     def _generate_https(self):
         """Default generation of the HTTPS specific code.
@@ -144,7 +144,7 @@ class AbstractScript(object):
         :return: Code snippet with the HTTP response search feature.
         :rtype: str
         """
-        return self.code_search.format(search_string=search_string.replace("'", "\'"))
+        return self.code_search.format(search_string=search_string.replace('"', '\\"'))
 
     def _generate_nosearch(self):
         """Default generation of the code having no search functionality.

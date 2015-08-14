@@ -24,7 +24,7 @@ curl_setopt($ch, CURLOPT_PROXY, '{proxy}');
 
 
 code_post = """
-$content = '{data}';
+$content = "{data}";
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
 """
@@ -40,7 +40,7 @@ if (curl_errno($ch)) {{
  curl_close($ch);
 }}
 print $response;
-$string = '{search_string}';
+$string = "{search_string}";
 // Blindly copied from http://stackoverflow.com/questions/10778318/test-if-a-string-is-regex
 // Checks if the passed string is a regex or a simple string
 if( preg_match("/^\/.+\/[a-z]*$/i",$string)) {{

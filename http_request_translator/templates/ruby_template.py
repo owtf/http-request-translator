@@ -16,7 +16,7 @@ code_proxy = """
 
 
 code_header = """
-    '{header}' => '{value}',"""
+    "{header}" => "{value}","""
 
 
 code_headers = """
@@ -26,7 +26,7 @@ code_headers = """
 
 
 code_post = """
-    body: '{data}'
+    body: "{data}"
 """
 
 

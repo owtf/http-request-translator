@@ -30,7 +30,7 @@ code_proxy = """
 
 code_post = """
     # Sets request method to POST
-    c.setopt(c.POSTFIELDS, '{data}')  #expects body to urlencoded
+    c.setopt(c.POSTFIELDS, "{data}")  #expects body to urlencoded
 """
 
 
@@ -55,7 +55,7 @@ code_search = """
     # end up with a Unicode string.
     response = body.decode('iso-8859-1')
 
-    match = re.findall(r'{search_string}', str(response))
+    match = re.findall(r"{search_string}", str(response))
     try:
         from termcolor import colored
         lib_available = True
@@ -64,8 +64,8 @@ code_search = """
     if match:
         for item in match:
             if lib_available:
-                replace_string = colored(match[x], 'green')
-                response = re.sub(match[x], replace_string, str(response))
+                replace_string = colored(match[item], 'green')
+                response = re.sub(match[item], replace_string, str(response))
             else:
                 print("Matched item: ",item)
 

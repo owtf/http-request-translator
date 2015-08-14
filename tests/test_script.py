@@ -19,7 +19,7 @@ class TestScripts(unittest.TestCase):
             'method': 'GET',
             'proxy_port': '2223',
             'proxy_host': 'http://xyz.com'}
-        self.code_search = "hello3131'you'are'awesome"
+        self.code_search = """hello3131\"you\\"are'awesome"""
         self.ruby_script = script.RubyScript(headers=self.headers, details=self.details)
         self.python_script = script.PythonScript(headers=self.headers, details=self.details)
         self.bash_script = script.BashScript(headers=self.headers, details=self.details)
@@ -79,13 +79,13 @@ class TestScripts(unittest.TestCase):
         for script_name in self.script_list:
             result = script_name._generate_post()
             if isinstance(script_name, script.RubyScript):
-                code_post = "\n    body: 'hello7World'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\"{}|_+!@#$%^&*()`'\n"
+                code_post = '\n    body: "hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\\"{}|_+!@#$%^&*()`"\n'
             elif isinstance(script_name, script.PythonScript):
-                code_post = "\n    # Sets request method to POST\n    c.setopt(c.POSTFIELDS, 'hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\"{}|_+!@#$%^&*()`')  #expects body to urlencoded\n"
+                code_post = '\n    # Sets request method to POST\n    c.setopt(c.POSTFIELDS, "hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\\"{}|_+!@#$%^&*()`")  #expects body to urlencoded\n'
             elif isinstance(script_name, script.BashScript):
-                code_post = " --data 'hello7World'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\"{}|_+!@#$%^&*()`'"
+                code_post = ' --data "hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\\"{}|_+!@#$%^&*()`" '
             elif isinstance(script_name, script.PHPScript):
-                code_post = "\n$content = 'hello7World'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\"{}|_+!@#$%^&*()`';\ncurl_setopt($ch, CURLOPT_POST, 1);\ncurl_setopt($ch, CURLOPT_POSTFIELDS, $content);\n"
+                code_post = '\n$content = "hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\\"{}|_+!@#$%^&*()`";\ncurl_setopt($ch, CURLOPT_POST, 1);\ncurl_setopt($ch, CURLOPT_POSTFIELDS, $content);\n'
             self.assertEqual(
                 result,
                 code_post,

@@ -3,16 +3,16 @@ code_begin = """
 curl"""
 
 
-code_header = """ --header '{header}:{value}' """
+code_header = """ --header "{header}:{value}" """
 
 
 code_proxy = " -x {proxy}"
 
 
-code_post = " --data '{data}'"
+code_post = """ --data "{data}" """
 
 
-code_search = " | egrep --color ' {search_string} |$'"
+code_search = """ | egrep --color " {search_string} |$" """
 
 
-code_nosearch = " -v --request {method} {url} {headers} --include"
+code_nosearch = """ -v --request {method} {url} {headers} --include"""

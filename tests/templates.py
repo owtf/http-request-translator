@@ -11,7 +11,7 @@ code_search_python = """
     # end up with a Unicode string.
     response = body.decode('iso-8859-1')
 
-    match = re.findall(r'hello3131\'you\'are\'awesome', str(response))
+    match = re.findall(r"hello3131\\"you\\\\"are'awesome", str(response))
     try:
         from termcolor import colored
         lib_available = True
@@ -20,8 +20,8 @@ code_search_python = """
     if match:
         for item in match:
             if lib_available:
-                replace_string = colored(match[x], 'green')
-                response = re.sub(match[x], replace_string, str(response))
+                replace_string = colored(match[item], 'green')
+                response = re.sub(match[item], replace_string, str(response))
             else:
                 print("Matched item: ",item)
 
@@ -96,7 +96,7 @@ req.on_complete do |response|
         lib_available = false
     end
 
-    matched = response.body.match /hello3131\'you\'are\'awesome/
+    matched = response.body.match /hello3131\\"you\\\\"are'awesome/
 
     original = response.body
     if matched then
@@ -138,7 +138,7 @@ options = {
     method: :get,
 
     headers: {
-    'Host' => ' google.com',
+    "Host" => " google.com",
     },
 
     proxy: 'http://xyz.com:2223',
@@ -164,12 +164,12 @@ end
 req.run
 """
 
-code_search_bash = " | egrep --color ' hello3131\'you\'are\'awesome |$'"
+code_search_bash = """ | egrep --color " hello3131\\"you\\\\"are'awesome |$" """
 
 
 code_bash = """
 #!/usr/bin/env bash
-curl -x http://xyz.com:2223 -v --request GET https://google.com/robots.txt  --header 'Host: google.com'  --include"""
+curl -x http://xyz.com:2223 -v --request GET https://google.com/robots.txt  --header "Host: google.com"  --include"""
 
 
 code_search_php = """
@@ -182,7 +182,7 @@ if (curl_errno($ch)) {
  curl_close($ch);
 }
 print $response;
-$string = 'hello3131\'you\'are\'awesome';
+$string = "hello3131\\"you\\\\"are'awesome";
 // Blindly copied from http://stackoverflow.com/questions/10778318/test-if-a-string-is-regex
 // Checks if the passed string is a regex or a simple string
 if( preg_match("/^\/.+\/[a-z]*$/i",$string)) {

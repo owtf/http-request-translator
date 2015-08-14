@@ -26,7 +26,7 @@ class BashScript(AbstractScript):
             url=self.url,
             headers=self._generate_headers())
         if self.search:
-            code += self.code_search.format(search_string=self.search)
+            code += self.code_search.format(search_string=self.search.replace('"', '\\"'))
         return code
 
 
