@@ -36,10 +36,19 @@ def process_arguments(args):
             print("\nThanks for using the interactive mode! Exiting!")
             sys.exit(0)
     else:
-        if not args.request:
+        if args.request:
+            headers, details = parse_raw_request(args.request)
+        elif args.file:
+            fp = open(args.file)
+            raw_request = ""
+            for line in fp.readlines():
+                if line != '':
+                    raw_request += line
+            raw_request = raw_request.rstrip('\r\n')  # Remove any linefeeds if present in the file provided
+            headers, details = parse_raw_request(raw_request)
+        else:
             print("Input a raw HTTP Request and try again.\nElse try using the interactive option")
             sys.exit(-1)
-        headers, details = parse_raw_request(args.request)
         if args.data:
             details['data'] = args.data
         else:

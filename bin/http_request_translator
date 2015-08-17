@@ -14,6 +14,7 @@ def take_arguments():
         description="Request Translator is a standalone tool that can translate "
                     "raw HTTP requests into curl commands or bash/python/php/ruby/PowerShell scripts")
     conflicting_group = parser.add_mutually_exclusive_group()
+    request_group = parser.add_mutually_exclusive_group()
     parser.add_argument(
         '--output', '-o',
         action='append',
@@ -38,9 +39,13 @@ def take_arguments():
     parser.add_argument(
         '--data', '-d',
         help='Add the data that you want to send along with the header')
-    parser.add_argument(
+    request_group.add_argument(
         '--request', '-r',
         help='Input the HTTP request')
+    request_group.add_argument(
+        '--file', '-f',
+        help='Input file for HTTP request')
+
     process_arguments(parser.parse_args())
     return parser.parse_args()
 
