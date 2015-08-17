@@ -1,9 +1,9 @@
 code_search_python = """
     try:
-        c.perform()
+        curl_handler.perform()
     except pycurl.error, error:
         print('An error occurred: ', error)
-    c.close()
+    curl_handler.close()
 
     body = buffer.getvalue()
     # Body is a string on Python 2 and a byte string on Python 3.
@@ -45,29 +45,29 @@ except ImportError:
 
 def main():
     buffer = BytesIO()
-    c = pycurl.Curl()
-    c.setopt(c.URL, 'https://google.com/robots.txt')
-    c.setopt(c.WRITEDATA, buffer)
-    c.setopt(c.HTTPHEADER, ['Host: google.com'])
+    curl_handler = pycurl.Curl()
+    curl_handler.setopt(curl_handler.URL, 'https://google.com/robots.txt')
+    curl_handler.setopt(curl_handler.WRITEDATA, buffer)
+    curl_handler.setopt(curl_handler.HTTPHEADER, ['Host: google.com'])
     # for verbosity
-    c.setopt(c.VERBOSE, True)
+    curl_handler.setopt(curl_handler.VERBOSE, True)
     # Follow redirects
-    c.setopt(c.FOLLOWLOCATION, True)
+    curl_handler.setopt(curl_handler.FOLLOWLOCATION, True)
     # For older PycURL versions:
-    #c.setopt(c.WRITEFUNCTION, buffer.write)
+    #curl_handler.setopt(curl_handler.WRITEFUNCTION, buffer.write)
 
-    c.setopt(c.PROXY, 'http://xyz.com:2223')
+    curl_handler.setopt(curl_handler.PROXY, 'http://xyz.com:2223')
 
-    c.setopt(pycurl.SSL_VERIFYPEER, 1)
-    c.setopt(pycurl.SSL_VERIFYHOST, 2)
+    curl_handler.setopt(pycurl.SSL_VERIFYPEER, 1)
+    curl_handler.setopt(pycurl.SSL_VERIFYHOST, 2)
     # If providing updated certs
-    # c.setopt(pycurl.CAINFO, "/path/to/updated-certificate-chain.crt")
+    # curl_handler.setopt(pycurl.CAINFO, "/path/to/updated-certificate-chain.crt")
 
     try:
-        c.perform()
+        curl_handler.perform()
     except pycurl.error, error:
         print('An error occurred: ', error)
-    c.close()
+    curl_handler.close()
 
     body = buffer.getvalue()
     # Body is a string on Python 2 and a byte string on Python 3.

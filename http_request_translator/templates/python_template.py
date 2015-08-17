@@ -10,44 +10,44 @@ except ImportError:
 
 def main():
     buffer = BytesIO()
-    c = pycurl.Curl()
-    c.setopt(c.URL, '{url}')
-    c.setopt(c.WRITEDATA, buffer)
-    c.setopt(c.HTTPHEADER, {headers})
+    curl_handler = pycurl.Curl()
+    curl_handler.setopt(curl_handler.URL, '{url}')
+    curl_handler.setopt(curl_handler.WRITEDATA, buffer)
+    curl_handler.setopt(curl_handler.HTTPHEADER, {headers})
     # for verbosity
-    c.setopt(c.VERBOSE, True)
+    curl_handler.setopt(curl_handler.VERBOSE, True)
     # Follow redirects
-    c.setopt(c.FOLLOWLOCATION, True)
+    curl_handler.setopt(curl_handler.FOLLOWLOCATION, True)
     # For older PycURL versions:
-    #c.setopt(c.WRITEFUNCTION, buffer.write)
+    #curl_handler.setopt(curl_handler.WRITEFUNCTION, buffer.write)
 """
 
 
 code_proxy = """
-    c.setopt(c.PROXY, '{proxy}')
+    curl_handler.setopt(curl_handler.PROXY, '{proxy}')
 """
 
 
 code_post = """
     # Sets request method to POST
-    c.setopt(c.POSTFIELDS, "{data}")  #expects body to urlencoded
+    curl_handler.setopt(curl_handler.POSTFIELDS, "{data}")  #expects body to urlencoded
 """
 
 
 code_https = """
-    c.setopt(pycurl.SSL_VERIFYPEER, 1)
-    c.setopt(pycurl.SSL_VERIFYHOST, 2)
+    curl_handler.setopt(pycurl.SSL_VERIFYPEER, 1)
+    curl_handler.setopt(pycurl.SSL_VERIFYHOST, 2)
     # If providing updated certs
-    # c.setopt(pycurl.CAINFO, "/path/to/updated-certificate-chain.crt")
+    # curl_handler.setopt(pycurl.CAINFO, "/path/to/updated-certificate-chain.crt")
 """
 
 
 code_search = """
     try:
-        c.perform()
+        curl_handler.perform()
     except pycurl.error, error:
         print('An error occurred: ', error)
-    c.close()
+    curl_handler.close()
 
     body = buffer.getvalue()
     # Body is a string on Python 2 and a byte string on Python 3.
@@ -79,10 +79,10 @@ if __name__ == '__main__':
 
 code_nosearch = """
     try:
-        c.perform()
+        curl_handler.perform()
     except pycurl.error, error:
         print('An error occurred: ', error)
-    c.close()
+    curl_handler.close()
 
     body = buffer.getvalue()
     # Body is a string on Python 2 and a byte string on Python 3.

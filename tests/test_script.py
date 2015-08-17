@@ -48,7 +48,7 @@ class TestScripts(unittest.TestCase):
             if isinstance(script_name, script.RubyScript):
                 code_proxy = "\n    proxy: 'http://xyz.com:2223',\n"
             elif isinstance(script_name, script.PythonScript):
-                code_proxy = "\n    c.setopt(c.PROXY, 'http://xyz.com:2223')\n"
+                code_proxy = "\n    curl_handler.setopt(curl_handler.PROXY, 'http://xyz.com:2223')\n"
             elif isinstance(script_name, script.BashScript):
                 code_proxy = " -x http://xyz.com:2223"
             elif isinstance(script_name, script.PHPScript):
@@ -81,7 +81,7 @@ class TestScripts(unittest.TestCase):
             if isinstance(script_name, script.RubyScript):
                 code_post = '\n    body: "hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\\"{}|_+!@#$%^&*()`"\n'
             elif isinstance(script_name, script.PythonScript):
-                code_post = '\n    # Sets request method to POST\n    c.setopt(c.POSTFIELDS, "hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\\"{}|_+!@#$%^&*()`")  #expects body to urlencoded\n'
+                code_post = '\n    # Sets request method to POST\n    curl_handler.setopt(curl_handler.POSTFIELDS, "hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\\"{}|_+!@#$%^&*()`")  #expects body to urlencoded\n'
             elif isinstance(script_name, script.BashScript):
                 code_post = ' --data "hello7World\'Ω≈ç√∫˜µ≤≥÷田中さんにあげて下さい,./;[]\-=<>?:\\"{}|_+!@#$%^&*()`" '
             elif isinstance(script_name, script.PHPScript):
