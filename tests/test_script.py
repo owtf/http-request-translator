@@ -2,8 +2,9 @@
 import unittest
 
 from http_request_translator import script
-from .templates import (code_search_python, code_python, code_search_ruby,
-                        code_ruby, code_search_bash, code_bash, code_search_php, code_php)
+from .templates import (code_begin_python, code_search_python, code_python, code_search_ruby, code_begin_ruby,
+                        code_ruby, code_begin_bash, code_search_bash, code_bash, code_search_php, code_php,
+                        code_begin_php)
 
 
 class TestScripts(unittest.TestCase):
@@ -91,6 +92,21 @@ class TestScripts(unittest.TestCase):
                 code_post,
                 'Invalid generation of post code for {}'.format(script_name.__class__.__name__))
 
+    def test_generate_begin(self):
+        for script_name in self.script_list:
+            result = script_name._generate_begin()
+            if isinstance(script_name, script.RubyScript):
+                code_begin = code_begin_ruby
+            elif isinstance(script_name, script.PythonScript):
+                code_begin = code_begin_python
+            elif isinstance(script_name, script.BashScript):
+                code_begin = code_begin_bash
+            elif isinstance(script_name, script.PHPScript):
+                code_begin = code_begin_php
+            self.assertEqual(
+                result,
+                code_begin,
+                'Invalid generation of begin code for {}'.format(script_name.__class__.__name__))
 
 if __name__ == '__main__':
     unittest.main()

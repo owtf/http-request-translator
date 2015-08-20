@@ -1,3 +1,28 @@
+code_begin_python = """
+#!/usr/bin/python
+from __future__ import print_function
+import re
+import pycurl
+try:
+    from io import BytesIO
+except ImportError:
+    from StringIO import StringIO as BytesIO
+
+def main():
+    buffer = BytesIO()
+    curl_handler = pycurl.Curl()
+    curl_handler.setopt(curl_handler.URL, 'https://google.com/robots.txt')
+    curl_handler.setopt(curl_handler.WRITEDATA, buffer)
+    curl_handler.setopt(curl_handler.HTTPHEADER, ['Host: google.com'])
+    # for verbosity
+    curl_handler.setopt(curl_handler.VERBOSE, True)
+    # Follow redirects
+    curl_handler.setopt(curl_handler.FOLLOWLOCATION, True)
+    # For older PycURL versions:
+    #curl_handler.setopt(curl_handler.WRITEFUNCTION, buffer.write)
+"""
+
+
 code_search_python = """
     try:
         curl_handler.perform()
@@ -83,6 +108,22 @@ if __name__ == '__main__':
 """
 
 
+code_begin_ruby = """
+require "typhoeus"
+
+url = 'https://google.com/robots.txt'
+
+options = {
+    followlocation: true,
+    verbose: true,
+    method: :get,
+
+    headers: {
+    "Host" => " google.com",
+    },
+"""
+
+
 code_search_ruby = """
 }
 req = Typhoeus::Request.new(url, options)
@@ -164,12 +205,35 @@ end
 req.run
 """
 
+
+code_begin_bash = """
+#!/usr/bin/env bash
+curl"""
+
+
 code_search_bash = """ | egrep --color " hello3131\\"you\\\\"are'awesome |$" """
 
 
 code_bash = """
 #!/usr/bin/env bash
 curl -x http://xyz.com:2223 -v --request GET https://google.com/robots.txt  --header "Host: google.com"  --include"""
+
+
+code_begin_php = """
+if (!extension_loaded('curl')) {
+    print 'Curl Extension not found. Exiting';
+    exit;
+}
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, 'https://google.com/robots.txt');
+// Set so curl_exec returns the result instead of outputting it.
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+// Set verbosity
+curl_setopt($ch, CURLOPT_VERBOSE, 1);
+$headers = array();
+
+$headers[] = "Host: google.com";
+"""
 
 
 code_search_php = """
