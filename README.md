@@ -35,28 +35,28 @@ If you want to specify multiple scripts:
 
 If you want to pass data along with the request:
 	
-    http_request_translator -o bash -d "<body/url parameters to be sent>" -r "Your Request"
+    http_request_translator -o <your favorite script(s)> -d "<body/url parameters to be sent>" -r "Your Request"
 
 If you want to specify a proxy server for sending request:
 	
-     http_request_translator -o <your favorite script(s)> --data "<body/url parameters to be sent>" -p "proxy_url:proxy_port" -r "Your Request"
+     http_request_translator -o <your favorite script(s)> -p "proxy_url:proxy_port" -r "Your Request"
 
 You can search the response by either using the regex-search or simple string search *(but not both)*.
 
 For simple string search:
 
-    http_request_translator -ss "some_string" -r "Your Request" -o bash
+    http_request_translator -ss "some_string" -r "Your Request" -o <your favorite script(s)>
 
 For regex search:
 
-    http_request_translator -se "some_regex" -r "Your Request" -o bash
+    http_request_translator -se "some_regex" -r "Your Request" -o <your favorite script(s)>
 
 If you want to manually enter the request, use `-i` option:
 
-    http_request_translator -o <your favorite script> -i
+    http_request_translator -o <your favorite script(s)> -i
 
 If you want to specify a file to read the request from, then do:
 
-    http_request_translator -f some_file -o <scripts>
+    http_request_translator -f some_file -o <your favorite script(s)>
 
 See `-help` or `-h` for more details.
