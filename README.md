@@ -59,4 +59,4 @@ If you want to specify a file to read the request from, then do:
 
     http_request_translator -f some_file -o <your favorite script(s)>
 
-See `-help` or `-h` for more details.
+See `--help` or `-h` for more details.
