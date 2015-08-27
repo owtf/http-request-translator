@@ -1,6 +1,14 @@
 # Compiled source and other garbage #
 #####################################
-*.pyc
+__pycache__/
+*.py[cod]
 *.swp
 # nose coverage
 .coverage
+
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Sphinx documentation
+docs/build/
