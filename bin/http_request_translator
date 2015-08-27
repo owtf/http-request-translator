@@ -12,7 +12,7 @@ def take_arguments():
     """
     parser = argparse.ArgumentParser(
         description="Request Translator is a standalone tool that can translate "
-                    "raw HTTP requests into curl commands or bash/python/php/ruby/PowerShell scripts")
+                    "raw HTTP requests into bash/python/php/ruby scripts")
     conflicting_group = parser.add_mutually_exclusive_group()
     request_group = parser.add_mutually_exclusive_group()
     parser.add_argument(

@@ -1,50 +1,62 @@
-A HTTP request translator, a *standalone* *tool* that can:
+HTTP Request Translator
+========================
 
-1) Be used from inside OR outside of OWTF.
+HTTP request translator is a *standalone* *tool* that can:
 
-2) Translate raw HTTP requests into curl commands or bash/python/php/ruby/PowerShell scripts
+* Be used from inside OR outside of OWTF.
 
-3) Provide essential quick and dirty transforms: base64 (encode/decode), urlencode (encode/decode)
+* Translate raw HTTP requests to bash/python/php/ruby scripts
 
-Quick Tip:
-The translator.py when executed with "--help" option will give the manual page of tool.
+* Provide essential quick and dirty transforms: base64(encode/decode), urlencode(encode/decode)
 
-How to use the tool: 
-1) Translating raw request from the CLI to a single script(say python):
+##Installation
+
+Currently the only installation method is to install from source. However it will be available as a library from PyPI.
+
+The first step is to clone the repository:
+
+    git clone https://github.com/owtf/http-request-translator.git
+
+Then run the setup.py script:
+
+    ./setup.py install
+
+It is recommended to install in a `virtualenv`.
+
+##Usage:
+
+To translate a raw request from the CLI to a single script:
 	
-	$python translator.py --output python --Request "<Your Request>"
+    http_request_translator -o python -r "<Your request>"
 
-2) Translating raw request from the CLI to multiple scripts(say python and bash)
+If you want to specify multiple scripts:
 
-	$python translator.py --output python,bash --Request "<Your Request>"
+    http_request_translator -o python,bash,ruby -r "<Your Request>"
 
-3) Translating raw request from the CLI by passing data along the request
+If you want to pass data along with the request:
 	
-	$python translator.py --output <your favorite script(s)> --data "<body/url parameters to be sent>" --Request "Your Request"
+    http_request_translator -o bash -d "<body/url parameters to be sent>" -r "Your Request"
 
-4) Translating raw request to a script that uses a proxy server for sending request
+If you want to specify a proxy server for sending request:
 	
-	$python translator.py --output <your favorite script(s)> --data "<body/url parameters to be sent>" --proxy "<proxy server that you want to use>" --Request "Your Request"
+     http_request_translator -o <your favorite script(s)> --data "<body/url parameters to be sent>" -p "proxy_url:proxy_port" -r "Your Request"
 
-	If you haven't specified the proxy server, it will use OWTF's defauly inbound proxy
+You can search the response by either using the regex-search or simple string search *(but not both)*.
 
-5) Search the response header using the regex-search or the normal string search 
-	
-	$python translator.py --stringSearch "<String that you want to search in response>" --Request "Your Request"
+For simple string search:
 
-	For regex search :
-	$python translator.py --regexSearch "<String that you want to search in response>" --Request "Your Request"
+    http_request_translator -ss "some_string" -r "Your Request" -o bash
 
-6) Translating a bunch of raw requests from CLI using the -i option. 
+For regex search:
 
-	$python translator.py --output <your favorite script> -i
+    http_request_translator -se "some_regex" -r "Your Request" -o bash
 
-	Hit enter twice after entering the request and the body(Also the URL parameters for GET requests). Keep translating as much as you want! To come out of the interactive mode, type "q!".
+If you want to manually enter the request, use `-i` option:
 
-7) To write the output of transformed request to a file 
+    http_request_translator -o <your favorite script> -i
 
-	$python translator.py --output <your favorite script(s)> --data "<body/url parameters to be sent>" --proxy "<proxy server that you want to use>" --Request "<Your Request>" > <filename.<extension>>
+If you want to specify a file to read the request from, then do:
 
-8) Read request from a file and transform it 
+    http_request_translator -f some_file -o <scripts>
 
-	$ python translator.py --output <your favorite script(s)> --Request "`cat <path/to/directory/file_name>`"
+See `-help` or `-h` for more details.
