@@ -22,6 +22,14 @@ Documentation
 .. toctree::
     :maxdepth: 2
 
+    translator
+    base
+    bash_script
+    ruby_script
+    python_script
+    php_script
+    url
+    plugin_manager
 
 Indices and tables
 ==================

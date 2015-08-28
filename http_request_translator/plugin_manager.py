@@ -37,7 +37,7 @@ def plugin_manager(script_list, parsed_tuple, search_string=None):
 
 
 def generate_script(script, headers, details, search_string=None):
-    """Returns the script code for the HTTP request passed in `script` language
+    """Returns the script code for the HTTP request passed in script language
 
     :param str script: Name of the language for which script is to be generated
     :param dict headers: Headers information
@@ -45,7 +45,7 @@ def generate_script(script, headers, details, search_string=None):
     :param str search_string: string to be searched for in the response for given request
 
     :return: A combined string of generated code
-    :rtype:`str`
+    :rtype: `str`
     """
     class_script = hardcoded_script_import(script.strip().lower())
     return class_script(headers=headers, details=details, search=search_string).generate_script()
