@@ -76,7 +76,8 @@ def process_arguments(args):
         if len(script_list) == 0:
             # Default curl commands if --output option is not passed
             # Not implemented yet
-            pass
+            generated_code = generate_script('bash', headers, details, arg_option)
+            print(generated_code)
         else:
             for script in script_list:
                 generated_code = generate_script(script, headers, details, arg_option)
@@ -125,9 +126,7 @@ def take_body(headers, script_list):
                 headers, details = parse_raw_request("".join(headers))
                 details['data'] = "".join(body).strip()
                 if not script_list:
-                    # TODO: Default curl commands if --output option is not passed
-                    # Not implemented yet
-                    pass
+                    print(generate_script('bash', headers, details))
                 else:
                     for script in script_list:
                         print(generate_script(script, headers, details))
