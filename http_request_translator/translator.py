@@ -74,8 +74,6 @@ def process_arguments(args):
         elif args.search_regex:
             arg_option = args.search_regex
         if len(script_list) == 0:
-            # Default curl commands if --output option is not passed
-            # Not implemented yet
             generated_code = generate_script('bash', headers, details, arg_option)
             print(generated_code)
         else:
