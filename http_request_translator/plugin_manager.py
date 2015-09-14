@@ -24,18 +24,6 @@ def hardcoded_script_import(script_name):
     raise ValueError("The '%s' language is not supported yet." % script_name)
 
 
-def plugin_manager(script_list, parsed_tuple, search_string=None):
-    # TODO: Docstring and comments.
-    default = len(script_list) or False
-    for script in script_list:
-        class_script = hardcoded_script_import(script.strip().lower())
-        headers, details = parsed_tuple
-        class_script(headers=headers, details=details, search=search_string).generate_script()
-    if default:
-        # TODO: Generates the default Curl command.
-        pass
-
-
 def generate_script(script, headers, details, search_string=None):
     """Returns the script code for the HTTP request passed in script language
 
