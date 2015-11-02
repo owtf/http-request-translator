@@ -37,22 +37,36 @@ Command Line Interface
 HTTP Request Translator provides a complete command line interface (CLI) to
 make it easy for you to use it.
 
-1. Translate a raw request from the CLI to a single script:
-   ``$ http_request_translator -o python -r "<Your request>"``
-2. Specify multiple scripts:
-   ``$ http_request_translator -o python,bash,ruby -r "<Your Request>"``
-3. Pass data along with the request:
-   ``$ http_request_translator -o <your favorite script(s)> -d "<body/url parameters to be sent>" -r "Your Request"``
-4. Specify a proxy server for sending request:
-   ``$ http_request_translator -o <your favorite script(s)> -p "proxy_url:proxy_port" -r "Your Request"``
-5. Search the response by either using the regex-search or simple string search *(but not both)*.
-    + For simple string search:
-      ``$ http_request_translator -ss "some_string" -r "Your Request" -o <your favorite script(s)>``
-    + For regex search:
-      ``$ http_request_translator -se "some_regex" -r "Your Request" -o <your favorite script(s)>``
-6. Manually enter the request using interactive mode:
-   ``$ http_request_translator -o <your favorite script(s)> -i``
-7. Specify a file to read the request from:
-   ``$ http_request_translator -f some_file -o <your favorite script(s)>``
+.. code-block:: bash
 
-See ``--help`` or ``-h`` for the exhaustive list of available options.
+    usage: http_request_translator [-h] [--output OUTPUT] [--proxy [PROXY]]
+                                   [--search_string SEARCH_STRING | --search_regex SEARCH_REGEX]
+                                   [--interactive] [--data DATA]
+                                   [--request REQUEST | --file FILE]
+
+    Request Translator is a standalone tool that can translate raw HTTP requests
+    into bash/python/php/ruby scripts
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --output OUTPUT, -o OUTPUT
+                            Generates a script for given HTTP request. If you want
+                            to generate multiple scripts, separate the script's
+                            name with a <,>
+      --proxy [PROXY], -p [PROXY]
+                            Generates command/script with relevant, specified
+                            proxy
+      --search_string SEARCH_STRING, -ss SEARCH_STRING
+                            Sends the request and searches for the required string
+                            in the response (i.e literal match)
+      --search_regex SEARCH_REGEX, -se SEARCH_REGEX
+                            Sends the request and searches for the required regex
+                            in the response (i.e regex match)
+      --interactive, -i     Interactive mode: read raw HTTP request from keyboard,
+                            hit enter when ready.Type ':q!' to exit from the
+                            interactive mode.
+      --data DATA, -d DATA  Add the data that you want to send along with the
+                            header
+      --request REQUEST, -r REQUEST
+                            Input the HTTP request
+      --file FILE, -f FILE  Input file for HTTP request
