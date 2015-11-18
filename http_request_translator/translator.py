@@ -51,8 +51,6 @@ def process_arguments(args):
             sys.exit(-1)
         if args.data:
             details['data'] = args.data
-        else:
-            details['data'] = None
         if args.proxy:
             # If proxy already doesn't starts with http and is like 127.0.0.1:8010
             if not args.proxy.startswith(('http', 'https')):
@@ -141,16 +139,19 @@ def parse_raw_request(request):
 
     :raises ValueError: When request passed in malformed.
 
-    :return: Separate dictionaries for headers and body and other parameters.
-    :rtype: dict,dict
+    :return: A tuple of two dictionaries where the first one is the headers and the second the details.
+    :rtype: tuple
     """
-    try:
-        new_request_method, headers = request.split('\n', 1)
-    except IndexError:
+    headers_lines = request.splitlines()
+    if not headers_lines:
         raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
-
+    new_request_method = headers_lines.pop(0)
+    # Headers
     header_list = []
-    for line in headers.splitlines():
+    while headers_lines:
+        line = headers_lines.pop(0)
+        if not line.strip('\r\n'):  # Empty line? Therefore the headers are over and the content is starting.
+            break
         header_list.append(line)
         try:
             header, value = line.split(":", 1)
@@ -158,8 +159,13 @@ def parse_raw_request(request):
             raise ValueError("Headers Malformed. Please Enter a Valid HTTP request.")
         if header.lower() == "host":
             host = value.strip()  # Keep hostname for further checks
-
+    # Data
+    data = ''
+    if headers_lines:
+        data = ''.join(headers_lines)
+    # Details
     details_dict = {}
+    details_dict['data'] = data
     details_dict['method'] = new_request_method.split(' ', 1)[0].strip()
     details_dict['Host'] = host
     # Not using whatever stored in parsed_request for the reason to keep the request as original as possible
@@ -192,4 +198,4 @@ def parse_raw_request(request):
         details_dict['pre_scheme'] = scheme + "://"  # Store the scheme defined in GET path for later checks
     else:
         details_dict['pre_scheme'] = ''
-    return header_list, details_dict
+    return (header_list, details_dict)
