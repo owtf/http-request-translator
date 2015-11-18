@@ -35,8 +35,7 @@ def take_arguments():
     parser.add_argument(
         '--interactive', '-i',
         action='store_true',
-        help="Interactive mode: read raw HTTP request from keyboard, hit enter when ready."
-             "Type ':q!' to exit from the interactive mode.")
+        help="Interactive mode: read raw HTTP request from keyboard.")
     parser.add_argument(
         '--data', '-d',
         help='Add the data that you want to send along with the header')
