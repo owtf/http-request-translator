@@ -23,7 +23,8 @@ class TestTranslator(unittest.TestCase):
                             'Host': 'foo.bar',
                             'version': '%d.%d' % (i, j),
                             'path': '/robots.txt',
-                            'method': 'GET'
+                            'method': 'GET',
+                            'data': ''
                         }
                     ),
                     'Invalid parsing of HTTP/%d.%d request!' % (i, j))
@@ -41,7 +42,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': 'foo.bar',
                     'version': '',
                     'path': '',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of request!')
@@ -57,7 +59,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': 'foo.bar',
                     'version': '/1.b',
                     'path': '/',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of HTTP//1.b request!')
@@ -75,7 +78,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': 'foo.bar',
                     'version': '1.1',
                     'path': '/?foo=bar',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of request with parameter in path!')
@@ -93,7 +97,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': 'foo.bar',
                     'version': '1.1',
                     'path': '/#foo=bar',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of request with comment in path!')
@@ -111,7 +116,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': 'foo.bar',
                     'version': '1.1',
                     'path': '/;foo=bar',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of request with coma in path!')
@@ -129,7 +135,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': 'google.com',
                     'version': '1.1',
                     'path': '/robots.txt',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of HTTP request with domain host!')
@@ -147,7 +154,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': 'google.com:31337',
                     'version': '1.1',
                     'path': '/robots.txt',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of HTTP request with domain host and custom port!')
@@ -165,7 +173,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': '127.0.0.1',
                     'version': '1.1',
                     'path': '/robots.txt',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of HTTP request with IPv4 host!')
@@ -183,7 +192,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': '127.0.0.1:31337',
                     'version': '1.1',
                     'path': '/robots.txt',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of HTTP request with IPv4 host and custom port!')
@@ -201,7 +211,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': '[::1]',
                     'version': '1.1',
                     'path': '/robots.txt',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of HTTP request with IPv6 host!')
@@ -219,7 +230,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': '[::1]:31337',
                     'version': '1.1',
                     'path': '/robots.txt',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of HTTP request with IPv6 host and custom port!')
@@ -247,7 +259,8 @@ class TestTranslator(unittest.TestCase):
                     'Host': 'foo.bar',
                     'version': '1.1',
                     'path': '',
-                    'method': 'GET'
+                    'method': 'GET',
+                    'data': ''
                 }
             ),
             'Invalid parsing of HTTP request with multiple Host headers!')
