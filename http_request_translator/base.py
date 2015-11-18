@@ -73,7 +73,7 @@ class AbstractScript(object):
             if self.code_post:
                 self._script += self._generate_post()
         else:
-            raise ValueError("'%s' is not supported. Only GET and POST requests are supported yet!" % details['method'])
+            raise ValueError("'%s' is not supported! Only GET and POST are supported for now." % self.details['method'])
         if self.code_https:
             self._script += self._generate_https()
         self._script += self._generate_request()
