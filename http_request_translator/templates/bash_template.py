@@ -1,5 +1,4 @@
-code_begin = """
-#!/usr/bin/env bash
+code_begin = """#!/usr/bin/env bash
 curl"""
 
 

@@ -1,5 +1,4 @@
-code_begin = """
-require "typhoeus"
+code_begin = """require "typhoeus"
 
 url = '{url}'
 

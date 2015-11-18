@@ -1,5 +1,4 @@
-code_begin = """
-if (!extension_loaded('curl')) {{
+code_begin = """if (!extension_loaded('curl')) {{
     print 'Curl Extension not found. Exiting';
     exit;
 }}
