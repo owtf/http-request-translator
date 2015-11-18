@@ -1,5 +1,4 @@
-code_begin_python = """
-#!/usr/bin/python
+code_begin_python = """#!/usr/bin/python
 from __future__ import print_function
 import re
 import pycurl
@@ -58,8 +57,7 @@ if __name__ == '__main__':
 """
 
 
-code_python = """
-#!/usr/bin/python
+code_python = """#!/usr/bin/python
 from __future__ import print_function
 import re
 import pycurl
@@ -107,8 +105,7 @@ if __name__ == '__main__':
     main()
 """
 
-code_post_python = """
-#!/usr/bin/python
+code_post_python = """#!/usr/bin/python
 from __future__ import print_function
 import re
 import pycurl
@@ -158,8 +155,7 @@ if __name__ == '__main__':
 """
 
 
-code_begin_ruby = """
-require "typhoeus"
+code_begin_ruby = """require "typhoeus"
 
 url = 'https://google.com/robots.txt'
 
@@ -218,8 +214,7 @@ req.run
 """
 
 
-code_ruby = """
-require "typhoeus"
+code_ruby = """require "typhoeus"
 
 url = 'https://google.com/robots.txt'
 
@@ -255,8 +250,7 @@ end
 req.run
 """
 
-code_post_ruby = """
-require "typhoeus"
+code_post_ruby = """require "typhoeus"
 
 url = 'https://www.codepunker.com/tools/http-requests'
 
@@ -291,25 +285,21 @@ end
 
 req.run
 """
-code_begin_bash = """
-#!/usr/bin/env bash
+code_begin_bash = """#!/usr/bin/env bash
 curl"""
 
 
 code_search_bash = """ | egrep --color " hello3131\\"you\\\\"are'awesome |$" """
 
 
-code_bash = """
-#!/usr/bin/env bash
+code_bash = """#!/usr/bin/env bash
 curl -x http://xyz.com:2223 -v --request GET https://google.com/robots.txt  --header "Host: google.com"  --include"""
 
 
-code_post_bash = """
-#!/usr/bin/env bash
+code_post_bash = """#!/usr/bin/env bash
 curl --data "extra=whoAreYou"  -v --request POST https://www.codepunker.com/tools/http-requests  --header "Host: www.codepunker.com"  --include"""
 
-code_begin_php = """
-if (!extension_loaded('curl')) {
+code_begin_php = """if (!extension_loaded('curl')) {
     print 'Curl Extension not found. Exiting';
     exit;
 }
@@ -351,8 +341,7 @@ else {
 """
 
 
-code_php = """
-if (!extension_loaded('curl')) {
+code_php = """if (!extension_loaded('curl')) {
     print 'Curl Extension not found. Exiting';
     exit;
 }
@@ -380,8 +369,7 @@ print $response;
 """
 
 
-code_post_php = """
-if (!extension_loaded('curl')) {
+code_post_php = """if (!extension_loaded('curl')) {
     print 'Curl Extension not found. Exiting';
     exit;
 }
