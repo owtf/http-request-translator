@@ -16,10 +16,11 @@ def take_arguments():
     conflicting_group = parser.add_mutually_exclusive_group()
     request_group = parser.add_mutually_exclusive_group()
     parser.add_argument(
-        '--output', '-o',
+        '--language', '-l',
         action='append',
-        help="Generates a script for given HTTP request. "
-             "If you want to generate multiple scripts, separate the script's name with a <,>")
+        help="Generates a script in language 'language' for given HTTP request. "
+             "If you want to generate multiple scripts, separate the script's name with a <,>. "
+             "Available languages: bash, php, python, ruby")
     parser.add_argument(
         '--proxy', '-p',
         nargs='?',

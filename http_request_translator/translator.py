@@ -26,9 +26,9 @@ def process_arguments(args):
     """
     argdict = vars(args)
     try:
-        script_list = argdict['output'][0].split(',')
+        script_list = argdict['language'][0].split(',')
     except TypeError:
-        script_list = []  # If --output option is not used.
+        script_list = []  # If --language option is not used.
     if args.interactive:
         try:
             take_headers(script_list)
