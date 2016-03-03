@@ -16,6 +16,8 @@ class AbstractScript(object):
 
     """Abstract representation of a script."""
 
+    __language__ = ''
+
     code_begin = ''
     code_header = ''
     code_proxy = ''
