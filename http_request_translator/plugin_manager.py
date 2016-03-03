@@ -1,27 +1,24 @@
 from __future__ import print_function
 
-from .script import BashScript, PHPScript, PythonScript, RubyScript
+from .base import AbstractScript
 
 
-def hardcoded_script_import(script_name):
-    """Manually find the class of the script.
+def get_script_class(script_name):
+    """Returns the class of the script.
 
-    :param str script_name: Name of the script from which to import the function.
+    :param str script_name: language name of the script class which we want to import
 
     :raises ValueError: When the script is not supported.
 
     :return: The class of the `script_name` script.
     :rtype: :class:`AbstractScript`
     """
-    if script_name == 'bash':
-        return BashScript
-    elif script_name == 'php':
-        return PHPScript
-    elif script_name == 'python':
-        return PythonScript
-    elif script_name == 'ruby':
-        return RubyScript
-    raise ValueError("The '%s' language is not supported yet." % script_name)
+    script_name = script_name.strip().lower()
+
+    for script_class in AbstractScript.__subclasses__():
+        if script_name == script_class.__language__:
+            return script_class
+    raise ValueError("The {} language is not supported.".format(script_name))
 
 
 def generate_script(script, headers, details, search_string=None):
@@ -35,5 +32,5 @@ def generate_script(script, headers, details, search_string=None):
     :return: A combined string of generated code
     :rtype: `str`
     """
-    class_script = hardcoded_script_import(script.strip().lower())
+    class_script = get_script_class(script.strip().lower())
     return class_script(headers=headers, details=details, search=search_string).generate_script()
