@@ -8,6 +8,7 @@ try:
     from urllib import quote
 except ImportError:
     from urllib.parse import quote
+from importlib import import_module
 
 from .url import get_url, check_valid_url
 
@@ -35,6 +36,7 @@ class AbstractScript(object):
 
         :raises ValueError: When url is invalid.
         """
+        self.load_attributes(self.__class__)
         self._script = ''
         self.headers = headers
         self.details = details
@@ -186,3 +188,23 @@ class AbstractScript(object):
         if self.details.get('data') and (self.details.get('method', '').lower() in http_verb_with_encoding):
             encoded_url += quote(self.details['data'], '')
         return encoded_url
+
+    @staticmethod
+    def load_attributes(cls):
+        """Loads attributes to Script class from a given script's template
+
+        Imports the template file/module, assigns all the attributes defined in the template file to the given class.
+
+        :param class cls: Script class to which template is to be loaded.
+
+        :raises AttributeError: When __language__ attribute is not present.
+        """
+        templates_path = "{}.templates".format(__name__.split('.', 1)[0])
+        if not hasattr(cls, '__language__'):
+            raise AttributeError("__language__ not found in class: {}, attributes cannot be loaded".format(cls.__name__))
+        template = import_module("{templates_path}.{class_template}".format(
+            templates_path=templates_path,
+            class_template=cls.__language__))
+        attributes = (var for var in vars(template) if var.startswith('code_'))
+        for attr in attributes:
+            setattr(cls, attr, getattr(template, attr))
