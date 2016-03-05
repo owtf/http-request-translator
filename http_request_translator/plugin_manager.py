@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 from .base import AbstractScript
+from .script import BashScript, PHPScript, PythonScript, RubyScript
 
 
 def get_script_class(script_name):
