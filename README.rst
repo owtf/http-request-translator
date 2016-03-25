@@ -63,7 +63,7 @@ make it easy for you to use it.
                             Sends the request and searches for the required regex
                             in the response (i.e regex match)
       --interactive, -i     Interactive mode: read raw HTTP request from keyboard,
-                            hit enter when ready.Type ':q!' to exit from the
+                            hit enter when ready.Type 'Ctrl+D' or 'Ctrl+C' to exit from the
                             interactive mode.
       --data DATA, -d DATA  Add the data that you want to send along with the
                             header
