@@ -12,9 +12,15 @@ class TestURL(unittest.TestCase):
         self.assertTrue(url.check_valid_url("https://github.com:443"))
         self.assertTrue(url.check_valid_url("http://[::1]"))
         self.assertTrue(url.check_valid_url("https://[::1]:443"))
+        self.assertTrue(url.check_valid_url("http://" + 'a' * 63 + ".com"))
 
         self.assertFalse(url.check_valid_url("://github.com/"))
         self.assertFalse(url.check_valid_url("https://::1:abcd"))
+        self.assertFalse(url.check_valid_url("http://" + 'a' * 64 + ".com"))
+
+        # Regression for https://github.com/owtf/http-request-translator/issues/44
+        self.assertTrue(url.check_valid_url("https://www.cmd5.com"))
+        self.assertTrue(url.check_valid_url("https://www-cmd5.com"))
 
     ###
     # url.check_valid_port
