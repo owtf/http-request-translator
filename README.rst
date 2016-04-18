@@ -16,17 +16,15 @@ It supports the following languages:
 + Ruby
 
 HTTP Request Translator can be used via its CLI or be imported from your own
-python project.
+python project (actively supported version 2.7 and 3.3+).
 
 ============
 Installation
 ============
 
-HTTP Request Translator can be installed from the ``setup.py`` python script:
-
-1. ``$ git clone https://github.com/owtf/http-request-translator -b dev``
+1. ``$ git clone https://github.com/owtf/http-request-translator``
 2. ``$ cd ./http-request-translator/``
-3. ``$ ./setup.py install``
+3. ``$ make install``
 
 *Note*: The last step might require root privileges.
 
