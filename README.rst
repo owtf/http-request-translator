@@ -39,7 +39,7 @@ make it easy for you to use it.
 
 .. code-block:: bash
 
-    usage: http_request_translator [-h] [--output OUTPUT] [--proxy [PROXY]]
+    usage: http_request_translator [-h] [--language LANGUAGE] [--proxy [PROXY]]
                                    [--search_string SEARCH_STRING | --search_regex SEARCH_REGEX]
                                    [--interactive] [--data DATA]
                                    [--request REQUEST | --file FILE]
@@ -49,10 +49,11 @@ make it easy for you to use it.
 
     optional arguments:
       -h, --help            show this help message and exit
-      --output OUTPUT, -o OUTPUT
-                            Generates a script for given HTTP request. If you want
-                            to generate multiple scripts, separate the script's
-                            name with a <,>
+      --language LANGUAGE, -l LANGUAGE
+                            Generates a script in language 'language' for given
+                            HTTP request. If you want to generate multiple
+                            scripts, separate the script's name with a <,>.
+                            Available languages: bash, php, python, ruby
       --proxy [PROXY], -p [PROXY]
                             Generates command/script with relevant, specified
                             proxy
@@ -63,8 +64,8 @@ make it easy for you to use it.
                             Sends the request and searches for the required regex
                             in the response (i.e regex match)
       --interactive, -i     Interactive mode: read raw HTTP request from keyboard,
-                            hit enter when ready.Type ':q!' to exit from the
-                            interactive mode.
+                            hit enter when ready. Type 'Ctrl+D' or 'Ctrl+C'to exit
+                            from the interactive mode.
       --data DATA, -d DATA  Add the data that you want to send along with the
                             header
       --request REQUEST, -r REQUEST
