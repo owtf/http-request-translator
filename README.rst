@@ -2,6 +2,9 @@
 HTTP Request Translator
 =======================
 
+.. image:: https://travis-ci.org/owtf/http-request-translator.svg?branch=dev
+    :target: https://travis-ci.org/owtf/http-request-translator
+
 HTTP Request Translator is a python standalone tool that will help you
 translate any raw HTTP requests into the language of your choice.
 
