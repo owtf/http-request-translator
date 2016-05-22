@@ -4,21 +4,49 @@ except ImportError:
     from urllib.parse import urlparse
 
 from .plugin_manager import generate_script
+from .url import get_url, check_valid_url
 
 
 class HttpRequestTranslator(object):
     """Main Interface for the tool.
     """
 
-    def __init__(self, languages=['bash'], request=None, headers=None, details=None, proxy=None, search_string='',
-        regex=None):
+    def __init__(self, languages=['bash'], request=None, proxy=None, search_string='', data=None):
+        """Initialises all the parameters of the object.
+
+        :param list languages: list of languages in which request's code is to be generated.
+        :param str request: raw request, for which code has to be generated
+        :param str proxy: custom proxy, if required in the code.
+        :param str search_string: search phrase(can be regex too) to be searched in the response.
+        :param str data: data string to be sent along with the header.
+        """
         self.languages = languages
         self.request = request
-        self.headers = headers
-        self.details = details
+        self.data = data
         self.proxy = proxy
         self.search_string = search_string
-        self.regex = regex
+
+        # extract headers, other details(data, method, host, etc.)
+        self._extract_request_details()
+
+    def _extract_request_details(self):
+        self.headers, self.details = self._parse_request()
+
+        if self.data:
+            self.details['data'] = self.data
+
+        if self.proxy:
+            # If proxy already doesn't starts with http and is like 127.0.0.1:8010
+            if not self.proxy.startswith(('http', 'https')):
+                proxy = get_url(self.proxy)  # Fix proxy to add appropriate scheme
+            else:
+                proxy = self.proxy.strip()
+            if not check_valid_url(proxy):
+                raise ValueError("Proxy provided is invalid.")
+            try:
+                self.details['proxy_host'], self.details['proxy_port'] = proxy.rsplit(":", 1)
+            except IndexError:
+                raise ValueError("Proxy provided is invalid.")
 
     def generate_code(self):
         """Generates code for all the languages defined in the object.
@@ -98,6 +126,5 @@ class HttpRequestTranslator(object):
             details_dict['pre_scheme'] = scheme + "://"  # Store the scheme defined in GET path for later checks
         else:
             details_dict['pre_scheme'] = ''
-        # Assign header list and details dict
-        self.headers = header_list
-        self.details = details_dict
+
+        return header_list, details_dict
