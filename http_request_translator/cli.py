@@ -1,14 +1,15 @@
 import argparse
+import json
 import os
+import sys
 
-from .exceptions import NoRequestProvided
 from .interface import HttpRequestTranslator
 
 
 def init():
     args = take_args()
     hrt_obj = process_args(args)
-    hrt_obj.generate_code()
+    print json.dumps(hrt_obj.generate_code(), indent=4)
 
 
 def take_args():
@@ -59,7 +60,7 @@ def get_interactive_request():
     while True:
         try:
             raw_request.append(raw_input().strip())
-        except EOFError:
+        except (EOFError, KeyboardInterrupt):
             break
     return '\n'.join(raw_request).strip()
 
@@ -85,21 +86,21 @@ def process_args(args):
     """
     argdict = vars(args)
 
-    script_list = ['bash'] # default script language is set to bash
+    languages = ['bash'] # default script language is set to bash
     if argdict.get('language'):
         languages = map(lambda x: x.strip(), argdict['language'][0].split(','))
 
     # fetch raw request from either of the three sources.
     raw_request = ""
     if args.interactive:
-        # get_interactive_request will handle input and formation of raw request.
         raw_request = get_interactive_request()
     elif args.request:
         raw_request = args.request
     elif args.file:
         raw_request = get_request_from_file(args.file)
     else:
-        raise NoRequestProvided
+        print "Input a valid HTTP request.\nOr use interactive mode instead!"
+        sys.exit(0)
 
     hrt_obj = HttpRequestTranslator(request=raw_request, languages=languages, proxy=args.proxy,
         search_string=args.search_string, data=args.data)
