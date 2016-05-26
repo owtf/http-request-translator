@@ -83,6 +83,9 @@ class HttpRequestTranslator(object):
             header_list.append(line)
             try:
                 header, value = line.split(":", 1)
+                # stripping one left blank space from value induced after split.
+                if value.startswith(' '):
+                    value = value[1:]
             except IndexError:
                 raise ValueError("Headers Malformed. Please Enter a Valid HTTP request.")
             if header.lower() == "host":
