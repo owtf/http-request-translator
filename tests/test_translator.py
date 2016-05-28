@@ -1,6 +1,6 @@
 import unittest
 
-from http_request_translator import translator
+from http_request_translator.interface import HttpRequestTranslator
 
 
 class TestTranslator(unittest.TestCase):
@@ -14,7 +14,7 @@ class TestTranslator(unittest.TestCase):
                 raw_request = "GET /robots.txt HTTP/%d.%d\n"\
                               "Host: foo.bar" % (i, j)
                 self.assertEqual(
-                    translator.parse_raw_request(raw_request),
+                    HttpRequestTranslator(request=raw_request)._parse_request(),
                     (
                         ['Host: foo.bar'],
                         {
@@ -33,7 +33,7 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET /\n"\
                       "Host: foo.bar"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 ['Host: foo.bar'],
                 {
@@ -50,7 +50,7 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET / HTTP//1.b\n"\
                       "Host: foo.bar"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 ['Host: foo.bar'],
                 {
@@ -69,7 +69,7 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET /?foo=bar HTTP/1.1\n"\
                       "Host: foo.bar"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 ['Host: foo.bar'],
                 {
@@ -88,7 +88,7 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET /#foo=bar HTTP/1.1\n"\
                       "Host: foo.bar"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 ['Host: foo.bar'],
                 {
@@ -107,7 +107,7 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET /;foo=bar HTTP/1.1\n"\
                       "Host: foo.bar"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 ['Host: foo.bar'],
                 {
@@ -126,7 +126,7 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET https://google.com/robots.txt HTTP/1.1\n"\
                       "Host: google.com"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 ['Host: google.com'],
                 {
@@ -145,7 +145,7 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET https://google.com:31337/robots.txt HTTP/1.1\n"\
                       "Host: google.com:31337"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 ['Host: google.com:31337'],
                 {
@@ -164,7 +164,7 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET https://127.0.0.1/robots.txt HTTP/1.1\n"\
                       "Host: 127.0.0.1"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 ['Host: 127.0.0.1'],
                 {
@@ -183,7 +183,7 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET https://127.0.0.1:31337/robots.txt HTTP/1.1\n"\
                       "Host: 127.0.0.1:31337"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 ['Host: 127.0.0.1:31337'],
                 {
@@ -202,7 +202,7 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET https://[::1]/robots.txt HTTP/1.1\n"\
                       "Host: [::1]"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 ['Host: [::1]'],
                 {
@@ -221,7 +221,7 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET https://[::1]:31337/robots.txt HTTP/1.1\n"\
                       "Host: [::1]:31337"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 ['Host: [::1]:31337'],
                 {
@@ -244,7 +244,7 @@ class TestTranslator(unittest.TestCase):
                       "host: foo.bar\n"\
                       "host:     foo.bar\n"
         self.assertEqual(
-            translator.parse_raw_request(raw_request),
+            HttpRequestTranslator(request=raw_request)._parse_request(),
             (
                 [
                     'Host: foo.bar',
@@ -269,13 +269,13 @@ class TestTranslator(unittest.TestCase):
         raw_request = "GET https://foo.bar HTTP/1.1\n"\
                       "Host"
         with self.assertRaises(ValueError):
-            translator.parse_raw_request(raw_request)
+            HttpRequestTranslator(request=raw_request)._parse_request()
 
     def test_parse_raw_request_no_path(self):
         raw_request = "GET\n"\
                       "Host: foo.bar"
         with self.assertRaises(ValueError):
-            translator.parse_raw_request(raw_request)
+            HttpRequestTranslator(request=raw_request)._parse_request()
 
 
 if __name__ == '__main__':
