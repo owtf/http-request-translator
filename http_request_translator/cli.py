@@ -5,18 +5,17 @@ import json
 import argparse
 
 from .interface import HttpRequestTranslator
-
-
-try:
-    input = raw_input  # Python2/3 version
-except NameError:
-    pass
+from .input_handler import Input
 
 
 def init():
-    parser = take_args()
-    hrt_obj = process_args(parser)
-    print(json.dumps(hrt_obj.generate_code(), indent=4))
+    args = take_args()
+    hrt_obj = process_args(args)
+    for key, value in hrt_obj.generate_code().items():
+        heading = "Code in %s" % key
+        border = '#'*len(heading)
+        print('\n'.join([border, heading, border]))
+        print(value)
 
 
 def take_args():
@@ -58,23 +57,54 @@ def take_args():
     request_group.add_argument(
         "--file", "-f",
         help="Input file for HTTP request")
+    request_group.add_argument(
+        "--stdin", "-s",
+        action="store_true",
+        help="Enable stdin mode for HTTP request")
     return parser
 
 
-def get_interactive_request():
-    """Read HTTP request from user input in interactive mode.
+def _get_input_type(args):
+    """Process the Arguments provided to the translator CLI and return a respective input mode requested.
 
-    :return: Request typed by the user
-    :rtype: `str`
+    :param `argparse.Namespace` args: `argparse.Namespace` instance.
+
+    :return: input mode name
+    :rtype: str
     """
-    raw_request = []
-    print("Enter raw request - ")
-    while True:
-        try:
-            raw_request.append(input().strip())
-        except (EOFError, KeyboardInterrupt):
-            break
-    return '\n'.join(raw_request).strip()
+    input_type = None
+    options = []
+
+    if args.interactive:
+        input_type = 'interactive'
+    elif args.file:
+        input_type = 'file'
+        options.append(args.file)
+    elif args.request:
+        input_type = 'inline'
+        options.append(args.request)
+    elif args.stdin:
+        input_type = 'stdin'
+
+    return input_type, options
+
+
+def get_input(input_type, *options):
+    """Takes an input mode type and returns a raw request.
+
+    :raises OSError, IOError: When file fails to open in FileInput mode.
+    :raises NoRequestProvided: When no request is provided.
+
+    :return: raw request
+    :rtype: str
+    """
+    for subclass in Input.__subclasses__():
+        if input_type == subclass.__type__:
+            inp = subclass()
+            inp.take_input(*options)
+            return inp.get_request()
+
+    return None
 
 
 def process_args(parser):
@@ -99,22 +129,12 @@ def process_args(parser):
     if argdict.get('language'):
         languages = map(lambda x: x.strip(), argdict['language'][0].split(','))
 
-    # Fetch raw request from either of the three sources.
-    raw_request = ""
-    if args.interactive:
-        raw_request = get_interactive_request()
-    elif args.request:
-        raw_request = args.request
-    elif args.file:
-        try:
-            raw_request = open(args.file).read()
-        except (OSError, IOError) as e:
-            sys.stderr.write("error: Failed to open '%s'\n\n" % args.file)
-            raise e
-    else:
-        sys.stderr.write("error: Input a valid HTTP request or use interactive mode instead.\n\n")
+    input_type, options = _get_input_type(args)
+    if not input_type:
         parser.print_help()
         sys.exit(-1)
+
+    raw_request = get_input(input_type, *options)
 
     hrt_obj = HttpRequestTranslator(
         request=raw_request,
@@ -122,4 +142,5 @@ def process_args(parser):
         proxy=args.proxy,
         search_string=args.search_string,
         data=args.data)
+
     return hrt_obj
