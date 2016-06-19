@@ -8,8 +8,8 @@ from .url import get_url, check_valid_url
 
 
 class HttpRequestTranslator(object):
-    """Main Interface for the tool.
-    """
+
+    """Main Interface for the tool."""
 
     def __init__(self, languages=['bash'], request=None, proxy=None, search_string='', data=None):
         """Initialises all the parameters of the object.

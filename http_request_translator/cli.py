@@ -25,6 +25,7 @@ def take_args():
     :return:`argparse.ArgumentParser` instance.
     :rtype:class `argparse.ArgumentParser`
     """
+    # TODO: use non-hardcoded list of supported languages.
     parser = argparse.ArgumentParser(
         description="Request Translator is a standalone tool that can translate "
                     "raw HTTP requests into bash/python/php/ruby scripts")
@@ -33,8 +34,8 @@ def take_args():
         "--language", "-l",
         action="append",
         help="Generates a script in language 'language' for given HTTP request. "
-            "If you want to generate multiple scripts, separate the script's name with a <,>. "
-            "Available languages: bash, php, python, ruby")
+             "If you want to generate multiple scripts, separate the script's name with a <,>. "
+             "Available languages: bash, php, python, ruby")
     parser.add_argument(
         "--proxy", "-p",
         nargs="?",
@@ -47,7 +48,7 @@ def take_args():
         "--interactive", "-i",
         action="store_true",
         help="Interactive mode: read raw HTTP request from keyboard, hit enter when ready. Type 'Ctrl+D' or 'Ctrl+C'"
-            "to exit from the interactive mode.")
+             "to exit from the interactive mode.")
     parser.add_argument(
         "--data", "-d",
         help="Add the data that you want to send along with the header")
@@ -61,6 +62,11 @@ def take_args():
 
 
 def get_interactive_request():
+    """Read HTTP request from user input in interactive mode.
+
+    :return: Request typed by the user
+    :rtype: `str`
+    """
     raw_request = []
     print("Enter raw request - ")
     while True:
@@ -74,9 +80,9 @@ def get_interactive_request():
 def process_args(parser):
     """Process the arguments provided to the translator CLI and return a HTTPRequestTranslator object.
 
+    .. note::
 
-def process_args(args):
-    """Process the arguments provided to the translator CLI and return a HTTPRequestTranslator object.
+        Default language is set to 'bash'.
 
     :param class `argparse.ArgumentParser`: `argparse.ArgumentParser` instance.
 
@@ -89,11 +95,11 @@ def process_args(args):
     args = parser.parse_args()
     argdict = vars(args)
 
-    languages = ['bash'] # default script language is set to bash
+    languages = ['bash']  # Default script language is set to bash.
     if argdict.get('language'):
         languages = map(lambda x: x.strip(), argdict['language'][0].split(','))
 
-    # fetch raw request from either of the three sources.
+    # Fetch raw request from either of the three sources.
     raw_request = ""
     if args.interactive:
         raw_request = get_interactive_request()
