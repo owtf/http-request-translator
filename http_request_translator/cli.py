@@ -1,15 +1,22 @@
-import argparse
-import json
-import os
+from __future__ import print_function
+
 import sys
+import json
+import argparse
 
 from .interface import HttpRequestTranslator
+
+
+try:
+    input = raw_input  # Python2/3 version
+except NameError:
+    pass
 
 
 def init():
     args = take_args()
     hrt_obj = process_args(args)
-    print json.dumps(hrt_obj.generate_code(), indent=4)
+    print(json.dumps(hrt_obj.generate_code(), indent=4))
 
 
 def take_args():
@@ -56,10 +63,10 @@ def take_args():
 
 def get_interactive_request():
     raw_request = []
-    print "Enter raw request - "
+    print("Enter raw request - ")
     while True:
         try:
-            raw_request.append(raw_input().strip())
+            raw_request.append(input().strip())
         except (EOFError, KeyboardInterrupt):
             break
     return '\n'.join(raw_request).strip()
