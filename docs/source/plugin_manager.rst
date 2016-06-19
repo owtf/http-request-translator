@@ -1,9 +1,9 @@
 Plugin Manager
 ##############
 
-.. automodule:: http_request_translator.plugin_manager
+.. automodule:: hrt.plugin_manager
 
-.. autofunction:: http_request_translator.plugin_manager.hardcoded_script_import
+.. autofunction:: hrt.plugin_manager.hardcoded_script_import
 
-.. autofunction:: http_request_translator.plugin_manager.generate_script
+.. autofunction:: hrt.plugin_manager.generate_script
 

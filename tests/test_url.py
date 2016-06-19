@@ -1,6 +1,6 @@
 import unittest
 
-from http_request_translator import url
+from hrt import url
 
 
 class TestURL(unittest.TestCase):

@@ -1,7 +1,7 @@
 Ruby Script
 ############
 
-.. automodule:: http_request_translator.script
+.. automodule:: hrt.script
 
 .. autoclass:: RubyScript
     :members:

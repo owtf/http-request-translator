@@ -1,11 +1,11 @@
 Url Parser
 ###########
 
-.. automodule:: http_request_translator.url
+.. automodule:: hrt.url
 
-.. autofunction:: http_request_translator.url.check_valid_url
+.. autofunction:: hrt.url.check_valid_url
 
-.. autofunction:: http_request_translator.url.check_valid_port
+.. autofunction:: hrt.url.check_valid_port
 
-.. autofunction:: http_request_translator.url.get_url
+.. autofunction:: hrt.url.get_url
 

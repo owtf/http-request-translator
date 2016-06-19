@@ -1,6 +1,6 @@
 import unittest
 
-from http_request_translator.interface import HttpRequestTranslator
+from hrt.interface import HttpRequestTranslator
 
 
 class TestTranslator(unittest.TestCase):

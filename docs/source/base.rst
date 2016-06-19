@@ -1,7 +1,7 @@
 Base class for all script generation 
 ####################################
 
-.. automodule:: http_request_translator.base
+.. automodule:: hrt.base
 
 .. autoclass:: AbstractScript
     :members:

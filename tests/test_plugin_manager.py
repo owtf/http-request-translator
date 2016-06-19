@@ -1,7 +1,7 @@
 import unittest
 from textwrap import dedent
 
-from http_request_translator import plugin_manager, script
+from hrt import plugin_manager, script
 
 
 class TestPluginManager(unittest.TestCase):

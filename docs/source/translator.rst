@@ -1,12 +1,12 @@
 Translator
 ##########
 
-.. automodule:: http_request_translator.translator
+.. automodule:: hrt.translator
 
-.. autofunction:: http_request_translator.translator.process_arguments
+.. autofunction:: hrt.translator.process_arguments
 
-.. autofunction:: http_request_translator.translator.take_headers
+.. autofunction:: hrt.translator.take_headers
 
-.. autofunction:: http_request_translator.translator.take_body
+.. autofunction:: hrt.translator.take_body
 
-.. autofunction:: http_request_translator.translator.parse_raw_request
+.. autofunction:: hrt.translator.parse_raw_request

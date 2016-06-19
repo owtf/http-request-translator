@@ -1,6 +1,6 @@
 import unittest
 
-from http_request_translator import input_handler
+from hrt import input_handler
 
 
 class TestCLIInput(unittest.TestCase):

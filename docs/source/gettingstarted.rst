@@ -36,25 +36,25 @@ To translate a raw request from the CLI to a single script:
 
 .. code-block:: bash
 
-    $ http_request_translator -o python -r "<Your request>"
+    $ hrt -o python -r "<Your request>"
 
 If you want to specify multiple scripts:
 
 .. code-block:: bash
 
-    $ http_request_translator -o python,bash,ruby -r "<Your Request>"
+    $ hrt -o python,bash,ruby -r "<Your Request>"
 
 If you want to pass data along with the request:
 
 .. code-block:: bash
 
-    $ http_request_translator -o <your favorite script(s)> -d "<body/url parameters to be sent>" -r "Your Request"
+    $ hrt -o <your favorite script(s)> -d "<body/url parameters to be sent>" -r "Your Request"
 
 If you want to specify a proxy server for sending request:
 
 .. code-block:: bash
 
-    $ http_request_translator -o <your favorite script(s)> -p "proxy_url:proxy_port" -r "Your Request"
+    $ hrt -o <your favorite script(s)> -p "proxy_url:proxy_port" -r "Your Request"
 
 You can search the response by either using the regex-search or simple string search *(but not both)*.
 
@@ -62,24 +62,24 @@ For simple string search:
 
 .. code-block:: bash
 
-    $ http_request_translator -ss "some_string" -r "Your Request" -o <your favorite script(s)>
+    $ hrt -ss "some_string" -r "Your Request" -o <your favorite script(s)>
 
 For regex search:
 
 .. code-block:: bash
 
-    $ http_request_translator -se "some_regex" -r "Your Request" -o <your favorite script(s)>
+    $ hrt -se "some_regex" -r "Your Request" -o <your favorite script(s)>
 
 If you want to manually enter the request, use `-i` option:
 
 .. code-block:: bash
 
-    $ http_request_translator -o <your favorite script(s)> -i
+    $ hrt -o <your favorite script(s)> -i
 
 If you want to specify a file to read the request from, then do:
 
 .. code-block:: bash
 
-    $ http_request_translator -f some_file -o <your favorite script(s)>
+    $ hrt -f some_file -o <your favorite script(s)>
 
 See `--help` or `-h` for more details.

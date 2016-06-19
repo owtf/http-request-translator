@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# http_request_translator documentation build configuration file, created by
+# hrt documentation build configuration file, created by
 # sphinx-quickstart on Thu Aug 27 23:25:21 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -49,7 +49,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'http_request_translator'
+project = u'hrt'
 copyright = u'2015, Arun Sori, Tao Sauvage'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -182,7 +182,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'http_request_translatordoc'
+htmlhelp_basename = 'hrtdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -202,7 +202,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'http_request_translator.tex', u'http\\_request\\_translator Documentation',
+  ('index', 'hrt.tex', u'http\\_request\\_translator Documentation',
    u'Arun Sori, Tao Sauvage', 'manual'),
 ]
 
@@ -232,7 +232,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'http_request_translator', u'http_request_translator Documentation',
+    ('index', 'hrt', u'hrt Documentation',
      [u'Arun Sori, Tao Sauvage'], 1)
 ]
 
@@ -246,8 +246,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'http_request_translator', u'http_request_translator Documentation',
-   u'Arun Sori, Tao Sauvage', 'http_request_translator', 'One line description of project.',
+  ('index', 'hrt', u'hrt Documentation',
+   u'Arun Sori, Tao Sauvage', 'hrt', 'One line description of project.',
    'Miscellaneous'),
 ]
 

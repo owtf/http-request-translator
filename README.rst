@@ -40,7 +40,7 @@ make it easy for you to use it.
 
 .. code-block:: bash
 
-    usage: http_request_translator [-h] [--language LANGUAGE] [--proxy [PROXY]]
+    usage: hrt [-h] [--language LANGUAGE] [--proxy [PROXY]]
                                    [--search_string SEARCH_STRING | --search_regex SEARCH_REGEX]
                                    [--interactive] [--data DATA]
                                    [--request REQUEST | --file FILE]

@@ -7,7 +7,7 @@ except ImportError:
     from distutils.core import setup
 
 setup(
-    name='http_request_translator',
+    name='hrt',
     version='0.1',
     description='Translates raw HTTP requests to Python,Ruby,Php and Bash scripts',
     url='https://github.com/owtf/http-request-translator/',
@@ -15,5 +15,5 @@ setup(
     author_email='owasp_owtf_developers@lists.owasp.org',
     license='3-clause BSD',
     install_requires=[],
-    packages=['http_request_translator', 'http_request_translator.templates'],
-    scripts=['bin/http_request_translator'])
+    packages=['hrt', 'hrt.templates'],
+    scripts=['bin/hrt'])

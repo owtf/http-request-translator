@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from http_request_translator import cli
+from hrt import cli
 
 
 if __name__ == '__main__':

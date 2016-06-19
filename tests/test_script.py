@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from http_request_translator.base import AbstractScript
-from http_request_translator import script
+from hrt.base import AbstractScript
+from hrt import script
 from .templates import (code_begin_python, code_search_python, code_python, code_post_python, code_search_ruby,
                         code_begin_ruby, code_ruby, code_post_ruby, code_begin_bash, code_search_bash, code_bash,
                         code_post_bash, code_search_php, code_php, code_begin_php, code_post_php)
