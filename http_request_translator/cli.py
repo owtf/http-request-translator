@@ -4,7 +4,7 @@ import sys
 import argparse
 
 from .interface import HttpRequestTranslator
-from .input_handler import Input
+from .input_handler import handlers
 
 
 def init():
@@ -59,13 +59,13 @@ def take_args():
     return parser
 
 
-def _get_input_type(args):
-    """Process the Arguments provided to the translator CLI and return a respective input mode requested.
+def get_input_type(args):
+    """Find input handler with its corresponding parameters based on CLI arguments.
 
     :param `argparse.Namespace` args: `argparse.Namespace` instance.
 
-    :return: input mode name
-    :rtype: str
+    :return: tuple of input type and corresponding options
+    :rtype: tuple
     """
     input_type = None
     options = []
@@ -81,25 +81,23 @@ def _get_input_type(args):
     elif args.stdin:
         input_type = 'stdin'
 
-    return input_type, options
+    return (input_type, options)
 
 
 def get_input(input_type, *options):
     """Takes an input mode type and returns a raw request.
 
     :raises OSError, IOError: When file fails to open in FileInput mode.
-    :raises NoRequestProvided: When no request is provided.
 
     :return: raw request
     :rtype: str
     """
-    for subclass in Input.__subclasses__():
-        if input_type == subclass.__type__:
-            inp = subclass()
-            inp.take_input(*options)
-            return inp.get_request()
-
-    return None
+    if input_type in handlers:
+        if options:
+            return handlers[input_type](*options)
+        else:
+            return handlers[input_type]()
+    return ''
 
 
 def process_args(parser):
@@ -124,7 +122,7 @@ def process_args(parser):
     if argdict.get('language'):
         languages = map(lambda x: x.strip(), argdict['language'][0].split(','))
 
-    input_type, options = _get_input_type(args)
+    input_type, options = get_input_type(args)
     if not input_type:
         parser.print_help()
         sys.exit(-1)
