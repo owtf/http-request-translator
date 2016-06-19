@@ -14,16 +14,16 @@ except NameError:
 
 
 def init():
-    args = take_args()
-    hrt_obj = process_args(args)
+    parser = take_args()
+    hrt_obj = process_args(parser)
     print(json.dumps(hrt_obj.generate_code(), indent=4))
 
 
 def take_args():
-    """Entry point for the translator through CLI. Parses arguments using `argparse` library.
+    """Entry point for the translator through CLI. Initializes parser using `argparse` library.
 
-    :return:`argparse` class object containing arguments passed to the translator.
-    :rtype:class `argparse.Namespace`
+    :return:`argparse.ArgumentParser` instance.
+    :rtype:class `argparse.ArgumentParser`
     """
     parser = argparse.ArgumentParser(
         description="Request Translator is a standalone tool that can translate "
@@ -57,8 +57,7 @@ def take_args():
     request_group.add_argument(
         "--file", "-f",
         help="Input file for HTTP request")
-
-    return parser.parse_args()
+    return parser
 
 
 def get_interactive_request():
@@ -72,25 +71,22 @@ def get_interactive_request():
     return '\n'.join(raw_request).strip()
 
 
-def get_request_from_file(filepath):
-    if not os.path.exists(filepath):
-        raise IOError
-
-    raw_request = open(filepath).read()
-    return raw_request
+def process_args(parser):
+    """Process the arguments provided to the translator CLI and return a HTTPRequestTranslator object.
 
 
 def process_args(args):
     """Process the arguments provided to the translator CLI and return a HTTPRequestTranslator object.
 
-    :param class `argparse.Namespace`: `argparse` class object containing arguments passed to the translator.
+    :param class `argparse.ArgumentParser`: `argparse.ArgumentParser` instance.
 
     :raises ValueError: When proxy is invalid.
     :raises NoRequestProvided: When no request is provided.
 
-    :return: HTTPRequestTranslator object
+    :return: HTTPRequestTranslator instance
     :rtype: `HTTPRequestTranslator`
     """
+    args = parser.parse_args()
     argdict = vars(args)
 
     languages = ['bash'] # default script language is set to bash
@@ -104,11 +100,20 @@ def process_args(args):
     elif args.request:
         raw_request = args.request
     elif args.file:
-        raw_request = get_request_from_file(args.file)
+        try:
+            raw_request = open(args.file).read()
+        except (OSError, IOError) as e:
+            sys.stderr.write("error: Failed to open '%s'\n\n" % args.file)
+            raise e
     else:
-        print "Input a valid HTTP request.\nOr use interactive mode instead!"
-        sys.exit(0)
+        sys.stderr.write("error: Input a valid HTTP request or use interactive mode instead.\n\n")
+        parser.print_help()
+        sys.exit(-1)
 
-    hrt_obj = HttpRequestTranslator(request=raw_request, languages=languages, proxy=args.proxy,
-        search_string=args.search_string, data=args.data)
+    hrt_obj = HttpRequestTranslator(
+        request=raw_request,
+        languages=languages,
+        proxy=args.proxy,
+        search_string=args.search_string,
+        data=args.data)
     return hrt_obj
