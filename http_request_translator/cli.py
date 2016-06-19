@@ -1,7 +1,6 @@
 from __future__ import print_function
 
 import sys
-import json
 import argparse
 
 from .interface import HttpRequestTranslator
@@ -10,12 +9,8 @@ from .input_handler import Input
 
 def init():
     args = take_args()
-    hrt_obj = process_args(args)
-    for key, value in hrt_obj.generate_code().items():
-        heading = "Code in %s" % key
-        border = '#'*len(heading)
-        print('\n'.join([border, heading, border]))
-        print(value)
+    hrt = process_args(args)
+    print(''.join(v for v in hrt.generate_code().values()))
 
 
 def take_args():
