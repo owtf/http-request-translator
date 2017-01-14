@@ -9,7 +9,7 @@ except NameError:
 
 def callback_interactive():
     raw_request = []
-    print("Enter raw request - ")
+    print("Enter raw request (press ^D to finish or ^C to quit)")
     while True:
         try:
             raw_request.append(input().strip())
