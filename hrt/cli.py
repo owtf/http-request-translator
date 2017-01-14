@@ -10,7 +10,13 @@ from .input_handler import handlers
 def init():
     args = take_args()
     hrt = process_args(args)
-    print(''.join(v for v in hrt.generate_code().values()))
+    codes = hrt.generate_code()
+    if args.parse_args().beautify:
+        for language in codes:
+            print('=' * 5 + ' %s ' % language.upper() + '=' * 5)
+            print(codes[language])
+    else :
+        print(''.join(v for v in codes.values()))
 
 
 def take_args():
@@ -30,6 +36,10 @@ def take_args():
         help="Generates a script in language 'language' for given HTTP request. "
              "If you want to generate multiple scripts, separate the script's name with a <,>. "
              "Available languages: bash, php, python, ruby")
+    parser.add_argument(
+        "--beautify", "-bt",
+        action="store_true",
+        help="Beautify code printing when multiple languages are selected")
     parser.add_argument(
         "--proxy", "-p",
         nargs="?",
