@@ -75,6 +75,7 @@ class HttpRequestTranslator(object):
             raise ValueError("Request Malformed. Please Enter a Valid HTTP request.")
         new_request_method = headers_lines.pop(0)
         # Headers
+        host = ''
         header_list = []
         while headers_lines:
             line = headers_lines.pop(0)
