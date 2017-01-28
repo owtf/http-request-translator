@@ -277,6 +277,53 @@ class TestTranslator(unittest.TestCase):
         with self.assertRaises(ValueError):
             HttpRequestTranslator(request=raw_request)._parse_request()
 
+    def test_parse_raw_request_post(self):
+        raw_request = "POST /\r\n"\
+                      "Host: foo.bar\r\n"\
+                      "Content-Length: 2\r\n"\
+                      "\r\n\r\n"\
+                      "{}\r\n"
+        self.assertEqual(
+            HttpRequestTranslator(request=raw_request)._parse_request(),
+            (
+                ['Host: foo.bar', 'Content-Length: 2'],
+                {
+                    'protocol': '',
+                    'pre_scheme': '',
+                    'Host': 'foo.bar',
+                    'version': '',
+                    'path': '',
+                    'method': 'POST',
+                    'data': '{}'
+                }
+            ),
+            'Invalid parsing of request!')
+
+    def test_extract_request_details(self):
+        raw_request = "GET /\r\n"\
+                      "Host: foo.bar"
+        my_hrt = HttpRequestTranslator(request=raw_request)
+        my_hrt._extract_request_details()
+        self.assertEqual(
+            my_hrt.headers,
+            ['Host: foo.bar'],
+            'Invalid parsing of request!')
+
+    def test_extract_request_details_with_data(self):
+        raw_request = "POST /\r\n"\
+                      "Host: foo.bar\r\n"\
+                      "Content-Length: 2"
+        my_hrt = HttpRequestTranslator(request=raw_request, data='{}')
+        my_hrt._extract_request_details()
+        self.assertEqual(
+            my_hrt.headers,
+            ['Host: foo.bar', 'Content-Length: 2'],
+            'Invalid parsing of request!')
+        self.assertEqual(
+            my_hrt.data,
+            '{}',
+            'Invalid extraction of request details!')
+
 
 if __name__ == '__main__':
     unittest.main()
