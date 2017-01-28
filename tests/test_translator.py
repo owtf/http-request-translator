@@ -324,6 +324,58 @@ class TestTranslator(unittest.TestCase):
             '{}',
             'Invalid extraction of request details!')
 
+    def test_extract_request_details_with_proxy_no_port(self):
+        raw_request = "GET /\r\n"\
+                      "Host: foo.bar"
+        with self.assertRaises(ValueError):
+            HttpRequestTranslator(request=raw_request, proxy='127.0.0.1')
+
+    def test_extract_request_details_with_proxy_http_no_port(self):
+        raw_request = "GET /\r\n"\
+                      "Host: foo.bar"
+        with self.assertRaises(ValueError):
+            HttpRequestTranslator(request=raw_request, proxy='http://127.0.0.1')
+
+    def test_extract_request_details_with_proxy_valid(self):
+        raw_request = "GET /\r\n"\
+                      "Host: foo.bar"
+        my_hrt = HttpRequestTranslator(request=raw_request, proxy='127.0.0.1:8000')
+        my_hrt._extract_request_details()
+        self.assertEqual(
+            my_hrt.details,
+            {
+                'proxy_host': 'http://127.0.0.1',
+                'path': '',
+                'data': '',
+                'version': '',
+                'method': 'GET',
+                'pre_scheme': '',
+                'Host': 'foo.bar',
+                'proxy_port': '8000',
+                'protocol': ''
+            },
+            'Invalid parsing of request!')
+
+    def test_extract_request_details_with_proxy_http_valid(self):
+        raw_request = "GET /\r\n"\
+                      "Host: foo.bar"
+        my_hrt = HttpRequestTranslator(request=raw_request, proxy='http://127.0.0.1:8000')
+        my_hrt._extract_request_details()
+        self.assertEqual(
+            my_hrt.details,
+            {
+                'proxy_host': 'http://127.0.0.1',
+                'path': '',
+                'data': '',
+                'version': '',
+                'method': 'GET',
+                'pre_scheme': '',
+                'Host': 'foo.bar',
+                'proxy_port': '8000',
+                'protocol': ''
+            },
+            'Invalid parsing of request!')
+
 
 if __name__ == '__main__':
     unittest.main()

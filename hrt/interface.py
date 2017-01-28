@@ -4,7 +4,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 from .plugin_manager import generate_script
-from .url import get_url, check_valid_url
+from .url import get_url, check_valid_url, check_valid_port
 
 
 class HttpRequestTranslator(object):
@@ -41,11 +41,11 @@ class HttpRequestTranslator(object):
                 proxy = get_url(self.proxy)  # Fix proxy to add appropriate scheme
             else:
                 proxy = self.proxy.strip()
-            if not check_valid_url(proxy):
-                raise ValueError("Proxy provided is invalid.")
             try:
                 self.details['proxy_host'], self.details['proxy_port'] = proxy.rsplit(":", 1)
             except IndexError:
+                raise ValueError("Proxy provided is invalid.")
+            if not check_valid_url(self.details['proxy_host']) or not check_valid_port(self.details['proxy_port']):
                 raise ValueError("Proxy provided is invalid.")
 
     def generate_code(self):
