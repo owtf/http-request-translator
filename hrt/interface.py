@@ -43,7 +43,7 @@ class HttpRequestTranslator(object):
                 proxy = self.proxy.strip()
             try:
                 self.details['proxy_host'], self.details['proxy_port'] = proxy.rsplit(":", 1)
-            except IndexError:
+            except ValueError:  # Missing value when splitting
                 raise ValueError("Proxy provided is invalid.")
             if not check_valid_url(self.details['proxy_host']) or not check_valid_port(self.details['proxy_port']):
                 raise ValueError("Proxy provided is invalid.")

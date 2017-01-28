@@ -336,6 +336,12 @@ class TestTranslator(unittest.TestCase):
         with self.assertRaises(ValueError):
             HttpRequestTranslator(request=raw_request, proxy='http://127.0.0.1')
 
+    def test_extract_request_details_with_proxy_invalid(self):
+        raw_request = "GET /\r\n"\
+                      "Host: foo.bar"
+        with self.assertRaises(ValueError):
+            HttpRequestTranslator(request=raw_request, proxy='http127.0.0.1')
+
     def test_extract_request_details_with_proxy_valid(self):
         raw_request = "GET /\r\n"\
                       "Host: foo.bar"
