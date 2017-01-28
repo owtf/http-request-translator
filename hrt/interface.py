@@ -87,7 +87,7 @@ class HttpRequestTranslator(object):
                 # stripping one left blank space from value induced after split.
                 if value.startswith(' '):
                     value = value[1:]
-            except IndexError:
+            except ValueError:
                 raise ValueError("Headers Malformed. Please Enter a Valid HTTP request.")
             if header.lower() == "host":
                 host = value.strip()  # Keep hostname for further checks

@@ -277,6 +277,11 @@ class TestTranslator(unittest.TestCase):
         with self.assertRaises(ValueError):
             HttpRequestTranslator(request=raw_request)._parse_request()
 
+    def test_parse_raw_request_empty(self):
+        raw_request = ''
+        with self.assertRaises(ValueError):
+            HttpRequestTranslator(request=raw_request)._parse_request()
+
     def test_parse_raw_request_post(self):
         raw_request = "POST /\r\n"\
                       "Host: foo.bar\r\n"\
@@ -360,7 +365,7 @@ class TestTranslator(unittest.TestCase):
                 'proxy_port': '8000',
                 'protocol': ''
             },
-            'Invalid parsing of request!')
+            'Invalid extraction of request details!')
 
     def test_extract_request_details_with_proxy_http_valid(self):
         raw_request = "GET /\r\n"\
@@ -380,7 +385,23 @@ class TestTranslator(unittest.TestCase):
                 'proxy_port': '8000',
                 'protocol': ''
             },
-            'Invalid parsing of request!')
+            'Invalid extraction of request details!')
+
+    def test_generate_code_default(self):
+        raw_request = "GET /\r\n"\
+                      "Host: foo.bar"
+        self.assertEqual(
+            HttpRequestTranslator(request=raw_request).generate_code(),
+            {'bash': '#!/usr/bin/env bash\ncurl -v --request GET http://foo.bar  --header "Host: foo.bar"  --include'},
+            'Invalid code generation!')
+
+    def test_generate_code_default_empty(self):
+        raw_request = "GET /\r\n"\
+                      "Host: foo.bar"
+        self.assertEqual(
+            HttpRequestTranslator(request=raw_request, languages=[]).generate_code(),
+            {},
+            'Invalid code generation!')
 
 
 if __name__ == '__main__':
