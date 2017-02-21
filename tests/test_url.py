@@ -26,6 +26,12 @@ class TestURL(unittest.TestCase):
         self.assertTrue(url.check_valid_url("http://www.cmd5.com"))
         self.assertTrue(url.check_valid_url("https://www-cmd5.com"))
 
+        # Regression for https://github.com/owtf/http-request-translator/issues/59
+        self.assertTrue(url.check_valid_url('http://9gag.com'))
+        self.assertTrue(url.check_valid_url('https://9gag.com'))
+        self.assertTrue(url.check_valid_url('http://gag9.com'))
+        self.assertTrue(url.check_valid_url('https://gag9.com'))
+
     ###
     # url.check_valid_port
     ###
