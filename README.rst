@@ -22,6 +22,12 @@ python project (actively supported version 2.7 and 3.3+).
 Installation
 ============
 
+Via PyPi:
+
+1. ``$ pip install hrt``
+
+Manually:
+
 1. ``$ git clone https://github.com/owtf/http-request-translator``
 2. ``$ cd ./http-request-translator/``
 3. ``$ make install``
