@@ -8,7 +8,7 @@ except ImportError:
 
 setup(
     name='hrt',
-    version='0.1',
+    version='0.1.0',
     description='Translates raw HTTP requests to Python,Ruby,Php and Bash scripts',
     url='https://github.com/owtf/http-request-translator/',
     author='Ramana Subramanyam, Arun Sori, cjdupreez',
